@@ -1,0 +1,21 @@
+{   
+    "compilerOptions": {
+        "target": "es5",
+        "lib": [
+            "es2019",
+        ],
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "strictNullChecks": true,
+        "sourceMap": false,
+        "declaration": true,
+        "declarationMap": true,
+        "experimentalDecorators": true,
+        "newLine": "lf",
+        "outDir": "dist",
+        "baseUrl": ".",
+        "importHelpers": true,
+    }
+}

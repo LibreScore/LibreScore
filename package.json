@@ -1,0 +1,49 @@
+{
+  "name": "librescore",
+  "version": "0.1.0",
+  "description": "",
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LibreScore/LibreScore.git"
+  },
+  "keywords": [
+    "LibreScore"
+  ],
+  "author": "LibreScore",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/LibreScore/LibreScore/issues"
+  },
+  "homepage": "https://github.com/LibreScore/LibreScore#readme",
+  "files": [
+    "dist",
+    "src",
+    "tsconfig.json",
+    ".eslintrc"
+  ],
+  "dependencies": {
+    "tslib": "^1.11.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.1.4",
+    "@types/node": "^12.12.35",
+    "jest": "^25.1.0",
+    "ts-jest": "^25.2.1",
+    "typescript": "^3.8.3"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "verbose": true,
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/test/",
+      "<rootDir>/node_modules/"
+    ]
+  },
+  "scripts": {
+    "build": "tsc -p src",
+    "watch": "npm run build -- --watch",
+    "test": "jest --coverage --runInBand"
+  }
+}
