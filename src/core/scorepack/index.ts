@@ -4,6 +4,7 @@ import CID from 'cids'
 import dagCBOR from 'ipld-dag-cbor'
 import crypto from 'libp2p-crypto'
 import { FunctionKeys } from 'utility-types'
+import { Identity } from '../identity'
 
 /**
  * See the [specification](/SPEC/scorepack.md) - User Signatures
@@ -39,7 +40,7 @@ export class ScorePack {
   _fmt = 'scorepack' as const;
   _ver = 1 as const;
 
-  _sig: Sig | null = null;
+  _sig?: Sig | null = null;
 
   _prev?: CID | string;
 
@@ -63,6 +64,13 @@ export class ScorePack {
     // assign pack metadata to the ScorePack instance
     Object.assign(this, info)
 
+    if (!this.title || typeof this.title !== 'string') {
+      throw new TypeError('title is missing')
+    }
+    if (!this.score || !CID.isCID(this.score)) {
+      throw new TypeError('score CID is missing')
+    }
+
     // expect `updated` and `created` to be ISO8601 strings
     // trigger error if the date string is invalid
     this.updated = new Date(this.updated).toISOString()
@@ -78,7 +86,7 @@ export class ScorePack {
       }
       // the previous ScorePack revision must also be in DAG-CBOR
       if (prev.codec !== 'dag-cbor') {
-        throw new Error('CID of `_prev` is invalid.')
+        throw new TypeError('CID of `_prev` is invalid.')
       }
       // prefer to use the string representation which is encoded in base58-btc
       this._prev = prev.toBaseEncodedString('base58-btc')
@@ -86,10 +94,20 @@ export class ScorePack {
   }
 
   /**
+   * Clone the ScorePack class instance
+   */
+  clone (): ScorePack {
+    // depth = 1
+    // https://stackoverflow.com/a/44782052
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return Object.assign(Object.create(Object.getPrototypeOf(this)), this)
+  }
+
+  /**
    * Serialize the *ScorePack* in DAG-CBOR
    * @returns DAG-CBOR Node
    */
-  marshal (): DagNode {
+  private marshal (): DagNode {
     // Remove all `undefined` values in the ScorePack object (may cause errors)
     Object.getOwnPropertyNames(this).forEach(k => {
       if (this[k] === undefined) {
@@ -103,7 +121,10 @@ export class ScorePack {
     return dagNode
   }
 
-  async sign (identity): Promise<Sig> {
+  /**
+   * Sign / Re-sign the *ScorePack* with the user identity provided
+   */
+  async sign (identity: Identity): Promise<Sig> {
     // sign with `_sig` set to `null`
     this._sig = null
 
@@ -120,18 +141,42 @@ export class ScorePack {
     return sig
   }
 
+  /**
+   * Verify the integrity of the *ScorePack*  
+   * (the signature matches)
+   */
   async verify (): Promise<boolean> {
+    if (!this._sig || !this._sig.publicKey || !this._sig.signature) {
+      throw new Error('No signature in the scorepack')
+    }
 
+    const { publicKey, signature } = this._sig
+    const pubKey = crypto.keys.unmarshalPublicKey(publicKey)
+
+    // verify with `_sig` set to null
+    const clone = this.clone()
+    clone._sig = null
+    const dagNode = clone.marshal()
+    return pubKey.verify(dagNode, signature)
+  }
+
+  /**
+   * Sign and serialize the *ScorePack*
+   */
+  async flush (identity: Identity): Promise<DagNode> {
+    await this.sign(identity)
+    const dagNode = this.marshal()
+    return dagNode
   }
 
   /**
    * Deserialize *ScorePack* from the DAG-CBOR node
    */
   static unmarshal (dagNode: DagNode): ScorePack {
-
+    const obj: Omit<ScorePack, FunctionKeys<ScorePack>> = dagCBOR.util.deserialize(dagNode)
   }
 }
 
-export type PackInfo = Omit<ScorePack, FunctionKeys<ScorePack> | '_fmt' | '_ver' | '_sig'>
+export type PackInfo = Omit<ScorePack, FunctionKeys<ScorePack> | '_fmt' | '_ver'>
 
 export default ScorePack
