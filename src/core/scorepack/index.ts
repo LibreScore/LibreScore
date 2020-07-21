@@ -137,7 +137,7 @@ export class ScorePack {
     const sigBuf = await identity.sign(dagNode)
 
     const pubKey: crypto.PublicKey = await identity.publicKey()
-    const sig = {
+    const sig: Sig = {
       publicKey: crypto.keys.marshalPublicKey(pubKey),
       signature: sigBuf,
     }

@@ -41,14 +41,17 @@ The following is some suggestions:
 
 ### User Signatures
 
+Verification in an asymmetric encryption system requires a signature and its public key. In order to support multiple identity/wallet providers, just make things simple and generic.
+
 | Field | Type | Description |
 |---|---|---|
 | `publicKey` | Buffer | user's public key [serialized in protobuf](https://github.com/libp2p/js-libp2p-crypto/blob/master/src/keys/index.js#L85) (libp2p-crypto standard, multiple key types supported) |
 | `signature` | Buffer | |
 
-1. Remove all `undefined` values in the ScorePack object (`undefined` values may not exist in other languages; They may trigger errors using in CBOR)
-2. Serialize the *ScorePack* in DAG-CBOR with `_sig` set to `null`
-3. Sign the DAG-CBOR serialized object with the user's private key 
+**Notes:**
+
+* Remove all `undefined` values in the ScorePack object (`undefined` values may not exist in other languages; They may trigger errors using in CBOR)
+* Sign/Verify the *ScorePack* with `_sig` set to `null`
 
 ## Implementations
 
