@@ -27,6 +27,11 @@ interface Source {
 
 type DagNode = Buffer
 
+const FMT_NAME = 'scorepack' as const
+const FMT_VER = 1 as const
+
+const ERR_SCOREPACK_INVALID = new TypeError('The ScorePack is invalid')
+
 /**
  * The *ScorePack* format is LibreScore's main data structure to store score metadata and CID reference to its mscz file on IPFS
  * 
@@ -37,8 +42,8 @@ export class ScorePack {
   /**
    * See the [specification](/SPEC/scorepack.md) - Format Description
    */
-  _fmt = 'scorepack' as const;
-  _ver = 1 as const;
+  _fmt = FMT_NAME;
+  _ver = FMT_VER;
 
   _sig?: Sig | null = null;
 
@@ -174,6 +179,22 @@ export class ScorePack {
    */
   static unmarshal (dagNode: DagNode): ScorePack {
     const obj: Omit<ScorePack, FunctionKeys<ScorePack>> = dagCBOR.util.deserialize(dagNode)
+
+    // check the fmt name info
+    if (obj._fmt !== FMT_NAME) {
+      throw ERR_SCOREPACK_INVALID
+    }
+
+    if (obj._ver !== FMT_VER) {
+      throw ERR_SCOREPACK_INVALID
+      /**
+       * @todo
+       * convert to current version
+       */
+    }
+
+    // check other info in the class constructor
+    return new ScorePack(obj)
   }
 }
 
