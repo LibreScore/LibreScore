@@ -196,6 +196,13 @@ export class ScorePack {
     // check other info in the class constructor
     return new ScorePack(obj)
   }
+
+  /**
+   * @alias `ScorePack.unmarshal`
+   */
+  static from (dagNode: DagNode): ScorePack {
+    return ScorePack.unmarshal(dagNode)
+  }
 }
 
 export type PackInfo = Omit<ScorePack, FunctionKeys<ScorePack> | '_fmt' | '_ver'>
