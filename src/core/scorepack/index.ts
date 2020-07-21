@@ -17,7 +17,7 @@ export interface Sig {
 /**
  * See the [specification](/SPEC/scorepack.md) - The `Source` Object
  */
-interface Source {
+export interface Source {
   name?: string;
   description?: string;
   url?: string;
@@ -27,10 +27,14 @@ interface Source {
 
 type DagNode = Buffer
 
-const FMT_NAME = 'scorepack' as const
-const FMT_VER = 1 as const
+export const FMT_NAME = 'scorepack' as const
+export const FMT_VER = 1 as const
 
-const ERR_SCOREPACK_INVALID = new TypeError('The ScorePack is invalid')
+export const ERR_SCOREPACK_INVALID = new TypeError('The ScorePack is invalid')
+export const ERR_MISSING_TITLE = new TypeError('title is missing')
+export const ERR_MISSING_SCORE_CID = new TypeError('score CID is missing')
+export const ERR_NO_SIGNATURE = new Error('No signature in the scorepack')
+export const ERR_PREV_SCORE_INVALID = new TypeError('CID of `_prev` is invalid')
 
 /**
  * The *ScorePack* format is LibreScore's main data structure to store score metadata and CID reference to its mscz file on IPFS
@@ -70,10 +74,10 @@ export class ScorePack {
     Object.assign(this, info)
 
     if (!this.title || typeof this.title !== 'string') {
-      throw new TypeError('title is missing')
+      throw ERR_MISSING_TITLE
     }
     if (!this.score || !CID.isCID(this.score)) {
-      throw new TypeError('score CID is missing')
+      throw ERR_MISSING_SCORE_CID
     }
 
     // expect `updated` and `created` to be ISO8601 strings
@@ -91,7 +95,7 @@ export class ScorePack {
       }
       // the previous ScorePack revision must also be in DAG-CBOR
       if (prev.codec !== 'dag-cbor') {
-        throw new TypeError('CID of `_prev` is invalid.')
+        throw ERR_PREV_SCORE_INVALID
       }
       // prefer to use the string representation which is encoded in base58-btc
       this._prev = prev.toBaseEncodedString('base58-btc')
@@ -152,7 +156,7 @@ export class ScorePack {
    */
   async verify (): Promise<boolean> {
     if (!this._sig || !this._sig.publicKey || !this._sig.signature) {
-      throw new Error('No signature in the scorepack')
+      throw ERR_NO_SIGNATURE
     }
 
     const { publicKey, signature } = this._sig
