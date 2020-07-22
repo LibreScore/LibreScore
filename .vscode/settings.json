@@ -9,9 +9,7 @@
     "typescript.format.insertSpaceBeforeFunctionParenthesis": true,
     "javascript.format.insertSpaceAfterConstructor": true,
     "typescript.format.insertSpaceAfterConstructor": true,
-    "[typescript]": {
-        "editor.formatOnSave": true
-    },
+    "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true
     },
