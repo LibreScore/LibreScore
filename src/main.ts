@@ -4,4 +4,4 @@ import 'whatwg-fetch'
 
 import UI from './ui'
 
-UI.$mount('#app')
+UI.mount('#app')

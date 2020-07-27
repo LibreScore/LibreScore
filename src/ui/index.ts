@@ -1,14 +1,11 @@
 
-import Vue from 'vue'
+import { createApp } from 'vue'
+import { IonicVue } from '@ionic/vue/dist/index'
+// import router from './router'
 
 import App from './App.vue'
 
-Vue.config.ignoredElements.push(/^ion-/) // ignore ionic components
-
-export const vm = new Vue({
-  render (h) {
-    return h(App, { ref: 'App' })
-  },
-})
+export const vm = createApp(App).use(IonicVue)
+// .use(router)
 
 export default vm

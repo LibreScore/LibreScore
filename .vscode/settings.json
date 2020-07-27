@@ -3,6 +3,7 @@
     "eslint.validate": [
         "javascript",
         "typescript",
+        "vue",
     ],
     "editor.tabSize": 2,
     "javascript.format.insertSpaceBeforeFunctionParenthesis": true,

@@ -2,7 +2,6 @@
   "name": "librescore",
   "version": "0.1.0",
   "description": "",
-  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/LibreScore/LibreScore.git"
@@ -23,40 +22,45 @@
     ".eslintrc"
   ],
   "dependencies": {
+    "@ionic/vue": "^5.3.0-0",
     "core-js": "^3.6.5",
     "ipfs": "^0.48.0",
-    "tslib": "^1.13.0",
-    "vue": "^2.6.11",
-    "vue-router": "^3.3.4",
+    "register-service-worker": "^1.7.1",
+    "vue": "^3.0.0-0",
+    "vue-router": "^4.0.0-0",
+    "webmscore": "^0.7.0",
     "whatwg-fetch": "^3.2.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.10.5",
-    "@babel/plugin-transform-runtime": "^7.10.5",
-    "@types/jest": "^25.1.4",
+    "@types/jest": "^24.0.19",
     "@types/node": "^12.12.50",
-    "@vue/component-compiler-utils": "^3.1.2",
-    "jest": "^25.1.0",
-    "parcel": "^1.12.4",
+    "@typescript-eslint/eslint-plugin": "^2.33.0",
+    "@typescript-eslint/parser": "^2.33.0",
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-pwa": "~4.5.0",
+    "@vue/cli-plugin-router": "~4.5.0",
+    "@vue/cli-plugin-typescript": "~4.5.0",
+    "@vue/cli-plugin-unit-jest": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.0.0-0",
+    "@vue/eslint-config-standard": "^5.1.2",
+    "@vue/eslint-config-typescript": "^5.0.2",
+    "@vue/test-utils": "^2.0.0-0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.0",
+    "eslint-plugin-vue": "^7.0.0-0",
+    "typescript": "~3.9.3",
+    "vue-jest": "^5.0.0-0",
     "rimraf": "^3.0.2",
-    "ts-jest": "^25.2.1",
-    "typescript": "^3.8.3",
-    "utility-types": "^3.10.0",
-    "vue-template-compiler": "^2.6.11"
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "verbose": true,
-    "coveragePathIgnorePatterns": [
-      "<rootDir>/test/",
-      "<rootDir>/node_modules/"
-    ]
+    "utility-types": "^3.10.0"
   },
   "scripts": {
-    "dev": "parcel serve src/index.html --no-hmr",
-    "build": "npm run clean && parcel build src/index.html",
-    "clean": "rimraf dist",
-    "test": "jest --coverage --runInBand"
+    "dev": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "clean": "rimraf dist"
   }
 }

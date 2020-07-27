@@ -1,13 +1,16 @@
 {
-    "parser": "@typescript-eslint/parser",
-    "plugins": [
-        "@typescript-eslint"
-    ],
     "extends": [
-        "standard",
+        "@vue/standard",
+        "@vue/typescript/recommended",
         "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/recommended-requiring-type-checking"
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:vue/vue3-essential",
     ],
+    "parserOptions": {
+        "project": [
+            "./tsconfig.json"
+        ]
+    },
     "rules": {
         "no-useless-constructor": "off",
         "@typescript-eslint/no-useless-constructor": "error",
@@ -31,11 +34,6 @@
         "comma-dangle": [
             "warn",
             "always-multiline"
-        ]
-    },
-    "parserOptions": {
-        "project": [
-            "./tsconfig.json"
         ]
     },
     "env": {

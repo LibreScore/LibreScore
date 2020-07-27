@@ -1,21 +1,37 @@
-{   
+{
     "compilerOptions": {
-        "target": "es5",
-        "lib": [
-            "es2019",
-        ],
-        "module": "commonjs",
+        "target": "esnext",
+        "module": "esnext",
+        "jsx": "preserve",
+        "importHelpers": true,
         "moduleResolution": "node",
         "esModuleInterop": true,
+        "sourceMap": true,
         "resolveJsonModule": true,
         "strictNullChecks": true,
-        "sourceMap": false,
-        "declaration": true,
-        "declarationMap": true,
-        "experimentalDecorators": true,
-        "newLine": "lf",
-        "outDir": "dist",
         "baseUrl": ".",
-        "importHelpers": true,
-    }
+        "types": [
+            "webpack-env",
+            "jest"
+        ],
+        "paths": {
+            "@/*": [
+                "src/*"
+            ]
+        },
+        "lib": [
+            "esnext",
+            "dom",
+            "dom.iterable",
+            "scripthost"
+        ],
+    },
+    "include": [
+        "src/**/*",
+        "tests/**/*",
+        "*.js",
+    ],
+    "exclude": [
+        "node_modules"
+    ]
 }
