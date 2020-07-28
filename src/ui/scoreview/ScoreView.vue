@@ -5,6 +5,7 @@
       :page="page"
       :mpos="mpos"
       :img="img"
+      :activeId="activeId"
       @seek="log"
     ></sheet-view>
   </div>
@@ -12,6 +13,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import createTree from 'functional-red-black-tree'
 
 // use CDN (webpack externals)
 import WebMscore from 'webmscore'
@@ -34,28 +36,43 @@ export default defineComponent({
   },
   data () {
     return {
-      mscore: null,
-      page: null, // The page index (0-based)
-      mpos: null,
-      img: null,
-      metadata: null,
+      mscore: null as any as WebMscore,
+
+      page: null as any as number, // The page index (0-based)
+      mpos: null as any as Positions,
+      timePosTree: null as any,
+      metadata: null as any as ScoreMetadata,
+
+      img: '',
       imgCache: new Map<number, Promise<string /** Blob URLs */>>(),
+
+      currentTime: NaN, // The current playback time in ms
+      activeId: NaN,
     }
   },
   watch: {
     async page (current: number): Promise<void> {
       // get the maximum page index
-      const metadata: ScoreMetadata = this.metadata
-      const max = metadata.pages - 1
+      const max = this.metadata.pages - 1
 
       // preload up to 3 pages
       for (let p = current; p <= Math.min(current + 2, max); p++) {
-        this.getPageImg(p).then((url) => {
-          console.info('preloaded page', p, url)
-        })
+        void (
+          this.getPageImg(p).then((url) => {
+            console.info('preloaded page', p, url)
+          })
+        )
       }
 
       this.img = await this.getPageImg(current)
+    },
+    currentTime (): void {
+      // find the first element that its time position <= the current playback time
+      const elid = this.timePosTree.le(this.currentTime).value
+      const currentEl = this.mpos.elements[elid]
+
+      this.activeId = currentEl.id
+      this.page = currentEl.page
     },
   },
   methods: {
@@ -65,7 +82,7 @@ export default defineComponent({
      * @returns a Blob URL
      */
     getPageImg (page: number): Promise<string> {
-      const imgCache: Map<number, Promise<string /** Blob URLs */>> = this.imgCache
+      const imgCache = this.imgCache
 
       // retrieve from cache
       if (imgCache.has(page)) {
@@ -98,24 +115,29 @@ export default defineComponent({
     this.mscore = mscore
 
     // get the score metadata
-    const metadata: ScoreMetadata = await mscore.metadata()
-    this.metadata = metadata
+    this.metadata = await mscore.metadata()
 
     // load sheet images
     // trigger the `page` watcher
     this.page = 0
 
     // get the positions of measures
-    const mpos: Positions = await mscore.measurePositions()
-    this.mpos = mpos
+    this.mpos = await mscore.measurePositions()
+
+    // build the red-black tree that indexes time positions to measure elements
+    let tree = createTree()
+    this.mpos.events.forEach((el) => {
+      tree = tree.insert(el.position, el.elid)
+    })
+    this.timePosTree = tree
   },
-  beforeUnmount () {
+  async beforeUnmount () {
     // release resources
     this.mscore.destroy()
 
-    const imgCache: Map<number, string> = this.imgCache
+    const imgCache = this.imgCache
     for (const blobUrl of imgCache.values()) {
-      URL.revokeObjectURL(blobUrl)
+      URL.revokeObjectURL(await blobUrl)
     }
   },
 })

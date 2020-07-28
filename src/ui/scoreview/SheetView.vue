@@ -7,6 +7,7 @@
 
     <div
       v-for="e of measureBoxes"
+      :class="{ active: e.id === activeId }"
       :key="e.id"
       :style="calStyle(e)"
       @click="$emit('seek', e.time)"
@@ -16,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 import { Positions, PositionElement } from 'webmscore/schemas'
 import { toPercentage } from '@/utils/css'
 
@@ -48,7 +49,7 @@ export default defineComponent({
      * positions of measures
      */
     mpos: {
-      type: Object, // Positions
+      type: Object as PropType<Positions>,
       required: true,
     },
     /**
@@ -57,6 +58,9 @@ export default defineComponent({
     img: {
       type: String,
       required: true,
+    },
+    activeId: {
+      type: Number,
     },
   },
   emits: [
@@ -68,7 +72,7 @@ export default defineComponent({
      */
     measureBoxes (): MeasureBox[] {
       const page = this.page
-      const mpos: Positions = this.mpos
+      const mpos = this.mpos
 
       const boxes: MeasureBox[] = []
       for (const e of mpos.elements) {
@@ -98,12 +102,10 @@ export default defineComponent({
       return boxes
     },
     imgWidth (): number {
-      const mpos: Positions = this.mpos
-      return mpos.pageSize.width
+      return this.mpos.pageSize.width
     },
     imgHeight (): number {
-      const mpos: Positions = this.mpos
-      return mpos.pageSize.height
+      return this.mpos.pageSize.height
     },
   },
   methods: {
