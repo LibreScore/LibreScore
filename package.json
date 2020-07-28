@@ -28,7 +28,7 @@
     "register-service-worker": "^1.7.1",
     "vue": "^3.0.0-0",
     "vue-router": "^4.0.0-0",
-    "webmscore": "^0.7.0",
+    "webmscore": "^0.8.0",
     "whatwg-fetch": "^3.2.0"
   },
   "devDependencies": {
@@ -53,10 +53,10 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.0",
     "eslint-plugin-vue": "^7.0.0-0",
-    "typescript": "~3.9.3",
-    "vue-jest": "^5.0.0-0",
     "rimraf": "^3.0.2",
-    "utility-types": "^3.10.0"
+    "typescript": "~3.9.3",
+    "utility-types": "^3.10.0",
+    "vue-jest": "^5.0.0-0"
   },
   "scripts": {
     "dev": "vue-cli-service serve",
