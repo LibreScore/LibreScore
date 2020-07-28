@@ -2,7 +2,7 @@
   <div class="container">
     <img
       class="sheet-img"
-      :src="svg"
+      :src="img"
     >
 
     <div
@@ -28,6 +28,11 @@ interface MeasureBox extends PositionElement {
    * The time position/offset (in ms) of each element in the exported audio
    */
   time: number;
+
+  /** 
+   * The start time of the next measure
+   */
+  timeEnd: number;
 }
 
 export default defineComponent({
@@ -47,9 +52,9 @@ export default defineComponent({
       required: true,
     },
     /**
-     * The URL (or DataURL) to the svg image of the sheet
+     * The URL (or DataURL) to the sheet image
      */
-    svg: {
+    img: {
       type: String,
       required: true,
     },
@@ -65,19 +70,29 @@ export default defineComponent({
       const page = this.page
       const mpos: Positions = this.mpos
 
-      // find measures on the specific page
-      // mpos is sorted properly
       const boxes: MeasureBox[] = []
       for (const e of mpos.elements) {
+        // filter measures on the specific page
         if (e.page < page) {
           continue
         } else if (e.page > page) {
           break
         }
 
+        // find the first time occurrence in any repeat
         const elid = e.id
-        const time = mpos.events[elid].position
-        boxes.push({ ...e, time })
+        const elIndex = mpos.events.findIndex((el) => el.elid === elid)
+
+        const el = mpos.events[elIndex]
+        const time = el.position
+
+        // The `timeEnd` is the start time of the next measure in the same repeat
+        const nextEl = mpos.events[elIndex + 1]
+        const timeEnd = nextEl
+          ? nextEl.position
+          : Infinity // this is the last measure
+
+        boxes.push({ ...e, time, timeEnd })
       }
 
       return boxes
@@ -131,8 +146,11 @@ export default defineComponent({
     cursor: pointer;
   }
 
-  .measure:hover,
-  .measure.active {
+  .measure:hover {
     background: rgba(255, 0, 0, 0.05);
+  }
+
+  .measure.active {
+    background: rgba(255, 0, 0, 0.2);
   }
 </style>

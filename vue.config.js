@@ -4,4 +4,9 @@ module.exports = {
   filenameHashing: true,
   productionSourceMap: true,
   integrity: true,
+  configureWebpack: {
+    externals: {
+      webmscore: 'WebMscore',
+    },
+  },
 }
