@@ -7,11 +7,17 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <link rel="icon" href="<%= BASE_URL %>favicon.ico">
   <title>LibreScore</title>
+
+  <link href="<%= BASE_URL %>webmscore.lib.data" rel="prefetch">
+  <link href="<%= BASE_URL %>webmscore.lib.wasm" rel="prefetch">
+
+  <link href="<%= VUE_APP_FONT_URL_CN %>" rel="prefetch">
+  <link href="<%= VUE_APP_FONT_URL_KR %>" rel="prefetch">
+  <link href="<%= VUE_APP_SF3_URL %>" rel="prefetch">
 </head>
 
 <body>
   <div id="app"></div>
-  <script src="https://cdn.jsdelivr.net/npm/webmscore@0.8.0/webmscore.js" integrity="sha256-6BFvI62Zk52v7E5oJ3IC1WlUhStR+tA3gdXB4NzylWQ=" crossorigin="anonymous"></script>
   <!-- built files will be auto injected -->
 </body>
 
