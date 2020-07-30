@@ -1,6 +1,6 @@
 
-import 'core-js/stable'
-import 'whatwg-fetch'
+// import 'core-js/stable'
+// import 'whatwg-fetch'
 
 import UI from './ui'
 
