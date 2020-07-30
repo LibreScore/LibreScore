@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { Positions, PositionElement } from 'webmscore/schemas'
+import type { Positions, PositionElement } from 'webmscore/schemas'
 import { toPercentage } from '@/utils/css'
 
 /**

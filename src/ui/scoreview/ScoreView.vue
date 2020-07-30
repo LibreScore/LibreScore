@@ -6,7 +6,7 @@
       :mpos="mpos"
       :img="img"
       :activeId="activeId"
-      @seek="log"
+      @seek="seek"
     ></sheet-view>
   </div>
 </template>
@@ -15,9 +15,9 @@
 import { defineComponent } from 'vue'
 import createTree from 'functional-red-black-tree'
 
-// use CDN (webpack externals)
-import WebMscore from 'webmscore'
-import { Positions, ScoreMetadata } from 'webmscore/schemas'
+import { WebMscoreLoad } from '@/utils/webmscore'
+import type WebMscore from 'webmscore'
+import type { Positions, ScoreMetadata } from 'webmscore/schemas'
 
 import SheetView from './SheetView.vue'
 
@@ -102,16 +102,18 @@ export default defineComponent({
 
       return blobUrlPromise
     },
+    seek (time: number): void {
+      this.currentTime = time
+    },
   },
   async mounted () {
     // single instance only (no component reusing)
     // set `key` attribute on this component
 
-    // get WebMscore ready
-    await WebMscore.ready
-
     // load score
-    const mscore = await WebMscore.load('mscz', this.mscz)
+    const mscore = await WebMscoreLoad(
+      new Uint8Array(this.mscz), // make a copy (the ownership of the Uint8Array is transferred to the web worker context, so it becomes unusable in the main context)
+    )
     this.mscore = mscore
 
     // get the score metadata
