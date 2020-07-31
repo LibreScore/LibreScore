@@ -7,11 +7,11 @@
 
     <div
       v-for="e of measuresOnPage"
+      class="measure"
       :class="{ active: e.id === activeId }"
       :key="e.id"
       :style="calStyle(e)"
       @click="() => onClick(e)"
-      class="measure"
     ></div>
   </div>
 </template>
@@ -121,6 +121,8 @@ export default defineComponent({
     display: block;
     width: 100%;
     height: 100%;
+    /** prevent dragging the image itself */
+    pointer-events: none;
   }
 
   .measure {
