@@ -64,7 +64,7 @@ export default defineComponent({
       this.img = await this.getPageImg(current)
     },
     currentTime (): void {
-      if (!this.currentTime) { return }
+      if (!isFinite(this.currentTime)) { return }
       const currentEl = this.measures.getElByTime(this.currentTime)
       this.page = currentEl.page
     },

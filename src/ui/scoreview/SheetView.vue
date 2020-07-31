@@ -80,7 +80,7 @@ export default defineComponent({
       return this.measures.imgHeight
     },
     activeId (): number {
-      if (!this.currentTime) { return NaN }
+      if (!isFinite(this.currentTime)) { return NaN } // use `isFinite` to identify valid numbers in case that `this.currentTime` == 0
       const currentEl = this.measures.getElByTime(this.currentTime)
       return currentEl.id
     },
