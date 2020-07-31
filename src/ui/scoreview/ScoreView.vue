@@ -1,11 +1,11 @@
 <template>
   <div>
     <sheet-view
-      v-if="mpos && img"
+      v-if="measures && img"
       :page="page"
-      :mpos="mpos"
+      :measures="measures"
       :img="img"
-      :activeId="activeId"
+      :currentTime="currentTime"
       @seek="seek"
     ></sheet-view>
   </div>
@@ -13,11 +13,10 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import createTree from 'functional-red-black-tree'
 
-import { WebMscoreLoad } from '@/utils/webmscore'
+import { WebMscoreLoad, Measures } from '@/mscore'
 import type WebMscore from 'webmscore'
-import type { Positions, ScoreMetadata } from 'webmscore/schemas'
+import type { ScoreMetadata } from 'webmscore/schemas'
 
 import SheetView from './SheetView.vue'
 
@@ -39,15 +38,13 @@ export default defineComponent({
       mscore: null as any as WebMscore,
 
       page: null as any as number, // The page index (0-based)
-      mpos: null as any as Positions,
-      timePosTree: null as any,
+      measures: null as any as Measures,
       metadata: null as any as ScoreMetadata,
 
       img: '',
       imgCache: new Map<number, Promise<string /** Blob URLs */>>(),
 
       currentTime: NaN, // The current playback time in ms
-      activeId: NaN,
     }
   },
   watch: {
@@ -67,15 +64,15 @@ export default defineComponent({
       this.img = await this.getPageImg(current)
     },
     currentTime (): void {
-      // find the first element that its time position <= the current playback time
-      const elid = this.timePosTree.le(this.currentTime).value
-      const currentEl = this.mpos.elements[elid]
-
-      this.activeId = currentEl.id
+      if (!this.currentTime) { return }
+      const currentEl = this.measures.getElByTime(this.currentTime)
       this.page = currentEl.page
     },
   },
   methods: {
+    /**
+     * @todo map/export metadata, mscore, download mscz, etc. methods
+     */
     /**
      * Get the Blob URL to the sheet image of the page
      * @param page the page index
@@ -124,14 +121,8 @@ export default defineComponent({
     this.page = 0
 
     // get the positions of measures
-    this.mpos = await mscore.measurePositions()
-
-    // build the red-black tree that indexes time positions to measure elements
-    let tree = createTree()
-    this.mpos.events.forEach((el) => {
-      tree = tree.insert(el.position, el.elid)
-    })
-    this.timePosTree = tree
+    const mpos = await mscore.measurePositions()
+    this.measures = new Measures(mpos)
   },
   async beforeUnmount () {
     // release resources

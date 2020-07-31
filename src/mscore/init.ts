@@ -1,7 +1,7 @@
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type WebMscore from 'webmscore'
-import { fetchData } from './'
+import { fetchData } from '../utils'
 
 const FONT_URLS = [
   process.env.VUE_APP_FONT_URL_CN,
@@ -15,7 +15,7 @@ let soundfont: Promise<Uint8Array> | undefined
 /**
  * Load fonts with cache
  */
-export const loadFonts = (): Promise<Uint8Array[]> => {
+const loadFonts = (): Promise<Uint8Array[]> => {
   if (!fonts) {
     fonts = Promise.all(
       FONT_URLS.map(u => fetchData(u as string)),
@@ -28,7 +28,7 @@ export const loadFonts = (): Promise<Uint8Array[]> => {
 /**
  * Load the SoundFont (.sf3) file with cache
  */
-export const loadSoundFont = (): Promise<Uint8Array> => {
+const loadSoundFont = (): Promise<Uint8Array> => {
   if (!soundfont) {
     soundfont = fetchData(SF3_URL as string)
   }
@@ -51,10 +51,28 @@ export const WebMscoreLoad = async (mscz: Uint8Array): Promise<WebMscore> => {
     await loadFonts(), // load CJK fonts
   )
 
-  // load the SoundFont file
-  await mscore.setSoundFont(
-    await loadSoundFont(),
-  )
+  // async load the SoundFont file
+  // eslint-disable-next-line @typescript-eslint/no-floating-promises, @typescript-eslint/no-use-before-define
+  void WebMscoreSoundFont(mscore)
 
   return mscore
+}
+
+const SOUND_FONT_LOADED = Symbol('SoundFont loaded')
+
+/**
+ * Attach the SoundFont (.sf3) file to the mscore instance 
+ */
+export const WebMscoreSoundFont = (mscore: WebMscore): Promise<void> => {
+  if (!mscore[SOUND_FONT_LOADED]) {
+    mscore[SOUND_FONT_LOADED] = (
+      async (): Promise<void> => {
+        await mscore.setSoundFont(
+          await loadSoundFont(),
+        )
+      }
+    )()
+  }
+
+  return mscore[SOUND_FONT_LOADED]
 }
