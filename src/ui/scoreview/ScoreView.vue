@@ -126,7 +126,7 @@ export default defineComponent({
   },
   async beforeUnmount () {
     // release resources
-    this.mscore.destroy()
+    this.mscore.destroy(false) // destroy the whole WebMscore webworker context
 
     const imgCache = this.imgCache
     for (const blobUrl of imgCache.values()) {
