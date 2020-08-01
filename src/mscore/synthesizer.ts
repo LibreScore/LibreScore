@@ -80,8 +80,14 @@ export class Synthesizer {
         throw new Error('The score has ended.')
       }
 
-      const fragment = this.buildFragment(synthRes)
-      void onUpdate?.(fragment)
+      const result = this.buildFragment(synthRes)
+      if (result) {
+        void onUpdate?.(result)
+      } else {
+        // cache exists for this playback time
+        // so stop synth further
+        await this.worklet.cancel() // set aborted = true, and release resources
+      }
 
       if (synthRes.done) { // the score ends, no more fragments available
         // update the score's end time (duration)
@@ -105,15 +111,15 @@ export class Synthesizer {
 
   /**
    * Build AudioFragment from the SynthRes, and load it to cache
+   * @returns the AudioFragment processed, or `undefined` if the AudioFragment exists in cache
    */
-  private buildFragment (synthRes: SynthRes): AudioFragment {
+  private buildFragment (synthRes: SynthRes): AudioFragment | undefined {
     const chunk = new Float32Array(synthRes.chunk.buffer)
     const { startTime, endTime } = synthRes
 
     // skip if the AudioFragment exists in cache
-    const inCache: AudioFragment | undefined = this.cache.get(startTime)
-    if (inCache) {
-      return inCache
+    if (this.cache.get(startTime)) {
+      return
     }
 
     // create AudioBuffer
