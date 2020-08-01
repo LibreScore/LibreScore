@@ -10,7 +10,7 @@
     <ion-slides
       ref="slides"
       :scrollbar="true"
-      :pager="true"
+      :pager="imgUrls.length <= 15"
       @ionSlideDidChange="slideIndexChanged"
     >
       <ion-slide
