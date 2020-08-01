@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 
 import type WebMscore from 'webmscore'
 import type { SynthRes } from 'webmscore/schemas'
@@ -136,6 +137,10 @@ export class Synthesizer {
       sampleRate: this.SAMPLE_RATE,
     })
 
+    const channelDataL = Array.from({ length: this.CHANNELS }).map((_, c) => {
+      return buf.getChannelData(c)
+    })
+
     for (let i = 0; i < synthResL.length; i++) {
       const synthRes = synthResL[i]
       const chunk = new Float32Array(synthRes.chunk.buffer)
@@ -144,8 +149,9 @@ export class Synthesizer {
       // audio frames are interleaved
       for (let d = 0; d < this.FRAME_LENGTH; d++) {
         for (let c = 0; c < this.CHANNELS; c++) {
-          const p = d * this.CHANNELS + c
-          buf.copyToChannel(chunk.slice(p, p + 1), c, i * this.FRAME_LENGTH + d)
+          const chunkOffset = d * this.CHANNELS + c
+          const bufOffset = i * this.FRAME_LENGTH + d
+          channelDataL[c][bufOffset] = chunk[chunkOffset]
         }
       }
     }
@@ -159,53 +165,49 @@ export class Synthesizer {
 
   /**
    * Play a single AudioFragment,  
-   * the Promise resolves once the entire fragment has been played
+   * the callback function is called once the entire fragment has been played
    */
-  private playFragment (f: AudioFragment): Promise<void> {
-    return new Promise((resolve) => {
-      // An AudioBufferSourceNode can only be played once
-      const source = this.audioCtx.createBufferSource()
+  private playFragment (f: AudioFragment, cb: () => any): void {
+    // An AudioBufferSourceNode can only be played once
+    const source = this.audioCtx.createBufferSource()
 
-      source.buffer = f.audioBuffer
-      source.connect(this.audioCtx.destination)
-      source.start()
+    source.buffer = f.audioBuffer
+    source.connect(this.audioCtx.destination)
+    source.start()
 
-      setTimeout(resolve, f.audioBuffer.duration * 1000)
-    })
+    setTimeout(cb, f.audioBuffer.duration * 1000)
   }
 
   /**
    * @param onUpdate called each time a fragment is played (the playback time updates)
-   * @returns The Promise resolves once the score ended, or user aborted
+   * @param onEnd called once the score ended, or user aborted
    */
-  async play (abort?: AbortSignal, onUpdate?: (time: number) => any): Promise<void> {
-    while (true) {
-      // the score ends
-      if (this.time >= this.maxTime) {
-        break
-      }
-      // user aborted
-      if (abort?.aborted) {
-        break
+  play (abort?: AbortSignal, onUpdate?: (time: number) => any, onEnd?: () => any): void {
+    const next = (): void => {
+      if (
+        this.time >= this.maxTime || // the score ends
+        abort?.aborted // user aborted
+      ) {
+        return onEnd?.()
       }
 
-      let fragment = this.findFragment(this.time)
+      const fragment = this.findFragment(this.time)
       if (!fragment) {
         // get the synth worklet ready for this playback time, and get its first fragment processed
-        fragment = await new Promise((
-          resolve: (f: AudioFragment) => void,
-        ) => {
-          // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        new Promise((resolve) => {
           this.startSynth(this.time, resolve)
-        })
+        }).then(() => next())
+        return
       }
 
       // play one fragment
-      await this.playFragment(fragment)
-
-      // update the current playback time
-      this.time = fragment.endTime
-      void onUpdate?.(this.time)
+      this.playFragment(fragment, () => {
+        // update the current playback time
+        this.time = fragment.endTime
+        void onUpdate?.(this.time)
+        return next()
+      })
     }
+    return next()
   }
 }
