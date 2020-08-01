@@ -1,26 +1,34 @@
 <template>
-  <ion-slides
-    v-if="measures /** the score file is fully processed */"
-    ref="slides"
-    :scrollbar="true"
-    :pager="true"
-    @ionSlideDidChange="slideIndexChanged"
-  >
-    <ion-slide
-      v-for="(_, p) of imgUrls"
-      :key="'sheet-' + p /** slides are preallocated with the number of pages in this score */"
+  <div v-if="measures /** the score file is fully processed */">
+    <score-playback
+      :mscore="mscore"
+      :duration="duration"
+      :currentTime="currentTime"
+      @seek="updatePlaybackTime"
+    ></score-playback>
+
+    <ion-slides
+      ref="slides"
+      :scrollbar="true"
+      :pager="true"
+      @ionSlideDidChange="slideIndexChanged"
     >
-      <div v-if="imgUrls[p] /** the sheet image of this page is processed */">
-        <sheet-view
-          :page="p"
-          :measures="measures"
-          :img="imgUrls[p]"
-          :currentTime="currentTime"
-          @seek="seek"
-        ></sheet-view>
-      </div>
-    </ion-slide>
-  </ion-slides>
+      <ion-slide
+        v-for="(_, p) of imgUrls"
+        :key="'sheet-' + p /** slides are preallocated with the number of pages in this score */"
+      >
+        <div v-if="imgUrls[p] /** the sheet image of this page is processed */">
+          <sheet-view
+            :page="p"
+            :measures="measures"
+            :img="imgUrls[p]"
+            :currentTime="currentTime"
+            @seek="updatePlaybackTime"
+          ></sheet-view>
+        </div>
+      </ion-slide>
+    </ion-slides>
+  </div>
 </template>
 
 <script lang="ts">
@@ -32,12 +40,14 @@ import type { ScoreMetadata } from 'webmscore/schemas'
 
 import { IonSlides, IonSlide } from '@ionic/vue'
 import SheetView from './SheetView.vue'
+import ScorePlayback from './ScorePlayback.vue'
 
 export default defineComponent({
   components: {
     IonSlides,
     IonSlide,
     SheetView,
+    ScorePlayback,
   },
   props: {
     /** 
@@ -62,6 +72,18 @@ export default defineComponent({
       currentTime: NaN, // The current playback time in ms
     }
   },
+  computed: {
+    /**
+     * The score duration **in ms**
+     */
+    duration (): number {
+      if (!this.metadata || !this.metadata.duration) {
+        return 0
+      }
+
+      return +this.metadata.duration * 1000 // convert to ms
+    },
+  },
   watch: {
     currentPage (current: number): void {
       // get the maximum page index
@@ -82,9 +104,6 @@ export default defineComponent({
     },
   },
   methods: {
-    /**
-     * @todo map/export metadata, mscore, download mscz, etc. methods
-     */
     /**
      * Get the Blob URL to the sheet image of the page
      * @param page the page index
@@ -121,7 +140,7 @@ export default defineComponent({
 
       return blobUrlPromise
     },
-    seek (time: number): void {
+    updatePlaybackTime (time: number): void {
       this.currentTime = time
     },
     async slideIndexChanged (): Promise<void> {

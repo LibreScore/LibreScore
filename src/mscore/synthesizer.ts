@@ -101,10 +101,8 @@ export class Synthesizer {
    * Find the AudioFragment that its `startTime` is in (`time - FRAGMENT_DURATION`, `time`]
    */
   private findFragment (time: number): AudioFragment | undefined {
-    const fragment: AudioFragment = this.cache.le(time).value
-
-    const startTime = fragment.startTime
-    if (startTime > (time - this.FRAGMENT_DURATION)) {
+    const fragment: AudioFragment | undefined = this.cache.le(time).value
+    if (fragment && fragment.startTime > (time - this.FRAGMENT_DURATION)) {
       return fragment
     }
   }
