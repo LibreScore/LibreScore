@@ -37,6 +37,7 @@ import { defineComponent } from 'vue'
 import { WebMscoreLoad, Measures } from '@/mscore'
 import type WebMscore from 'webmscore'
 import type { ScoreMetadata } from 'webmscore/schemas'
+import { isDev } from '@/utils'
 
 import { IonSlides, IonSlide } from '@ionic/vue'
 import SheetView from './SheetView.vue'
@@ -127,7 +128,7 @@ export default defineComponent({
         // update states
         this.imgUrls[page] = blobUrl
 
-        if (process?.env?.NODE_ENV === 'development') {
+        if (isDev()) {
           // use 1-based index here (match the page number shown on the image)
           console.info('loaded page #', page + 1, blobUrl)
         }

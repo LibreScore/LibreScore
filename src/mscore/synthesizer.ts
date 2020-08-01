@@ -4,6 +4,7 @@ import type WebMscore from 'webmscore'
 import type { SynthRes } from 'webmscore/schemas'
 import type { PromiseType } from 'utility-types'
 import createTree from 'functional-red-black-tree'
+import { isDev } from '@/utils'
 
 type SynthFn = PromiseType<ReturnType<WebMscore['synthAudio']>>
 
@@ -83,6 +84,10 @@ export class Synthesizer {
       if (synthRes.endTime < 0) {
         console.warn('The score has ended.')
         return
+      }
+
+      if (isDev()) {
+        console.info(synthRes.endTime)
       }
 
       synthResL.push(synthRes)
