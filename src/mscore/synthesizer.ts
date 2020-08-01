@@ -21,11 +21,12 @@ export class Synthesizer {
   private readonly FRAME_LENGTH = 512;
   private readonly SAMPLE_RATE = 44100; // 44.1 kHz
 
+  private readonly BATCH_SIZE = 20;
   /**
    * The duration (s) of one AudioFragment  
-   * ~ 0.0116 s
+   * ~ 0.0116 s * `BATCH_SIZE`
    */
-  private readonly FRAGMENT_DURATION = this.FRAME_LENGTH / this.SAMPLE_RATE;
+  private readonly FRAGMENT_DURATION = (this.FRAME_LENGTH / this.SAMPLE_RATE) * this.BATCH_SIZE;
 
   /**
    * index time positions (in seconds) to AudioFragments
@@ -68,6 +69,8 @@ export class Synthesizer {
       },
     }
 
+    let synthResL: SynthRes[] = []
+
     // synth loop
     while (true) {
       if (aborted) {
@@ -77,16 +80,21 @@ export class Synthesizer {
       // process synth
       const synthRes: SynthRes = await synthFn()
       if (synthRes.endTime < 0) {
-        throw new Error('The score has ended.')
+        console.warn('The score has ended.')
+        return
       }
 
-      const result = this.buildFragment(synthRes)
-      if (result) {
-        void onUpdate?.(result)
-      } else {
-        // cache exists for this playback time
-        // so stop synth further
-        await this.worklet.cancel() // set aborted = true, and release resources
+      synthResL.push(synthRes)
+      if (synthResL.length >= this.BATCH_SIZE) {
+        const result = this.buildFragment(synthResL)
+        if (result) {
+          void onUpdate?.(result)
+        } else {
+          // cache exists for this playback time
+          // so stop synth further
+          await this.worklet.cancel() // set aborted = true, and release resources
+        }
+        synthResL = []
       }
 
       if (synthRes.done) { // the score ends, no more fragments available
@@ -108,12 +116,12 @@ export class Synthesizer {
   }
 
   /**
-   * Build AudioFragment from the SynthRes, and load it to cache
+   * Build AudioFragment from the list of `SynthRes`es, and load it to cache
    * @returns the AudioFragment processed, or `undefined` if the AudioFragment exists in cache
    */
-  private buildFragment (synthRes: SynthRes): AudioFragment | undefined {
-    const chunk = new Float32Array(synthRes.chunk.buffer)
-    const { startTime, endTime } = synthRes
+  private buildFragment (synthResL: SynthRes[]): AudioFragment | undefined {
+    const startTime = synthResL[0].startTime
+    const endTime = synthResL.slice(-1)[0].endTime
 
     // skip if the AudioFragment exists in cache
     if (this.cache.get(startTime)) {
@@ -123,17 +131,22 @@ export class Synthesizer {
     // create AudioBuffer
     // AudioBuffers can be reused for multiple plays of the sound
     const buf = new AudioBuffer({
-      length: this.FRAME_LENGTH,
+      length: this.FRAME_LENGTH * synthResL.length,
       numberOfChannels: this.CHANNELS,
       sampleRate: this.SAMPLE_RATE,
     })
 
-    // copy data to the AudioBuffer
-    // audio frames are interleaved
-    for (let d = 0; d < buf.length; d++) {
-      for (let c = 0; c < buf.numberOfChannels; c++) {
-        const p = d * buf.numberOfChannels + c
-        buf.copyToChannel(chunk.slice(p, p + 1), c, d)
+    for (let i = 0; i < synthResL.length; i++) {
+      const synthRes = synthResL[i]
+      const chunk = new Float32Array(synthRes.chunk.buffer)
+
+      // copy data to the AudioBuffer
+      // audio frames are interleaved
+      for (let d = 0; d < this.FRAME_LENGTH; d++) {
+        for (let c = 0; c < this.CHANNELS; c++) {
+          const p = d * this.CHANNELS + c
+          buf.copyToChannel(chunk.slice(p, p + 1), c, i * this.FRAME_LENGTH + d)
+        }
       }
     }
 
@@ -157,7 +170,7 @@ export class Synthesizer {
       source.connect(this.audioCtx.destination)
       source.start()
 
-      source.addEventListener('ended', () => resolve())
+      setTimeout(resolve, f.audioBuffer.duration * 1000)
     })
   }
 
