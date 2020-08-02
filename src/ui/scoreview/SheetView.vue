@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div class="sheet-container">
     <img
       class="sheet-img"
       :src="img"
@@ -108,12 +108,13 @@ export default defineComponent({
 </script>
 
 <style scoped>
-  .container {
+  .sheet-container {
     /** If the position property is absolute, */
     /** the containing block is ... the nearest ancestor element that has a position value other than static. */
     /** https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_Block */
     /** So set to 'relative' here */
     position: relative;
+    height: 100%;
   }
 
   .sheet-img {

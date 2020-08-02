@@ -9,15 +9,15 @@
     >
       <ion-label slot="start">{{ printTime(currentTime) }}</ion-label>
       <ion-label slot="end">{{ printTime(duration) }}</ion-label>
-    </ion-range>
 
-    <ion-icon
-      id="play-btn"
-      :icon="playing ? icons.pauseSharp : icons.playSharp"
-      @click="toggle"
-      class="ion-margin-end ion-color-primary"
-      slot="end"
-    ></ion-icon>
+      <ion-icon
+        slot="end"
+        id="play-btn"
+        class="ion-color-primary"
+        :icon="playing ? icons.pauseSharp : icons.playSharp"
+        @click="toggle"
+      ></ion-icon>
+    </ion-range>
   </ion-item>
 </template>
 

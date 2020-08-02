@@ -1,5 +1,8 @@
 <template>
-  <div v-if="measures /** the score file is fully processed */">
+  <ion-card
+    v-if="ready"
+    color="light"
+  >
     <score-playback
       :mscore="mscore"
       :duration="duration"
@@ -16,19 +19,22 @@
       <ion-slide
         v-for="(_, p) of imgUrls"
         :key="'sheet-' + p /** slides are preallocated with the number of pages in this score */"
+        class="ion-align-self-center"
       >
-        <div v-if="imgUrls[p] /** the sheet image of this page is processed */">
-          <sheet-view
-            :page="p"
-            :measures="measures"
-            :img="imgUrls[p]"
-            :currentTime="currentTime"
-            @seek="updatePlaybackTime"
-          ></sheet-view>
-        </div>
+        <sheet-view
+          v-if="imgUrls[p] /** the sheet image of this page is processed */"
+          :page="p"
+          :measures="measures"
+          :img="imgUrls[p]"
+          :currentTime="currentTime"
+          @seek="updatePlaybackTime"
+        ></sheet-view>
+
+        <!-- image loading -->
+        <ion-spinner v-else></ion-spinner>
       </ion-slide>
     </ion-slides>
-  </div>
+  </ion-card>
 </template>
 
 <script lang="ts">
@@ -39,7 +45,7 @@ import type WebMscore from 'webmscore'
 import type { ScoreMetadata } from 'webmscore/schemas'
 import { isDev } from '@/utils'
 
-import { IonSlides, IonSlide } from '@ionic/vue'
+import { IonSlides, IonSlide, IonCard, IonSpinner } from '@ionic/vue'
 import SheetView from './SheetView.vue'
 import ScorePlayback from './ScorePlayback.vue'
 
@@ -47,6 +53,8 @@ export default defineComponent({
   components: {
     IonSlides,
     IonSlide,
+    IonCard,
+    IonSpinner,
     SheetView,
     ScorePlayback,
   },
@@ -75,6 +83,12 @@ export default defineComponent({
   },
   computed: {
     /**
+     * The score file and at least one image is fully processed
+     */
+    ready (): boolean {
+      return this.measures && this.imgUrls.some(Boolean)
+    },
+    /**
      * The score duration **in ms**
      */
     duration (): number {
@@ -101,7 +115,9 @@ export default defineComponent({
     async currentTime (): Promise<void> {
       if (!isFinite(this.currentTime)) { return }
       const currentEl = this.measures.getElByTime(this.currentTime)
-      return this.slideTo(currentEl.page)
+      if (currentEl.page !== this.currentPage) {
+        return this.slideTo(currentEl.page)
+      }
     },
   },
   methods: {
