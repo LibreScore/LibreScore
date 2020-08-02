@@ -4,7 +4,6 @@ import type WebMscore from 'webmscore'
 import type { SynthRes } from 'webmscore/schemas'
 import type { PromiseType } from 'utility-types'
 import createTree from 'functional-red-black-tree'
-import { isDev } from '@/utils'
 
 type SynthFn = PromiseType<ReturnType<WebMscore['synthAudio']>>
 
@@ -36,15 +35,12 @@ export class Synthesizer {
    */
   private cache = createTree();
 
-  /**
-   * The score's end time (no more fragments available)
-   */
-  private maxTime = Infinity;
-
   public worklet: { cancel (): Promise<void> } | undefined;
 
   constructor (
     private readonly mscore: WebMscore,
+    /** the score's duration **in seconds** */
+    private readonly duration: number,
     /** the current playback time **in seconds** */
     public time = 0,
     private readonly audioCtx = new AudioContext(),
@@ -52,9 +48,10 @@ export class Synthesizer {
 
   /**
    * Synthesize audio fragments
-   * @param onUpdate called each time a fragment is processed
+   * @param onReady called once the synth function is ready
+   * @param onUpdate called each time a fragment is processed, or error triggered
    */
-  async startSynth (startTime: number, onUpdate?: (fragment: AudioFragment) => any): Promise<void> {
+  async startSynth (startTime: number, onUpdate?: (ended?: boolean) => any): Promise<void> {
     let aborted = false
 
     // cancel the previous synth worklet
@@ -76,26 +73,29 @@ export class Synthesizer {
     // synth loop
     while (true) {
       if (aborted) {
+        // try to process the remaining `synthRes`es
+        if (synthResL.length) {
+          this.buildFragment(synthResL)
+        }
+        void onUpdate?.(true)
+
         break
       }
 
       // process synth
       const synthRes: SynthRes = await synthFn()
+
       if (synthRes.endTime < 0) {
         console.warn('The score has ended.')
-        return
-      }
-
-      if (isDev()) {
-        console.info(synthRes.endTime)
+        aborted = true
+        continue
       }
 
       synthResL.push(synthRes)
       if (synthResL.length >= this.BATCH_SIZE) {
         const result = this.buildFragment(synthResL)
-        if (result) {
-          void onUpdate?.(result)
-        } else {
+        void onUpdate?.()
+        if (!result) {
           // cache exists for this playback time
           // so stop synth further
           await this.worklet.cancel() // set aborted = true, and release resources
@@ -104,8 +104,6 @@ export class Synthesizer {
       }
 
       if (synthRes.done) { // the score ends, no more fragments available
-        // update the score's end time (duration)
-        this.maxTime = synthRes.endTime
         aborted = true
       }
     }
@@ -130,8 +128,9 @@ export class Synthesizer {
     const endTime = synthResL.slice(-1)[0].endTime
 
     // skip if the AudioFragment exists in cache
-    if (this.cache.get(startTime)) {
-      return
+    let existed = false
+    if (this.findFragment(endTime)) {
+      existed = true
     }
 
     // create AudioBuffer
@@ -165,6 +164,8 @@ export class Synthesizer {
     const fragment: AudioFragment = { audioBuffer: buf, startTime, endTime }
     this.cache = this.cache.insert(startTime, fragment)
 
+    if (existed) return
+
     return fragment
   }
 
@@ -190,7 +191,7 @@ export class Synthesizer {
   play (abort?: AbortSignal, onUpdate?: (time: number) => any, onEnd?: () => any): void {
     const next = (): void => {
       if (
-        this.time >= this.maxTime || // the score ends
+        this.time >= this.duration || // the score ends
         abort?.aborted // user aborted
       ) {
         return onEnd?.()
@@ -201,7 +202,9 @@ export class Synthesizer {
         // get the synth worklet ready for this playback time, and get its first fragment processed
         new Promise((resolve) => {
           this.startSynth(this.time, resolve)
-        }).then(() => next())
+        }).then((aborted: boolean) => {
+          if (!aborted) next(); else void onEnd?.()
+        })
         return
       }
 

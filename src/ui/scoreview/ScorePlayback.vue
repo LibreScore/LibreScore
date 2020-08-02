@@ -1,19 +1,30 @@
 <template>
-  <ion-range
-    :min="0"
-    :max="duration"
-    :value="currentTime"
-    :debounce="20"
-    @ionChange="(e) => $emit('seek', e.detail.value)"
-  >
-    <ion-label slot="start">{{ printTime(currentTime) }}</ion-label>
-    <ion-label slot="end">{{ printTime(duration) }}</ion-label>
-  </ion-range>
+  <ion-item>
+    <ion-range
+      :min="0"
+      :max="duration"
+      :value="currentTime"
+      :debounce="20"
+      @ionChange="(e) => $emit('seek', e.detail.value)"
+    >
+      <ion-label slot="start">{{ printTime(currentTime) }}</ion-label>
+      <ion-label slot="end">{{ printTime(duration) }}</ion-label>
+    </ion-range>
+
+    <ion-icon
+      id="play-btn"
+      :icon="playing ? icons.pauseSharp : icons.playSharp"
+      @click="toggle"
+      class="ion-margin-end ion-color-primary"
+      slot="end"
+    ></ion-icon>
+  </ion-item>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IonRange, IonLabel } from '@ionic/vue'
+import { IonRange, IonLabel, IonItem, IonIcon } from '@ionic/vue'
+import * as icons from 'ionicons/icons'
 
 import type WebMscore from 'webmscore'
 import { Synthesizer } from '@/mscore'
@@ -22,6 +33,8 @@ export default defineComponent({
   components: {
     IonRange,
     IonLabel,
+    IonItem,
+    IonIcon,
   },
   props: {
     mscore: {
@@ -51,6 +64,7 @@ export default defineComponent({
       synthesizer: null as any as Synthesizer,
       playing: false,
       abortCtrl: undefined as AbortController | undefined,
+      icons,
     }
   },
   watch: {
@@ -74,6 +88,13 @@ export default defineComponent({
     pause (): void {
       void this.abortCtrl?.abort()
     },
+    toggle (): void {
+      if (this.playing) {
+        this.pause()
+      } else {
+        this.play()
+      }
+    },
     /**
      * Print time in human readable format (min:sec) 
      */
@@ -87,7 +108,7 @@ export default defineComponent({
     },
   },
   mounted () {
-    this.synthesizer = new Synthesizer(this.mscore)
+    this.synthesizer = new Synthesizer(this.mscore, this.duration / 1000 /* convert to s */)
   },
   async beforeUnmount () {
     // release resources
@@ -95,3 +116,14 @@ export default defineComponent({
   },
 })
 </script>
+
+<style scoped>
+  #play-btn {
+    cursor: pointer;
+    color: var(--ion-color-base);
+  }
+
+  #play-btn:hover {
+    color: var(--ion-color-tint);
+  }
+</style>
