@@ -25,6 +25,7 @@
         "@typescript-eslint/no-unsafe-assignment": "off",
         "@typescript-eslint/no-unsafe-call": "off",
         "@typescript-eslint/no-var-requires": "off",
+        "vue/no-deprecated-slot-attribute": "off",
         "no-trailing-spaces": [
             "error",
             {
