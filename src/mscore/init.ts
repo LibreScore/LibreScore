@@ -10,30 +10,20 @@ const FONT_URLS = [
   FONT_URL_KR,
 ]
 
-let fonts: Promise<Uint8Array[]> | undefined
-let soundfont: Promise<Uint8Array> | undefined
-
 /**
- * Load fonts with cache
+ * Load fonts
  */
 const loadFonts = (): Promise<Uint8Array[]> => {
-  if (!fonts) {
-    fonts = Promise.all(
-      FONT_URLS.map(u => fetchData(u as string)),
-    )
-  }
-
-  return fonts
+  return Promise.all(
+    FONT_URLS.map(u => fetchData(u as string)),
+  )
 }
 
 /**
- * Load the SoundFont (.sf3) file with cache
+ * Load the SoundFont (.sf3) file
  */
 const loadSoundFont = (): Promise<Uint8Array> => {
-  if (!soundfont) {
-    soundfont = fetchData(SF3_URL as string)
-  }
-  return soundfont
+  return fetchData(SF3_URL as string)
 }
 
 /**
