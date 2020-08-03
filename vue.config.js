@@ -8,6 +8,6 @@ process.env.VUE_APP_SF3_URL = 'https://cdn.jsdelivr.net/gh/musescore/MuseScore@2
 module.exports = {
   publicPath: './',
   filenameHashing: true,
-  productionSourceMap: true,
+  productionSourceMap: false,
   integrity: true,
 }
