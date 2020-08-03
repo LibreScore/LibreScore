@@ -48,4 +48,14 @@ export default defineComponent({
   @import "~@ionic/vue/css/text-transformation.css";
   @import "~@ionic/vue/css/flex-utils.css";
   @import "~@ionic/vue/css/display.css";
+
+  /** Clickable ion icons */
+  .icon-btn {
+    cursor: pointer;
+    color: var(--ion-color-base);
+  }
+
+  .icon-btn:hover {
+    color: var(--ion-color-tint);
+  }
 </style>

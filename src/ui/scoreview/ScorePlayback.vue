@@ -21,7 +21,7 @@
         slot="end"
         class="ion-color-medium icon-btn"
         :icon="icons.ellipsisVertical"
-        @click="showPopover"
+        @click="showActions"
       >
         <div ref="actions">
           <slot name="actions"></slot>
@@ -33,15 +33,19 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IonRange, IonLabel, IonItem, IonIcon, popoverController } from '@ionic/vue/dist/index'
+import { IonRange, IonLabel, IonItem, IonIcon } from '@ionic/vue/dist/index'
 import { pauseSharp, playSharp, ellipsisVertical } from 'ionicons/icons'
 
 import type WebMscore from 'webmscore'
 import { Synthesizer } from '@/mscore'
-import { printTimeMixin } from '@/utils/mixins'
+import { PrintTimeMixin } from '../mixins/str-fmt'
+import { PopoverMixin } from '../mixins/popover'
 
 export default defineComponent({
-  mixins: [printTimeMixin],
+  mixins: [
+    PrintTimeMixin,
+    PopoverMixin,
+  ],
   components: {
     IonRange,
     IonLabel,
@@ -111,18 +115,9 @@ export default defineComponent({
         this.play()
       }
     },
-    async showPopover (e): Promise<void> {
-      const popover = await popoverController.create({
-        component: '',
-        showBackdrop: true,
-      })
-
-      popover.event = e
-
+    showActions (ev): Promise<void> {
       const el = this.$refs.actions as any
-      popover.component = el
-
-      await popover.present()
+      return this.showPopover(ev, el)
     },
   },
   mounted () {
@@ -134,14 +129,3 @@ export default defineComponent({
   },
 })
 </script>
-
-<style scoped>
-  .icon-btn {
-    cursor: pointer;
-    color: var(--ion-color-base);
-  }
-
-  .icon-btn:hover {
-    color: var(--ion-color-tint);
-  }
-</style>

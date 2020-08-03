@@ -1,7 +1,7 @@
 
-import { printTime } from './index'
+import { printTime } from '@/utils'
 
-export const printTimeMixin = {
+export const PrintTimeMixin = {
   methods: {
     printTime (ms: number): string {
       return printTime(ms)
