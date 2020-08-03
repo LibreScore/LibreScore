@@ -12,19 +12,29 @@
 
       <ion-icon
         slot="end"
-        id="play-btn"
-        class="ion-color-primary"
+        class="ion-color-primary icon-btn"
         :icon="playing ? icons.pauseSharp : icons.playSharp"
         @click="toggle"
       ></ion-icon>
+
+      <ion-icon
+        slot="end"
+        class="ion-color-medium icon-btn"
+        :icon="icons.ellipsisVertical"
+        @click="showPopover"
+      >
+        <div ref="actions">
+          <slot name="actions"></slot>
+        </div>
+      </ion-icon>
     </ion-range>
   </ion-item>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IonRange, IonLabel, IonItem, IonIcon } from '@ionic/vue'
-import * as icons from 'ionicons/icons'
+import { IonRange, IonLabel, IonItem, IonIcon, popoverController } from '@ionic/vue/dist/index'
+import { pauseSharp, playSharp, ellipsisVertical } from 'ionicons/icons'
 
 import type WebMscore from 'webmscore'
 import { Synthesizer } from '@/mscore'
@@ -64,7 +74,11 @@ export default defineComponent({
       synthesizer: null as any as Synthesizer,
       playing: false,
       abortCtrl: undefined as AbortController | undefined,
-      icons,
+      icons: {
+        pauseSharp,
+        playSharp,
+        ellipsisVertical,
+      },
     }
   },
   watch: {
@@ -95,6 +109,19 @@ export default defineComponent({
         this.play()
       }
     },
+    async showPopover (e): Promise<void> {
+      const popover = await popoverController.create({
+        component: '',
+        showBackdrop: true,
+      })
+
+      popover.event = e
+
+      const el = this.$refs.actions as any
+      popover.component = el
+
+      await popover.present()
+    },
     /**
      * Print time in human readable format (min:sec) 
      */
@@ -118,12 +145,12 @@ export default defineComponent({
 </script>
 
 <style scoped>
-  #play-btn {
+  .icon-btn {
     cursor: pointer;
     color: var(--ion-color-base);
   }
 
-  #play-btn:hover {
+  .icon-btn:hover {
     color: var(--ion-color-tint);
   }
 </style>

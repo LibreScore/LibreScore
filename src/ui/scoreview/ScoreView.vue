@@ -8,7 +8,11 @@
       :duration="duration"
       :currentTime="currentTime"
       @seek="updatePlaybackTime"
-    ></score-playback>
+    >
+      <template #actions>
+        <action-list :actions="actions"></action-list>
+      </template>
+    </score-playback>
 
     <ion-slides
       ref="slides"
@@ -43,11 +47,13 @@ import { defineComponent } from 'vue'
 import { WebMscoreLoad, Measures } from '@/mscore'
 import type WebMscore from 'webmscore'
 import type { ScoreMetadata } from 'webmscore/schemas'
+import FileSaver from 'file-saver'
 import { isDev } from '@/utils'
 
 import { IonSlides, IonSlide, IonCard, IonSpinner } from '@ionic/vue'
 import SheetView from './SheetView.vue'
 import ScorePlayback from './ScorePlayback.vue'
+import ActionList, { Actions } from '../components/ActionList.vue'
 
 export default defineComponent({
   components: {
@@ -57,6 +63,7 @@ export default defineComponent({
     IonSpinner,
     SheetView,
     ScorePlayback,
+    ActionList,
   },
   props: {
     /** 
@@ -70,6 +77,7 @@ export default defineComponent({
   data () {
     return {
       mscore: null as any as WebMscore,
+      filename: 'score',
 
       measures: null as any as Measures,
       metadata: null as any as ScoreMetadata,
@@ -79,6 +87,12 @@ export default defineComponent({
 
       currentPage: null as any as number, // The current page index (0-based)
       currentTime: NaN, // The current playback time in ms
+
+      actions: {} as Actions,
+
+      pdfFile: undefined as Promise<File> | undefined,
+      midiFile: undefined as Promise<File> | undefined,
+      audioFile: undefined as Promise<File> | undefined,
     }
   },
   computed: {
@@ -157,9 +171,11 @@ export default defineComponent({
 
       return blobUrlPromise
     },
+
     updatePlaybackTime (time: number): void {
       this.currentTime = time
     },
+
     async slideIndexChanged (): Promise<void> {
       const sidesEl = this.$refs.slides as any
       const index = await sidesEl.getActiveIndex()
@@ -172,10 +188,45 @@ export default defineComponent({
       const sidesEl = this.$refs.slides as any
       return sidesEl.slideTo(pageIndex, 0 /* speed */) // also changes `this.currentPage`
     },
+
+    /**
+     * Download the score MSCZ file
+     */
+    downloadMSCZ (): void {
+      const file = new File([this.mscz], `${this.filename}.mscz`)
+      FileSaver.saveAs(file)
+    },
+    downloadPDF (): Promise<void> {
+      return this._saveFile('pdfFile', 'savePdf', [], 'pdf')
+    },
+    downloadMIDI (): Promise<void> {
+      return this._saveFile('midiFile', 'saveMidi', [], 'midi')
+    },
+    downloadAudio (format: Parameters<WebMscore['saveAudio']>[0]): Promise<void> {
+      return this._saveFile('audioFile', 'saveAudio', [format], format)
+    },
+
+    async _saveFile (varName: string, fnName: string, args: any[], ext: string): Promise<void> {
+      if (!this[varName]) {
+        this[varName] = this.mscore[fnName](...args).then((data) => {
+          return new File([data], `${this.filename}.${ext}`)
+        })
+      }
+      FileSaver.saveAs(await this[varName])
+    },
   },
   async mounted () {
     // single instance only (no component reusing)
     // set `key` attribute on this component
+
+    this.actions = {
+      Download: [
+        { label: 'MSCZ', fn: (): void => this.downloadMSCZ() },
+        { label: 'PDF', fn: (): Promise<void> => this.downloadPDF() },
+        { label: 'MIDI', fn: (): Promise<void> => this.downloadMIDI() },
+        { label: 'OGG Audio', fn: (): Promise<void> => this.downloadAudio('ogg') },
+      ],
+    }
 
     // load score
     const mscore = await WebMscoreLoad(
@@ -185,6 +236,7 @@ export default defineComponent({
 
     // get the score metadata
     this.metadata = await mscore.metadata()
+    this.filename = await mscore.titleFilenameSafe()
     // preallocate the `imgUrls` array for Vue list rendering
     this.imgUrls = Array.from({ length: this.metadata.pages })
 
