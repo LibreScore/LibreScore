@@ -38,8 +38,10 @@ import { pauseSharp, playSharp, ellipsisVertical } from 'ionicons/icons'
 
 import type WebMscore from 'webmscore'
 import { Synthesizer } from '@/mscore'
+import { printTimeMixin } from '@/utils/mixins'
 
 export default defineComponent({
+  mixins: [printTimeMixin],
   components: {
     IonRange,
     IonLabel,
@@ -121,17 +123,6 @@ export default defineComponent({
       popover.component = el
 
       await popover.present()
-    },
-    /**
-     * Print time in human readable format (min:sec) 
-     */
-    printTime (ms: number): string {
-      const s = Math.round(ms / 1000) || 0 // convert to s
-
-      const minStr = `${Math.floor(s / 60)}`.padStart(2, '0')
-      const secStr = `${s % 60}`.padStart(2, '0')
-
-      return `${minStr}:${secStr}`
     },
   },
   mounted () {

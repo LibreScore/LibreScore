@@ -6,6 +6,18 @@ export const fetchData = async (url: string, init?: RequestInit): Promise<Uint8A
 }
 
 /**
+ * Print time in human readable format (min:sec) 
+ */
+export const printTime = (ms: number): string => {
+  const s = Math.round(ms / 1000) || 0 // convert to s
+
+  const minStr = `${Math.floor(s / 60)}`.padStart(2, '0')
+  const secStr = `${s % 60}`.padStart(2, '0')
+
+  return `${minStr}:${secStr}`
+}
+
+/**
  * LibreScore is in development mode
  */
 export const isDev = (): boolean => {
