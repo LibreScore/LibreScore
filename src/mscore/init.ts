@@ -1,13 +1,14 @@
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type WebMscore from 'webmscore'
 import { fetchData } from '../utils'
 
+import { FluidR3Mono as SF3_URL } from '@librescore/sf3'
+import { CN as FONT_URL_CN, KR as FONT_URL_KR } from '@librescore/fonts'
+
 const FONT_URLS = [
-  process.env.VUE_APP_FONT_URL_CN,
-  process.env.VUE_APP_FONT_URL_KR,
+  FONT_URL_CN,
+  FONT_URL_KR,
 ]
-const SF3_URL = process.env.VUE_APP_SF3_URL
 
 let fonts: Promise<Uint8Array[]> | undefined
 let soundfont: Promise<Uint8Array> | undefined
