@@ -42,7 +42,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 
 import { WebMscoreLoad, Measures } from '@/mscore'
 import type WebMscore from 'webmscore'
@@ -68,9 +68,10 @@ export default defineComponent({
   props: {
     /** 
      * The mscz score file
+     * A Promise that resolves to the Uint8Array data
      */
     mscz: {
-      type: Uint8Array,
+      type: undefined as any as PropType<Promise<Uint8Array>>,
       required: true,
     },
   },
@@ -192,8 +193,8 @@ export default defineComponent({
     /**
      * Download the score MSCZ file
      */
-    downloadMSCZ (): void {
-      const file = new File([this.mscz], `${this.filename}.mscz`)
+    async downloadMSCZ (): Promise<void> {
+      const file = new File([await this.mscz], `${this.filename}.mscz`)
       FileSaver.saveAs(file)
     },
     downloadPDF (): Promise<void> {
@@ -221,7 +222,7 @@ export default defineComponent({
 
     this.actions = {
       Download: [
-        { label: 'MSCZ', fn: (): void => this.downloadMSCZ() },
+        { label: 'MSCZ', fn: (): Promise<void> => this.downloadMSCZ() },
         { label: 'PDF', fn: (): Promise<void> => this.downloadPDF() },
         { label: 'MIDI', fn: (): Promise<void> => this.downloadMIDI() },
         { label: 'OGG Audio', fn: (): Promise<void> => this.downloadAudio('ogg') },
@@ -230,7 +231,7 @@ export default defineComponent({
 
     // load score
     const mscore = await WebMscoreLoad(
-      new Uint8Array(this.mscz), // make a copy (the ownership of the Uint8Array is transferred to the web worker context, so it becomes unusable in the main context)
+      new Uint8Array(await this.mscz), // make a copy (the ownership of the Uint8Array is transferred to the web worker context, so it becomes unusable in the main context)
     )
     this.mscore = mscore
 
