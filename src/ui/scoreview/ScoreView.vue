@@ -1,5 +1,9 @@
 <template>
   <ion-card :color="ready && 'light'">
+    <ion-card-header color="light">
+      <ion-card-subtitle>Preview</ion-card-subtitle>
+    </ion-card-header>
+
     <template v-if="ready">
       <score-playback
         :mscore="mscore"
@@ -56,7 +60,7 @@ import type { ScoreMetadata } from 'webmscore/schemas'
 import FileSaver from 'file-saver'
 import { isDev } from '@/utils'
 
-import { IonSlides, IonSlide, IonCard, IonCardHeader, IonSpinner, IonProgressBar } from '@ionic/vue'
+import { IonSlides, IonSlide, IonCard, IonCardHeader, IonCardSubtitle, IonSpinner, IonProgressBar } from '@ionic/vue'
 import SheetView from './SheetView.vue'
 import ScorePlayback from './ScorePlayback.vue'
 import ActionList, { Actions } from '../components/ActionList.vue'
@@ -67,6 +71,7 @@ export default defineComponent({
     IonSlide,
     IonCard,
     IonCardHeader,
+    IonCardSubtitle,
     IonSpinner,
     IonProgressBar,
     SheetView,
