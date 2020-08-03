@@ -1,43 +1,49 @@
 <template>
-  <ion-card
-    v-if="ready"
-    color="light"
-  >
-    <score-playback
-      :mscore="mscore"
-      :duration="duration"
-      :currentTime="currentTime"
-      @seek="updatePlaybackTime"
-    >
-      <template #actions>
-        <action-list :actions="actions"></action-list>
-      </template>
-    </score-playback>
-
-    <ion-slides
-      ref="slides"
-      :scrollbar="true"
-      :pager="imgUrls.length <= 15"
-      @ionSlideDidChange="slideIndexChanged"
-    >
-      <ion-slide
-        v-for="(_, p) of imgUrls"
-        :key="'sheet-' + p /** slides are preallocated with the number of pages in this score */"
-        class="ion-align-self-center"
+  <ion-card :color="ready && 'light'">
+    <template v-if="ready">
+      <score-playback
+        :mscore="mscore"
+        :duration="duration"
+        :currentTime="currentTime"
+        @seek="updatePlaybackTime"
       >
-        <sheet-view
-          v-if="imgUrls[p] /** the sheet image of this page is processed */"
-          :page="p"
-          :measures="measures"
-          :img="imgUrls[p]"
-          :currentTime="currentTime"
-          @seek="updatePlaybackTime"
-        ></sheet-view>
+        <template #actions>
+          <action-list :actions="actions"></action-list>
+        </template>
+      </score-playback>
 
-        <!-- image loading -->
-        <ion-spinner v-else></ion-spinner>
-      </ion-slide>
-    </ion-slides>
+      <ion-slides
+        ref="slides"
+        :scrollbar="true"
+        :pager="imgUrls.length <= 15"
+        @ionSlideDidChange="slideIndexChanged"
+      >
+        <ion-slide
+          v-for="(_, p) of imgUrls"
+          :key="'sheet-' + p /** slides are preallocated with the number of pages in this score */"
+          class="ion-align-self-center"
+        >
+          <sheet-view
+            v-if="imgUrls[p] /** the sheet image of this page is processed */"
+            :page="p"
+            :measures="measures"
+            :img="imgUrls[p]"
+            :currentTime="currentTime"
+            @seek="updatePlaybackTime"
+          ></sheet-view>
+
+          <!-- image loading -->
+          <ion-spinner v-else></ion-spinner>
+        </ion-slide>
+      </ion-slides>
+    </template>
+
+    <template v-else>
+      <ion-card-header>
+        Please wait...
+      </ion-card-header>
+      <ion-progress-bar type="indeterminate"></ion-progress-bar>
+    </template>
   </ion-card>
 </template>
 
@@ -50,7 +56,7 @@ import type { ScoreMetadata } from 'webmscore/schemas'
 import FileSaver from 'file-saver'
 import { isDev } from '@/utils'
 
-import { IonSlides, IonSlide, IonCard, IonSpinner } from '@ionic/vue'
+import { IonSlides, IonSlide, IonCard, IonCardHeader, IonSpinner, IonProgressBar } from '@ionic/vue'
 import SheetView from './SheetView.vue'
 import ScorePlayback from './ScorePlayback.vue'
 import ActionList, { Actions } from '../components/ActionList.vue'
@@ -60,14 +66,16 @@ export default defineComponent({
     IonSlides,
     IonSlide,
     IonCard,
+    IonCardHeader,
     IonSpinner,
+    IonProgressBar,
     SheetView,
     ScorePlayback,
     ActionList,
   },
   props: {
     /** 
-     * The mscz score file
+     * The mscz score file  
      * A Promise that resolves to the Uint8Array data
      */
     mscz: {
