@@ -4,6 +4,7 @@ import type WebMscore from 'webmscore'
 import type { SynthRes } from 'webmscore/schemas'
 import type { PromiseType } from 'utility-types'
 import createTree from 'functional-red-black-tree'
+import { sleep } from '@/utils'
 
 type SynthFn = PromiseType<ReturnType<WebMscore['synthAudio']>>
 
@@ -37,6 +38,8 @@ export class Synthesizer {
 
   public worklet: { cancel (): Promise<void> } | undefined;
 
+  public speed = 1.0;
+
   constructor (
     private readonly mscore: WebMscore,
     /** the score's duration **in seconds** */
@@ -51,7 +54,7 @@ export class Synthesizer {
    * @param onReady called once the synth function is ready
    * @param onUpdate called each time a fragment is processed, or error triggered
    */
-  async startSynth (startTime: number, onUpdate?: (ended?: boolean) => any): Promise<void> {
+  async startSynth (startTime: number, onUpdate?: (fragment: AudioFragment | undefined, ended: boolean) => any): Promise<void> {
     let aborted = false
 
     // cancel the previous synth worklet
@@ -75,9 +78,11 @@ export class Synthesizer {
       if (aborted) {
         // try to process the remaining `synthRes`es
         if (synthResL.length) {
-          this.buildFragment(synthResL)
+          const [result] = this.buildFragment(synthResL)
+          void onUpdate?.(result, true)
+        } else {
+          void onUpdate?.(undefined, true)
         }
-        void onUpdate?.(true)
 
         break
       }
@@ -93,9 +98,9 @@ export class Synthesizer {
 
       synthResL.push(synthRes)
       if (synthResL.length >= this.BATCH_SIZE) {
-        const result = this.buildFragment(synthResL)
-        void onUpdate?.()
-        if (!result) {
+        const [result, existed] = this.buildFragment(synthResL)
+        void onUpdate?.(result, existed)
+        if (existed) {
           // cache exists for this playback time
           // so stop synth further
           await this.worklet.cancel() // set aborted = true, and release resources
@@ -121,9 +126,9 @@ export class Synthesizer {
 
   /**
    * Build AudioFragment from the list of `SynthRes`es, and load it to cache
-   * @returns the AudioFragment processed, or `undefined` if the AudioFragment exists in cache
+   * @returns the AudioFragment processed, and `true` if the AudioFragment exists in cache
    */
-  private buildFragment (synthResL: SynthRes[]): AudioFragment | undefined {
+  private buildFragment (synthResL: SynthRes[]): [AudioFragment, boolean /* existed */] {
     const startTime = synthResL[0].startTime
     const endTime = synthResL.slice(-1)[0].endTime
 
@@ -164,58 +169,87 @@ export class Synthesizer {
     const fragment: AudioFragment = { audioBuffer: buf, startTime, endTime }
     this.cache = this.cache.insert(startTime, fragment)
 
-    if (existed) return
-
-    return fragment
+    return [fragment, existed]
   }
 
   /**
    * Play a single AudioFragment,  
-   * the callback function is called once the entire fragment has been played
+   * the promise resolves once the entire fragment has been played
    */
-  private playFragment (f: AudioFragment, cb: () => any): void {
-    // An AudioBufferSourceNode can only be played once
-    const source = this.audioCtx.createBufferSource()
+  private playFragment (f: AudioFragment, when = this.audioCtx.currentTime): Promise<void> {
+    return new Promise((resolve) => {
+      // An AudioBufferSourceNode can only be played once
+      const source = this.audioCtx.createBufferSource()
+      const speed = this.speed
 
-    source.buffer = f.audioBuffer
-    source.connect(this.audioCtx.destination)
-    source.start()
+      source.buffer = f.audioBuffer
+      source.playbackRate.value = speed
+      source.connect(this.audioCtx.destination)
 
-    setTimeout(cb, f.audioBuffer.duration * 1000)
+      source.start(when)
+
+      source.addEventListener('ended', () => resolve(), { once: true })
+    })
   }
 
   /**
    * @param onUpdate called each time a fragment is played (the playback time updates)
-   * @param onEnd called once the score ended, or user aborted
+   * @returns the promise resolves once the score ended, or user aborted
    */
-  play (abort?: AbortSignal, onUpdate?: (time: number) => any, onEnd?: () => any): void {
-    const next = (): void => {
+  async play (abort?: AbortSignal, onUpdate?: (time: number) => any): Promise<void> {
+    let cur: Promise<void> | undefined
+    let prev: Promise<void> | undefined
+
+    // reset the playback clock
+    let ctxTime = this.audioCtx.currentTime
+    let played = 0
+
+    while (true) {
       if (
         this.time >= this.duration || // the score ends
         abort?.aborted // user aborted
       ) {
-        return onEnd?.()
-      }
-
-      const fragment = this.findFragment(this.time)
-      if (!fragment) {
-        // get the synth worklet ready for this playback time, and get its first fragment processed
-        new Promise((resolve) => {
-          this.startSynth(this.time, resolve)
-        }).then((aborted: boolean) => {
-          if (!aborted) next(); else void onEnd?.()
-        })
         return
       }
 
-      // play one fragment
-      this.playFragment(fragment, () => {
-        // update the current playback time
-        this.time = fragment.endTime
-        void onUpdate?.(this.time)
-        return next()
-      })
+      let fragment = this.findFragment(this.time)
+      if (!fragment) {
+        // get the synth worklet ready for this playback time, and get its first fragment processed
+        const [f, ended] = await new Promise((resolve: (args: [(AudioFragment | undefined), boolean]) => void) => {
+          this.startSynth(this.time, (...args) => resolve(args))
+        })
+        if (ended || !f) {
+          return
+        } else {
+          fragment = f
+
+          // reset the playback clock
+          ctxTime = this.audioCtx.currentTime
+          played = 0
+        }
+      }
+
+      if (prev) {
+        // wait the previous play request to be finished
+        await prev
+      } else {
+        await sleep(this.FRAGMENT_DURATION * 1000)
+      }
+      prev = cur
+
+      // update the playback time
+      this.time = fragment.endTime
+      void onUpdate?.(this.time)
+
+      // request to play one fragment
+      cur = this.playFragment(fragment, ctxTime + played * this.FRAGMENT_DURATION / this.speed)
+      played++
     }
-    return next()
+  }
+
+  async destroy (): Promise<void> {
+    this.cache = null
+    await this.worklet?.cancel()
+    await this.audioCtx.close()
   }
 }

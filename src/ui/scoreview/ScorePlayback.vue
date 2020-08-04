@@ -95,15 +95,15 @@ export default defineComponent({
     },
   },
   methods: {
-    play (): void {
+    async play (): Promise<void> {
       this.playing = true
       this.abortCtrl = new AbortController()
 
-      this.synthesizer.play(this.abortCtrl.signal, (time) => {
+      await this.synthesizer.play(this.abortCtrl.signal, (time) => {
         this.$emit('seek', time * 1000 /* convert to ms */)
-      }, () => { // called once finished or aborted
-        this.playing = false
       })
+      // promise resolves once finished or aborted
+      this.playing = false
     },
     pause (): void {
       void this.abortCtrl?.abort()
@@ -125,7 +125,7 @@ export default defineComponent({
   },
   async beforeUnmount () {
     // release resources
-    await this.synthesizer.worklet?.cancel()
+    await this.synthesizer.destroy()
   },
 })
 </script>

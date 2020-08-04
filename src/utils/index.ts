@@ -17,6 +17,10 @@ export const printTime = (ms: number): string => {
   return `${minStr}:${secStr}`
 }
 
+export const sleep = (ms: number): Promise<void> => {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
 /**
  * LibreScore is in development mode
  */
