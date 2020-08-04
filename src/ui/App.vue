@@ -49,6 +49,11 @@ export default defineComponent({
   @import "~@ionic/vue/css/flex-utils.css";
   @import "~@ionic/vue/css/display.css";
 
+  :root {
+    --app-border-color: #bdc2c6;
+    --app-border: 2px solid var(--app-border-color);
+  }
+
   /** Clickable ion icons */
   .icon-btn {
     cursor: pointer;
