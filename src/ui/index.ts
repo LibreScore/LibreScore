@@ -5,7 +5,7 @@ import { IonicVue } from '@ionic/vue/dist/index'
 
 import App from './App.vue'
 
-export const vm = createApp(App).use(IonicVue)
+export const vm = createApp(App).use(IonicVue, { mode: 'md' })
 // .use(router)
 
 export default vm
