@@ -1,7 +1,10 @@
 <template>
   <div id="scoreview-main">
     <div style="flex: 0;">
-      <slot name="headerBar"></slot>
+      <slot
+        name="headerBar"
+        :actions="actions"
+      ></slot>
     </div>
 
     <template v-if="ready">
@@ -66,6 +69,7 @@ import { isDev } from '@/utils'
 import { IonSlides, IonSlide, IonSpinner } from '@ionic/vue'
 import SheetView from './SheetView.vue'
 import ScorePlayback from './ScorePlayback.vue'
+import { ActionGroups } from './ScoreHeaderBar.vue'
 
 export default defineComponent({
   components: {
@@ -85,6 +89,9 @@ export default defineComponent({
       required: true,
     },
   },
+  emits: [
+    'metadata-ready',
+  ],
   data () {
     return {
       mscore: null as any as WebMscore,
@@ -102,6 +109,9 @@ export default defineComponent({
       pdfFile: undefined as Promise<File> | undefined,
       midiFile: undefined as Promise<File> | undefined,
       audioFile: undefined as Promise<File> | undefined,
+
+      actions: undefined as ActionGroups[] | undefined,
+      pdfUrl: undefined as string | undefined,
     }
   },
   computed: {
@@ -205,28 +215,51 @@ export default defineComponent({
       const file = new File([await this.mscz], `${this.filename}.mscz`)
       FileSaver.saveAs(file)
     },
-    downloadPDF (): Promise<void> {
-      return this._saveFile('pdfFile', 'savePdf', [], 'pdf')
+    async downloadPDF (download = true): Promise<File> {
+      return this._saveFile('pdfFile', 'savePdf', [], 'pdf', download)
     },
-    downloadMIDI (): Promise<void> {
-      return this._saveFile('midiFile', 'saveMidi', [], 'midi')
+    async downloadMIDI (): Promise<void> {
+      await this._saveFile('midiFile', 'saveMidi', [], 'midi')
     },
-    downloadAudio (format: Parameters<WebMscore['saveAudio']>[0]): Promise<void> {
-      return this._saveFile('audioFile', 'saveAudio', [format], format)
+    async downloadAudio (format: Parameters<WebMscore['saveAudio']>[0]): Promise<void> {
+      await this._saveFile('audioFile', 'saveAudio', [format], format)
     },
-
-    async _saveFile (varName: string, fnName: string, args: any[], ext: string): Promise<void> {
+    async printPDF (): Promise<void> {
+      if (!this.pdfUrl) {
+        const file = await this.downloadPDF(false)
+        this.pdfUrl = URL.createObjectURL(file)
+      }
+      window.open(this.pdfUrl)
+    },
+    async _saveFile (varName: string, fnName: string, args: any[], ext: string, download = true): Promise<File> {
       if (!this[varName]) {
         this[varName] = this.mscore[fnName](...args).then((data) => {
           return new File([data], `${this.filename}.${ext}`)
         })
       }
-      FileSaver.saveAs(await this[varName])
+      const file: File = await this[varName]
+      if (download) {
+        FileSaver.saveAs(file)
+      }
+      return file
     },
   },
   async mounted () {
     // single instance only (no component reusing)
     // set `key` attribute on this component
+
+    this.actions = [
+      [
+        { label: 'Download MSCZ', fn: (): Promise<void> => this.downloadMSCZ() },
+        { label: 'Download MIDI', fn: (): Promise<void> => this.downloadMIDI() },
+        { label: 'Download PDF', fn: async (): Promise<void> => { await this.downloadPDF() } },
+      ],
+      [
+        { label: 'Print', fn: (): Promise<void> => this.printPDF() },
+        { label: 'Share', fn: (): void => { void 0 }, disabled: true },
+        { label: 'Download Audio', fn: (): Promise<void> => this.downloadAudio('ogg') },
+      ],
+    ]
 
     // load score
     const mscore = await WebMscoreLoad(
@@ -236,6 +269,7 @@ export default defineComponent({
 
     // get the score metadata
     this.metadata = await mscore.metadata()
+    this.$emit('metadata-ready', this.metadata)
     this.filename = await mscore.titleFilenameSafe()
     // preallocate the `imgUrls` array for Vue list rendering
     this.imgUrls = Array.from({ length: this.metadata.pages })
@@ -255,6 +289,10 @@ export default defineComponent({
     const imgCache = this.imgCache
     for (const blobUrl of imgCache.values()) {
       URL.revokeObjectURL(await blobUrl)
+    }
+
+    if (this.pdfUrl) {
+      URL.revokeObjectURL(this.pdfUrl)
     }
   },
 })

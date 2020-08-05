@@ -4,27 +4,38 @@
     style="height: 100%;"
   >
     <ion-row style="height: 100%;">
-      <ion-col push="9">
-        <div>
-          <h3>float-right</h3>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac vehicula lorem.
-        </div>
-      </ion-col>
-
       <ion-col
-        size="9"
-        pull="3"
+        size-lg="9"
         id="score-view-left"
       >
         <score-view-main
           v-if="mscz"
           :key="id"
           :mscz="mscz"
+          @metadata-ready="(m) => metadata = m"
         >
-          <template #headerBar>
-            <score-header-bar></score-header-bar>
+          <template #headerBar="slotProps">
+            <score-header-bar
+              :actions="slotProps.actions"
+              :scoreTitle="scoreTitle"
+              :scoreSummary="scoreSummary"
+            ></score-header-bar>
           </template>
         </score-view-main>
+      </ion-col>
+
+      <ion-col
+        size="12"
+        size-lg
+      >
+        <score-info
+          :description="description"
+          :userName="userName"
+          :sourceUrl="sourceUrl"
+          :tags="tags"
+          :date="date"
+          :metadata="metadata"
+        ></score-info>
       </ion-col>
     </ion-row>
   </ion-grid>
@@ -36,6 +47,7 @@ import { defineComponent } from 'vue'
 import { IonGrid, IonRow, IonCol } from '@ionic/vue'
 import ScoreViewMain from './ScoreViewMain.vue'
 import ScoreHeaderBar from './ScoreHeaderBar.vue'
+import ScoreInfo from './ScoreInfo.vue'
 export default defineComponent({
   components: {
     IonGrid,
@@ -43,6 +55,7 @@ export default defineComponent({
     IonCol,
     ScoreViewMain,
     ScoreHeaderBar,
+    ScoreInfo,
   },
   data () {
     return {
@@ -54,6 +67,12 @@ export default defineComponent({
 <style scoped>
   #score-view-left {
     height: 100%;
-    border-right: var(--app-border);
+  }
+
+  /** ionic breakpoint: lg */
+  @media (min-width: 992px) {
+    #score-view-left {
+      border-right: var(--app-border);
+    }
   }
 </style>

@@ -5,18 +5,6 @@ export const fetchData = async (url: string, init?: RequestInit): Promise<Uint8A
   return new Uint8Array(data)
 }
 
-/**
- * Print time in human readable format (min:sec) 
- */
-export const printTime = (ms: number): string => {
-  const s = Math.round(ms / 1000) || 0 // convert to s
-
-  const minStr = `${Math.floor(s / 60)}`.padStart(2, '0')
-  const secStr = `${s % 60}`.padStart(2, '0')
-
-  return `${minStr}:${secStr}`
-}
-
 export const sleep = (ms: number): Promise<void> => {
   return new Promise(resolve => setTimeout(resolve, ms))
 }

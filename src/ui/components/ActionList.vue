@@ -27,6 +27,7 @@ import ActionItem from './ActionItem.vue'
 export interface Action {
   label: string;
   fn: () => void | Promise<void>;
+  disabled?: boolean;
 }
 
 export interface Actions {
