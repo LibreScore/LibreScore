@@ -26,7 +26,7 @@
         size="12"
         size-lg
         id="score-view-right"
-        class="ion-color-light"
+        class="app-bg"
       >
         <score-info
           :description="description"
@@ -146,7 +146,6 @@ export default defineComponent({
 
   #score-view-right {
     overflow-y: auto;
-    background: var(--ion-color-base);
   }
 
   /** ionic breakpoint: lg */

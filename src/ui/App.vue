@@ -78,6 +78,10 @@ export default defineComponent({
     top: 1.8px;
   }
 
+  .app-bg {
+    background: var(--ion-color-base, #f4f5f8);
+  }
+
   .app-btn {
     font-weight: normal;
     text-transform: none;

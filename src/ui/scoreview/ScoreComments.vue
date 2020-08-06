@@ -1,8 +1,5 @@
 <template>
-  <ion-toolbar
-    color="light"
-    class="score-comments-sidebar"
-  >
+  <div class="score-comments-sidebar">
     <ion-card-title style="font-size: 16px;">
       Comments
     </ion-card-title>
@@ -18,17 +15,16 @@
       size="small"
       :disabled="true"
     >Submit</ion-button>
-  </ion-toolbar>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
 
-import { IonToolbar, IonCardTitle, IonTextarea, IonButton } from '@ionic/vue'
+import { IonCardTitle, IonTextarea, IonButton } from '@ionic/vue'
 
 export default defineComponent({
   components: {
-    IonToolbar,
     IonCardTitle,
     IonTextarea,
     IonButton,
