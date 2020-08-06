@@ -9,6 +9,7 @@
         id="score-view-left"
       >
         <score-view-main
+          v-if="mscz"
           :mscz="mscz"
           @metadata-ready="(m) => metadata = m"
         >
@@ -69,33 +70,35 @@ export default defineComponent({
   },
   props: {
     scorepack: {
-      type: undefined as any as PropType<ScorePack>,
+      type: undefined as any as PropType<Promise<ScorePack>>,
       required: true,
     },
   },
   data () {
     return {
+      // eslint-disable-next-line vue/no-reserved-keys
+      _scorepack: undefined as ScorePack | undefined,
       user: undefined as UserProfile | undefined,
       mscz: undefined as Promise<Uint8Array> | undefined,
       metadata: undefined as ScoreMetadata | undefined,
     }
   },
   computed: {
-    scoreTitle (): string {
-      return this.scorepack.title
+    scoreTitle (): string | undefined {
+      return this._scorepack?.title
     },
     scoreSummary (): string | undefined {
-      return this.scorepack.summary
+      return this._scorepack?.summary
     },
     description (): string | undefined {
-      return this.scorepack.description
+      return this._scorepack?.description
     },
     tags (): string[] | undefined {
-      return this.scorepack.tags
+      return this._scorepack?.tags
     },
     date (): Date | undefined {
-      if (!this.scorepack) return // no scorepack
-      const date = new Date(this.scorepack.updated)
+      if (!this._scorepack) return // no scorepack
+      const date = new Date(this._scorepack.updated)
       if (isNaN(date.valueOf())) return // Invalid Date
       return date
     },
@@ -105,8 +108,11 @@ export default defineComponent({
   },
   methods: {
     async init (): Promise<void> {
-      this.mscz = ipfsFetch(this.scorepack.score, IPFS_CLIENT_INFURA)
-      this.user = await resolveUserProfile(this.scorepack)
+      this._scorepack = await this.scorepack
+      if (!this._scorepack) throw new Error('No ScorePack')
+
+      this.mscz = ipfsFetch(this._scorepack.score, IPFS_CLIENT_INFURA)
+      this.user = await resolveUserProfile(this._scorepack)
     },
   },
   created (): Promise<void> {
