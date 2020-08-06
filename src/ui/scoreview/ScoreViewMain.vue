@@ -216,13 +216,13 @@ export default defineComponent({
       FileSaver.saveAs(file)
     },
     async downloadPDF (download = true): Promise<File> {
-      return this._saveFile('pdfFile', 'savePdf', [], 'pdf', download)
+      return this._saveFile('pdfFile', 'savePdf', [], 'pdf', 'application/pdf', download)
     },
     async downloadMIDI (): Promise<void> {
-      await this._saveFile('midiFile', 'saveMidi', [], 'midi')
+      await this._saveFile('midiFile', 'saveMidi', [], 'midi', 'audio/midi')
     },
     async downloadAudio (format: Parameters<WebMscore['saveAudio']>[0]): Promise<void> {
-      await this._saveFile('audioFile', 'saveAudio', [format], format)
+      await this._saveFile('audioFile', 'saveAudio', [format], format, `audio/${format}`)
     },
     async printPDF (): Promise<void> {
       if (!this.pdfUrl) {
@@ -231,10 +231,10 @@ export default defineComponent({
       }
       window.open(this.pdfUrl)
     },
-    async _saveFile (varName: string, fnName: string, args: any[], ext: string, download = true): Promise<File> {
+    async _saveFile (varName: string, fnName: string, args: any[], ext: string, mime?: string, download = true): Promise<File> {
       if (!this[varName]) {
         this[varName] = this.mscore[fnName](...args).then((data) => {
-          return new File([data], `${this.filename}.${ext}`)
+          return new File([data], `${this.filename}.${ext}`, { type: mime })
         })
       }
       const file: File = await this[varName]
