@@ -27,6 +27,7 @@
       <ion-col
         size="12"
         size-lg
+        id="score-view-right"
       >
         <score-info
           :description="description"
@@ -73,6 +74,17 @@ export default defineComponent({
   @media (min-width: 992px) {
     #score-view-left {
       border-right: var(--app-border);
+    }
+  }
+
+  #score-view-right {
+    overflow-y: auto;
+  }
+
+  /** ionic breakpoint: lg */
+  @media (min-width: 992px) {
+    #score-view-right {
+      height: 100%;
     }
   }
 </style>
