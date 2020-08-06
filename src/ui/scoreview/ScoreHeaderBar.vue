@@ -85,7 +85,6 @@ export default defineComponent({
     scoreSummary: {
       type: String,
       required: true,
-      default: ' ', // em space
     },
   },
   data () {
@@ -120,5 +119,7 @@ export default defineComponent({
     font-weight: 700;
     letter-spacing: 0.5px;
     font-size: 22px;
+    display: inline-block;
+    white-space: normal;
   }
 </style>
