@@ -1,24 +1,25 @@
 <template>
   <ion-app>
     <ion-header>
-      <ion-toolbar>
+      <ion-toolbar color="primary">
         <ion-title>
-          <ion-icon name="heart"></ion-icon>
-          Header
+          <img
+            :src="publicPath+'img/logo-text.svg'"
+            class="librescore-text-logo"
+          >
         </ion-title>
       </ion-toolbar>
     </ion-header>
 
-    <ion-content class="ion-padding">
-      <h1>Main Content</h1>
+    <ion-content>
+      <score-view></score-view>
     </ion-content>
   </ion-app>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
-
-import { IonApp, IonHeader, IonToolbar, IonContent, IonTitle, IonIcon } from '@ionic/vue'
+import { defineComponent, defineAsyncComponent } from 'vue'
+import { IonApp, IonHeader, IonToolbar, IonContent, IonTitle } from '@ionic/vue'
 
 export default defineComponent({
   components: {
@@ -27,7 +28,10 @@ export default defineComponent({
     IonToolbar,
     IonContent,
     IonTitle,
-    IonIcon,
+  data () {
+    return {
+      publicPath: process.env.BASE_URL,
+    }
   },
 })
 </script>
@@ -52,6 +56,7 @@ export default defineComponent({
   :root {
     --app-border-color: #bdc2c6;
     --app-border: 2px solid var(--app-border-color);
+    --logo-color: rgb(0, 123, 255);
   }
 
   /** Clickable ion icons */
@@ -62,6 +67,12 @@ export default defineComponent({
 
   .icon-btn:hover {
     color: var(--ion-color-tint);
+  }
+
+  .librescore-text-logo {
+    height: 20px;
+    position: relative;
+    top: 1.8px;
   }
 
   .app-btn {
