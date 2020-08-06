@@ -28,6 +28,7 @@
         size="12"
         size-lg
         id="score-view-right"
+        class="ion-color-light"
       >
         <score-info
           :description="description"
@@ -37,6 +38,8 @@
           :date="date"
           :metadata="metadata"
         ></score-info>
+
+        <score-comments></score-comments>
       </ion-col>
     </ion-row>
   </ion-grid>
@@ -49,6 +52,8 @@ import { IonGrid, IonRow, IonCol } from '@ionic/vue'
 import ScoreViewMain from './ScoreViewMain.vue'
 import ScoreHeaderBar from './ScoreHeaderBar.vue'
 import ScoreInfo from './ScoreInfo.vue'
+import ScoreComments from './ScoreComments.vue'
+
 export default defineComponent({
   components: {
     IonGrid,
@@ -57,6 +62,7 @@ export default defineComponent({
     ScoreViewMain,
     ScoreHeaderBar,
     ScoreInfo,
+    ScoreComments,
   },
   data () {
     return {
@@ -79,6 +85,7 @@ export default defineComponent({
 
   #score-view-right {
     overflow-y: auto;
+    background: var(--ion-color-base);
   }
 
   /** ionic breakpoint: lg */

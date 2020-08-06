@@ -63,4 +63,17 @@ export default defineComponent({
   .icon-btn:hover {
     color: var(--ion-color-tint);
   }
+
+  .app-btn {
+    font-weight: normal;
+    text-transform: none;
+    --box-shadow: none;
+  }
+
+  .app-textarea {
+    --background: #ffffff;
+    --border-radius: 4px;
+    border: 2px solid #dee2e6;
+    border-radius: var(--border-radius);
+  }
 </style>

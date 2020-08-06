@@ -32,7 +32,7 @@
                 :key="'actions' + i + action.label"
               >
                 <ion-button
-                  class="header-bar-btn"
+                  class="app-btn header-bar-btn"
                   :disabled="action.disabled"
                   :color="i == 0 ? 'primary' : undefined"
                   :style="i !== 0 ? {'--background':'#D0D7DE','--color':'#424242'} : {}"
@@ -114,9 +114,6 @@ export default defineComponent({
 
   .header-bar-btn {
     margin: 0.5em;
-    font-weight: normal;
-    text-transform: none;
-    --box-shadow: none;
   }
 
   .score-title {

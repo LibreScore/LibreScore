@@ -86,7 +86,7 @@
           </ion-item-divider>
         </ion-col>
       </ion-row>
-      <ion-row>
+      <ion-row style="margin-bottom: 0;">
         <ion-col>
           <ion-note>{{ description }}</ion-note>
         </ion-col>
@@ -100,7 +100,7 @@
 import { defineComponent, PropType } from 'vue'
 import type { ScoreMetadata } from 'webmscore/schemas'
 
-import { IonToolbar, IonGrid, IonRow, IonCol, IonChip, IonAvatar, IonLabel, IonNote, IonBadge } from '@ionic/vue'
+import { IonToolbar, IonGrid, IonRow, IonCol, IonChip, IonAvatar, IonLabel, IonNote, IonBadge, IonItemDivider } from '@ionic/vue'
 import { PrintTimeMixin, FmtTimeMixin } from '../mixins/str-fmt'
 
 export default defineComponent({
@@ -118,6 +118,7 @@ export default defineComponent({
     IonLabel,
     IonNote,
     IonBadge,
+    IonItemDivider,
   },
   props: {
     description: {
@@ -169,7 +170,6 @@ export default defineComponent({
 
 <style scoped>
   .score-info-sidebar {
-    min-height: 100%;
     padding: 2em;
   }
 
