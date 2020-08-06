@@ -3,22 +3,24 @@
     <ion-header>
       <ion-toolbar color="primary">
         <ion-title>
-          <img
-            :src="publicPath+'img/logo-text.svg'"
-            class="librescore-text-logo"
-          >
+          <router-link to="/">
+            <img
+              :src="publicPath+'img/logo-text.svg'"
+              class="librescore-text-logo"
+            >
+          </router-link>
         </ion-title>
       </ion-toolbar>
     </ion-header>
 
     <ion-content>
-      <score-view></score-view>
+      <router-view></router-view>
     </ion-content>
   </ion-app>
 </template>
 
 <script lang="ts">
-import { defineComponent, defineAsyncComponent } from 'vue'
+import { defineComponent } from 'vue'
 import { IonApp, IonHeader, IonToolbar, IonContent, IonTitle } from '@ionic/vue'
 
 export default defineComponent({
@@ -28,6 +30,7 @@ export default defineComponent({
     IonToolbar,
     IonContent,
     IonTitle,
+  },
   data () {
     return {
       publicPath: process.env.BASE_URL,
