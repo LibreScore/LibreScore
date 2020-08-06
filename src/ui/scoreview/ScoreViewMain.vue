@@ -244,28 +244,37 @@ export default defineComponent({
       return file
     },
   },
-  async mounted () {
+  async created () {
     // single instance only (no component reusing)
     // set `key` attribute on this component
 
+    // init action buttons
     this.actions = [
       [
-        { label: 'Download MSCZ', fn: (): Promise<void> => this.downloadMSCZ() },
-        { label: 'Download MIDI', fn: (): Promise<void> => this.downloadMIDI() },
-        { label: 'Download PDF', fn: async (): Promise<void> => { await this.downloadPDF() } },
+        { label: 'Download MSCZ', fn: (): Promise<void> => this.downloadMSCZ(), disabled: true },
+        { label: 'Download MIDI', fn: (): Promise<void> => this.downloadMIDI(), disabled: true },
+        { label: 'Download PDF', fn: async (): Promise<void> => { await this.downloadPDF() }, disabled: true },
       ],
       [
-        { label: 'Print', fn: (): Promise<void> => this.printPDF() },
+        { label: 'Print', fn: (): Promise<void> => this.printPDF(), disabled: true },
         { label: 'Share', fn: (): void => { void 0 }, disabled: true },
-        { label: 'Download Audio', fn: (): Promise<void> => this.downloadAudio('ogg') },
+        { label: 'Download Audio', fn: (): Promise<void> => this.downloadAudio('ogg'), disabled: true },
       ],
     ]
 
+    // fetch the mscz file
+    const _mscz = await this.mscz
+
     // load score
     const mscore = await WebMscoreLoad(
-      new Uint8Array(await this.mscz), // make a copy (the ownership of the Uint8Array is transferred to the web worker context, so it becomes unusable in the main context)
+      new Uint8Array(_mscz), // make a copy (the ownership of the Uint8Array is transferred to the web worker context, so it becomes unusable in the main context)
     )
     this.mscore = mscore
+
+    // enable action buttons
+    this.actions.forEach(g => g.forEach(action => {
+      action.disabled = false
+    }))
 
     // get the score metadata
     this.metadata = await mscore.metadata()

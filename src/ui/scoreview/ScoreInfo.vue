@@ -6,13 +6,13 @@
   >
     <ion-grid>
 
-      <ion-row>
+      <ion-row v-if="userName">
         <ion-col size="4">
           <ion-note>Uploader</ion-note>
         </ion-col>
         <ion-col>
           <a
-            :href="sourceUrl"
+            :href="userUrl"
             target="_blank"
           >
             <ion-chip class="ion-no-margin">
@@ -127,13 +127,12 @@ export default defineComponent({
     /** uploader */
     userName: {
       type: String,
-      default: 'LibreScore User',
     },
     userAvatar: {
       type: String,
       default: '/img/icons/logo.svg',
     },
-    sourceUrl: {
+    userUrl: {
       type: String,
     },
     /** Tags */

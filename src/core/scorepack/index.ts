@@ -2,9 +2,9 @@
 
 import CID from 'cids'
 import dagCBOR from 'ipld-dag-cbor'
-import crypto from 'libp2p-crypto'
 import { FunctionKeys } from 'utility-types'
 import { Identity } from '../identity'
+import * as PublicKey from '../pubkey'
 
 /**
  * See the [specification](/SPEC/scorepack.md) - User Signatures
@@ -25,7 +25,8 @@ export interface Source {
   user?: number | string;
 }
 
-type DagNode = Buffer
+/** raw IPFS block data */
+type RawNode = Buffer
 
 export const FMT_NAME = 'scorepack' as const
 export const FMT_VER = 1 as const
@@ -115,9 +116,9 @@ export class ScorePack {
 
   /**
    * Serialize the *ScorePack* in DAG-CBOR
-   * @returns DAG-CBOR Node
+   * @returns IPFS raw block data
    */
-  private marshal (): DagNode {
+  private marshal (): RawNode {
     // Remove all `undefined` values in the ScorePack object (may cause errors)
     Object.getOwnPropertyNames(this).forEach(k => {
       if (this[k] === undefined) {
@@ -127,8 +128,8 @@ export class ScorePack {
 
     // Serialize
     // Must ignore method keys
-    const dagNode: Buffer = dagCBOR.util.serialize(this)
-    return dagNode
+    const rawNode: Buffer = dagCBOR.util.serialize(this)
+    return rawNode
   }
 
   /**
@@ -138,12 +139,12 @@ export class ScorePack {
     // sign with `_sig` set to `null`
     this._sig = null
 
-    const dagNode = this.marshal()
-    const sigBuf = await identity.sign(dagNode)
+    const rawNode = this.marshal()
+    const sigBuf = await identity.sign(rawNode)
 
-    const pubKey: crypto.PublicKey = await identity.publicKey()
+    const pubKey: PublicKey.PublicKey = await identity.publicKey()
     const sig: Sig = {
-      publicKey: crypto.keys.marshalPublicKey(pubKey),
+      publicKey: PublicKey.marshal(pubKey),
       signature: sigBuf,
     }
     this._sig = sig
@@ -161,7 +162,7 @@ export class ScorePack {
     }
 
     const { publicKey, signature } = this._sig
-    const pubKey = crypto.keys.unmarshalPublicKey(publicKey)
+    const pubKey = PublicKey.unmarshal(publicKey)
 
     // verify with `_sig` set to null
     const clone = this.clone()
@@ -173,17 +174,17 @@ export class ScorePack {
   /**
    * Sign and serialize the *ScorePack*
    */
-  async flush (identity: Identity): Promise<DagNode> {
+  async flush (identity: Identity): Promise<RawNode> {
     await this.sign(identity)
-    const dagNode = this.marshal()
-    return dagNode
+    const rawNode = this.marshal()
+    return rawNode
   }
 
   /**
-   * Deserialize *ScorePack* from the DAG-CBOR node
+   * Deserialize *ScorePack* from the raw node using DAG-CBOR
    */
-  static unmarshal (dagNode: DagNode): ScorePack {
-    const obj: Omit<ScorePack, FunctionKeys<ScorePack>> = dagCBOR.util.deserialize(dagNode)
+  static unmarshal (rawNode: RawNode): ScorePack {
+    const obj: Omit<ScorePack, FunctionKeys<ScorePack>> = dagCBOR.util.deserialize(rawNode)
 
     // check the fmt name info
     if (obj._fmt !== FMT_NAME) {
@@ -205,8 +206,8 @@ export class ScorePack {
   /**
    * @alias `ScorePack.unmarshal`
    */
-  static from (dagNode: DagNode): ScorePack {
-    return ScorePack.unmarshal(dagNode)
+  static from (rawNode: RawNode): ScorePack {
+    return ScorePack.unmarshal(rawNode)
   }
 }
 

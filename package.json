@@ -28,6 +28,7 @@
     "file-saver": "^2.0.2",
     "functional-red-black-tree": "^1.0.1",
     "ipfs": "^0.48.0",
+    "ipfs-http-client": "^45.0.0",
     "register-service-worker": "^1.7.1",
     "vue": "^3.0.0-0",
     "vue-router": "^4.0.0-0",

@@ -9,8 +9,6 @@
         id="score-view-left"
       >
         <score-view-main
-          v-if="mscz"
-          :key="id"
           :mscz="mscz"
           @metadata-ready="(m) => metadata = m"
         >
@@ -32,13 +30,13 @@
       >
         <score-info
           :description="description"
-          :userName="userName"
-          :sourceUrl="sourceUrl"
+          :userAvatar="user && user.avatar"
+          :userName="user && user.name"
+          :userUrl="user && user.url"
           :tags="tags"
           :date="date"
           :metadata="metadata"
         ></score-info>
-
         <score-comments></score-comments>
       </ion-col>
     </ion-row>
@@ -46,13 +44,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, PropType } from 'vue'
 
 import { IonGrid, IonRow, IonCol } from '@ionic/vue'
 import ScoreViewMain from './ScoreViewMain.vue'
 import ScoreHeaderBar from './ScoreHeaderBar.vue'
 import ScoreInfo from './ScoreInfo.vue'
 import ScoreComments from './ScoreComments.vue'
+
+import type { ScoreMetadata } from 'webmscore/schemas'
+import ScorePack from '@/core/scorepack'
+import { resolveUserProfile, UserProfile } from '@/core/identity/name'
+import { ipfsFetch, IPFS_CLIENT_INFURA } from '@/ipfs'
 
 export default defineComponent({
   components: {
@@ -64,9 +67,50 @@ export default defineComponent({
     ScoreInfo,
     ScoreComments,
   },
+  props: {
+    scorepack: {
+      type: undefined as any as PropType<ScorePack>,
+      required: true,
+    },
+  },
   data () {
     return {
+      user: undefined as UserProfile | undefined,
+      mscz: undefined as Promise<Uint8Array> | undefined,
+      metadata: undefined as ScoreMetadata | undefined,
     }
+  },
+  computed: {
+    scoreTitle (): string {
+      return this.scorepack.title
+    },
+    scoreSummary (): string | undefined {
+      return this.scorepack.summary
+    },
+    description (): string | undefined {
+      return this.scorepack.description
+    },
+    tags (): string[] | undefined {
+      return this.scorepack.tags
+    },
+    date (): Date | undefined {
+      if (!this.scorepack) return // no scorepack
+      const date = new Date(this.scorepack.updated)
+      if (isNaN(date.valueOf())) return // Invalid Date
+      return date
+    },
+  },
+  watch: {
+    scorepack: 'init',
+  },
+  methods: {
+    async init (): Promise<void> {
+      this.mscz = ipfsFetch(this.scorepack.score, IPFS_CLIENT_INFURA)
+      this.user = await resolveUserProfile(this.scorepack)
+    },
+  },
+  created (): Promise<void> {
+    return this.init()
   },
 })
 </script>
