@@ -18,6 +18,7 @@ Each *ScorePack* is a DAG-CBOR encoded object with the following fields:
 | `_sig` (Required) | object \| null | see [User Signatures](#user-signatures) |
 | `_prev` | [CID](https://github.com/multiformats/cid) or its string representation | points to the previous revision of the *ScorePack* (*ScorePack*s are **immutable**; it helps us track its revision history) |
 | `score` (Required) | [CID](https://github.com/multiformats/cid) | points to the mscz score file  |
+| `thumbnail` | [CID](https://github.com/multiformats/cid) | points to the thumbnail image of the first page |
 | `title` (Required) | string | |
 | `description` | string | |
 | `summary` | string | |

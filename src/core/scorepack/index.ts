@@ -54,6 +54,7 @@ export class ScorePack {
   _prev?: CID | string;
 
   score: CID;
+  thumbnail?: CID;
 
   title: string;
   description?: string;
