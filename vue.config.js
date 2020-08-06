@@ -6,7 +6,7 @@ module.exports = {
   integrity: true,
   pwa: {
     name: 'LibreScore',
-    themeColor: '#50C8FF',
+    themeColor: '#3880FF',
     manifestOptions: {
       icons: [
         {
