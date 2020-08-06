@@ -84,7 +84,6 @@ export default defineComponent({
      */
     scoreSummary: {
       type: String,
-      required: true,
     },
   },
   data () {
