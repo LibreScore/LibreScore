@@ -152,6 +152,7 @@ export default defineComponent({
         return this.slideTo(currentEl.page)
       }
     },
+    mscz: 'init',
   },
   methods: {
     /**
@@ -243,53 +244,57 @@ export default defineComponent({
       }
       return file
     },
+
+    async init (): Promise<void> {
+      // init action buttons
+      this.actions = [
+        [
+          { label: 'Download MSCZ', fn: (): Promise<void> => this.downloadMSCZ(), disabled: true },
+          { label: 'Download MIDI', fn: (): Promise<void> => this.downloadMIDI(), disabled: true },
+          { label: 'Download PDF', fn: async (): Promise<void> => { await this.downloadPDF() }, disabled: true },
+        ],
+        [
+          { label: 'Print', fn: (): Promise<void> => this.printPDF(), disabled: true },
+          { label: 'Share', fn: (): void => { void 0 }, disabled: true },
+          { label: 'Download Audio', fn: (): Promise<void> => this.downloadAudio('ogg'), disabled: true },
+        ],
+      ]
+
+      // fetch the mscz file
+      const _mscz = await this.mscz
+      if (!_mscz) return
+
+      // load score
+      const mscore = await WebMscoreLoad(
+        new Uint8Array(_mscz), // make a copy (the ownership of the Uint8Array is transferred to the web worker context, so it becomes unusable in the main context)
+      )
+      this.mscore = mscore
+
+      // enable action buttons
+      this.actions.forEach(g => g.forEach(action => {
+        action.disabled = false
+      }))
+
+      // get the score metadata
+      this.metadata = await mscore.metadata()
+      this.$emit('metadata-ready', this.metadata)
+      this.filename = await mscore.titleFilenameSafe()
+      // preallocate the `imgUrls` array for Vue list rendering
+      this.imgUrls = Array.from({ length: this.metadata.pages })
+
+      // load sheet images
+      // trigger the `currentPage` watcher
+      this.currentPage = 0
+
+      // get the positions of measures
+      const mpos = await mscore.measurePositions()
+      this.measures = new Measures(mpos)
+    },
   },
-  async created () {
+  created () {
     // single instance only (no component reusing)
     // set `key` attribute on this component
-
-    // init action buttons
-    this.actions = [
-      [
-        { label: 'Download MSCZ', fn: (): Promise<void> => this.downloadMSCZ(), disabled: true },
-        { label: 'Download MIDI', fn: (): Promise<void> => this.downloadMIDI(), disabled: true },
-        { label: 'Download PDF', fn: async (): Promise<void> => { await this.downloadPDF() }, disabled: true },
-      ],
-      [
-        { label: 'Print', fn: (): Promise<void> => this.printPDF(), disabled: true },
-        { label: 'Share', fn: (): void => { void 0 }, disabled: true },
-        { label: 'Download Audio', fn: (): Promise<void> => this.downloadAudio('ogg'), disabled: true },
-      ],
-    ]
-
-    // fetch the mscz file
-    const _mscz = await this.mscz
-
-    // load score
-    const mscore = await WebMscoreLoad(
-      new Uint8Array(_mscz), // make a copy (the ownership of the Uint8Array is transferred to the web worker context, so it becomes unusable in the main context)
-    )
-    this.mscore = mscore
-
-    // enable action buttons
-    this.actions.forEach(g => g.forEach(action => {
-      action.disabled = false
-    }))
-
-    // get the score metadata
-    this.metadata = await mscore.metadata()
-    this.$emit('metadata-ready', this.metadata)
-    this.filename = await mscore.titleFilenameSafe()
-    // preallocate the `imgUrls` array for Vue list rendering
-    this.imgUrls = Array.from({ length: this.metadata.pages })
-
-    // load sheet images
-    // trigger the `currentPage` watcher
-    this.currentPage = 0
-
-    // get the positions of measures
-    const mpos = await mscore.measurePositions()
-    this.measures = new Measures(mpos)
+    return this.init()
   },
   async beforeUnmount () {
     // release resources

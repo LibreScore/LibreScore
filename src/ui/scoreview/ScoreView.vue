@@ -9,14 +9,13 @@
         id="score-view-left"
       >
         <score-view-main
-          v-if="mscz"
           :mscz="mscz"
           @metadata-ready="(m) => metadata = m"
         >
           <template #headerBar="slotProps">
             <score-header-bar
               :actions="slotProps.actions"
-              :scoreTitle="scoreTitle"
+              :scoreTitle="_scorepack /* retrieving scorepack */ ? scoreTitle : LOADING"
               :scoreSummary="scoreSummary"
             ></score-header-bar>
           </template>
@@ -81,6 +80,8 @@ export default defineComponent({
       user: undefined as UserProfile | undefined,
       mscz: undefined as Promise<Uint8Array> | undefined,
       metadata: undefined as ScoreMetadata | undefined,
+
+      LOADING: 'Loading...',
     }
   },
   computed: {
