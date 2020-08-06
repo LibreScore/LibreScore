@@ -14,7 +14,7 @@
     </ion-header>
 
     <ion-content>
-      <router-view></router-view>
+      <router-view :key="$router.currentRoute.value.path"></router-view>
     </ion-content>
   </ion-app>
 </template>

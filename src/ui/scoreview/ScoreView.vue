@@ -109,11 +109,21 @@ export default defineComponent({
   },
   methods: {
     async init (): Promise<void> {
-      this._scorepack = await this.scorepack
-      if (!this._scorepack) throw new Error('No ScorePack')
+      // reset 
+      this.mscz = undefined
+      this._scorepack = undefined
+      this.user = undefined
+      this.metadata = undefined
 
-      this.mscz = ipfsFetch(this._scorepack.score, IPFS_CLIENT_INFURA)
-      this.user = await resolveUserProfile(this._scorepack)
+      try {
+        this._scorepack = await this.scorepack
+        if (!this._scorepack) throw new Error('No ScorePack')
+
+        this.mscz = ipfsFetch(this._scorepack.score, IPFS_CLIENT_INFURA)
+        this.user = await resolveUserProfile(this._scorepack)
+      } catch (err) {
+        console.error(err)
+      }
     },
   },
   created (): Promise<void> {
