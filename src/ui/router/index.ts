@@ -9,6 +9,11 @@ const routes: RouteRecordRaw[] = [
     component: Home,
   },
   {
+    path: '/upload',
+    name: 'Upload',
+    component: () => import('../Upload.vue'),
+  },
+  {
     path: '/score/:cid',
     name: 'Score',
     component: () => import('../scoreview/ScoreView.vue'),
@@ -20,7 +25,7 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
-    path: '/*',
+    path: '/:catchAll(.*)',
     name: '404',
     redirect: '/',
   },

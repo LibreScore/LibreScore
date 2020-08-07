@@ -5,6 +5,11 @@ export const fetchData = async (url: string, init?: RequestInit): Promise<Uint8A
   return new Uint8Array(data)
 }
 
+export const readBlob = async (blob: Blob): Promise<Uint8Array> => {
+  const data = await blob.arrayBuffer()
+  return new Uint8Array(data)
+}
+
 export const sleep = (ms: number): Promise<void> => {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
