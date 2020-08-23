@@ -1,6 +1,7 @@
 
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import Home from '../Home.vue'
+import NotFoundPage from '../404.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -20,9 +21,9 @@ const routes: RouteRecordRaw[] = [
     },
   },
   {
-    path: '/*',
+    path: '/:catchAll(.*)',
     name: '404',
-    redirect: '/',
+    component: NotFoundPage,
   },
 ]
 

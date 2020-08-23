@@ -60,6 +60,8 @@ export default defineComponent({
     --app-border-color: #bdc2c6;
     --app-border: 2px solid var(--app-border-color);
     --logo-color: rgb(0, 123, 255);
+    --main-text-size: 44px;
+    --main-text-weight: 300;
   }
 
   /** Clickable ion icons */
