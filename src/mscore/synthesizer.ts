@@ -11,6 +11,7 @@ type SynthFn = PromiseType<ReturnType<WebMscore['synthAudio']>>
 export interface AudioFragment {
   startTime: number; // in seconds
   endTime: number;
+  duration: number;
   audioBuffer: AudioBuffer;
 }
 
@@ -23,7 +24,7 @@ export class Synthesizer {
   private readonly FRAME_LENGTH = 512;
   private readonly SAMPLE_RATE = 44100; // 44.1 kHz
 
-  private readonly BATCH_SIZE = 20;
+  private readonly BATCH_SIZE = 5;
   /**
    * The duration (s) of one AudioFragment  
    * ~ 0.0116 s * `BATCH_SIZE`
@@ -166,7 +167,7 @@ export class Synthesizer {
     }
 
     // add to cache
-    const fragment: AudioFragment = { audioBuffer: buf, startTime, endTime }
+    const fragment: AudioFragment = { audioBuffer: buf, startTime, endTime, duration: endTime - startTime }
     this.cache = this.cache.insert(startTime, fragment)
 
     return [fragment, existed]
@@ -178,17 +179,24 @@ export class Synthesizer {
    */
   private playFragment (f: AudioFragment, when = this.audioCtx.currentTime): Promise<void> {
     return new Promise((resolve) => {
-      // An AudioBufferSourceNode can only be played once
-      const source = this.audioCtx.createBufferSource()
+      // granular synthesis
+
       const speed = this.speed
+      const end = when + (f.duration / speed)
 
-      source.buffer = f.audioBuffer
-      source.playbackRate.value = speed
-      source.connect(this.audioCtx.destination)
+      let source: AudioBufferSourceNode | undefined
+      for (; when < end; when += f.duration) {
+        // An AudioBufferSourceNode can only be played once
+        source = this.audioCtx.createBufferSource()
 
-      source.start(when)
+        source.buffer = f.audioBuffer
+        source.connect(this.audioCtx.destination)
 
-      source.addEventListener('ended', () => resolve(), { once: true })
+        source.start(when)
+        source.stop(end) // If the node stops before the time specified, this call has no effect. So `Math.min(when + f.duration, end)` has no need here
+      }
+
+      void source?.addEventListener('ended', () => resolve(), { once: true })
     })
   }
 
@@ -200,9 +208,16 @@ export class Synthesizer {
     let cur: Promise<void> | undefined
     let prev: Promise<void> | undefined
 
-    // reset the playback clock
-    let ctxTime = this.audioCtx.currentTime
+    let ctxTime = 0
     let played = 0
+    const resetClock = (): void => {
+      // reset the playback clock
+      ctxTime = this.audioCtx.currentTime
+      played = 0
+    }
+    resetClock()
+
+    let speed = this.speed
 
     while (true) {
       if (
@@ -222,11 +237,14 @@ export class Synthesizer {
           return
         } else {
           fragment = f
-
-          // reset the playback clock
-          ctxTime = this.audioCtx.currentTime
-          played = 0
+          resetClock()
         }
+      }
+
+      if (speed !== this.speed) {
+        // playback speed has changed
+        resetClock()
+        speed = this.speed
       }
 
       if (prev) {
@@ -242,7 +260,7 @@ export class Synthesizer {
       void onUpdate?.(this.time)
 
       // request to play one fragment
-      cur = this.playFragment(fragment, ctxTime + played * this.FRAGMENT_DURATION / this.speed)
+      cur = this.playFragment(fragment, ctxTime + played * this.FRAGMENT_DURATION / speed)
       played++
     }
   }
