@@ -201,6 +201,16 @@ export class Synthesizer {
         const sourceEnd = Math.min(when + f.duration, end)
 
         // smoothing
+        // 
+        // think of a simple sine wave
+        //  .-.   -.
+        // /   \    \   
+        //      '-   '-'
+        // discontinuity -> audible clicks
+        // 
+        // reduce the amplitude (gain) at the point of discontinuity  
+        //  -> less discontinuous  
+        //  -> smoother
         const gainNode = this.audioCtx.createGain()
         gainNode.gain.value = 0
         gainNode.gain.setTargetAtTime(1, when, this.GAIN_TIME_CONSTANT)
