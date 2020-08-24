@@ -17,19 +17,26 @@ export interface AudioFragment {
 
 /**
  * Audio synthesizer with cache  
- * (using Web Audio API)
+ * (using Web Audio API)  
+ * (CPU sensitive)
  */
 export class Synthesizer {
   private readonly CHANNELS = 2;
   private readonly FRAME_LENGTH = 512;
   private readonly SAMPLE_RATE = 44100; // 44.1 kHz
 
-  private readonly BATCH_SIZE = 5;
+  private readonly BATCH_SIZE = 8;
   /**
    * The duration (s) of one AudioFragment  
    * ~ 0.0116 s * `BATCH_SIZE`
    */
   private readonly FRAGMENT_DURATION = (this.FRAME_LENGTH / this.SAMPLE_RATE) * this.BATCH_SIZE;
+
+  /**
+   * See https://developer.mozilla.org/en-US/docs/Web/API/AudioParam/setTargetAtTime
+   */
+  private readonly GAIN_TIME_CONSTANT = 0.001; // 1ms * GAIN_TIME_N
+  private readonly GAIN_TIME_N = 3;
 
   /**
    * index time positions (in seconds) to AudioFragments
@@ -39,7 +46,12 @@ export class Synthesizer {
 
   public worklet: { cancel (): Promise<void> } | undefined;
 
+  /**
+   * The playback speed and pitch can be adjusted independently
+   */
   public speed = 1.0;
+
+  public destination: AudioNode = this.audioCtx.destination;
 
   constructor (
     private readonly mscore: WebMscore,
@@ -186,14 +198,22 @@ export class Synthesizer {
 
       let source: AudioBufferSourceNode | undefined
       for (; when < end; when += f.duration) {
+        const sourceEnd = Math.min(when + f.duration, end)
+
+        // smoothing
+        const gainNode = this.audioCtx.createGain()
+        gainNode.gain.value = 0
+        gainNode.gain.setTargetAtTime(1, when, this.GAIN_TIME_CONSTANT)
+        gainNode.gain.setTargetAtTime(0, sourceEnd - this.GAIN_TIME_CONSTANT * this.GAIN_TIME_N, this.GAIN_TIME_CONSTANT)
+        gainNode.connect(this.destination)
+
         // An AudioBufferSourceNode can only be played once
         source = this.audioCtx.createBufferSource()
-
         source.buffer = f.audioBuffer
-        source.connect(this.audioCtx.destination)
+        source.connect(gainNode)
 
         source.start(when)
-        source.stop(end) // If the node stops before the time specified, this call has no effect. So `Math.min(when + f.duration, end)` has no need here
+        source.stop(sourceEnd)
       }
 
       void source?.addEventListener('ended', () => resolve(), { once: true })
