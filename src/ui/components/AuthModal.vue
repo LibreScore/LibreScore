@@ -244,7 +244,7 @@ export const requestIdentity = async (): Promise<Identity> => {
 <style>
   .app-modal-root {
     --border-radius: 4px;
-    --max-width: 25rem;
+    --max-width: 25.5rem;
     --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
     padding: 1em;
   }
