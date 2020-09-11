@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
+import { defineComponent } from 'vue'
 
 import { IonGrid, IonRow, IonCol } from '@ionic/vue'
 import ScoreViewMain from './ScoreViewMain.vue'
@@ -55,6 +55,7 @@ import ScoreComments from './ScoreComments.vue'
 
 import type { ScoreMetadata } from 'webmscore/schemas'
 import ScorePack from '@/core/scorepack'
+import { fromCid as loadScorePack } from '@/core/scorepack/load'
 import { resolveUserProfile, UserProfile } from '@/core/identity'
 import { ipfsFetch } from '@/ipfs'
 
@@ -72,8 +73,8 @@ export default defineComponent({
     ScoreComments,
   },
   props: {
-    scorepack: {
-      type: undefined as any as PropType<Promise<ScorePack>>,
+    cid: {
+      type: String,
       required: true,
     },
   },
@@ -109,7 +110,7 @@ export default defineComponent({
     },
   },
   watch: {
-    scorepack: 'init',
+    cid: 'init',
   },
   methods: {
     async init (): Promise<void> {
@@ -120,7 +121,7 @@ export default defineComponent({
       this.metadata = undefined
 
       try {
-        this._scorepack = await this.scorepack
+        this._scorepack = await loadScorePack(this.cid, this['ipfs'])
         if (!this._scorepack) throw new Error('No ScorePack')
 
         this.mscz = ipfsFetch(this._scorepack.score, this['ipfs'])

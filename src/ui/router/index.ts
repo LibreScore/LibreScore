@@ -16,7 +16,7 @@ const routes: RouteRecordRaw[] = [
     props: (route) => {
       const cid = route.params.cid as string
       return {
-        scorepack: import('@/core/scorepack/load').then(f => f.fromCid(cid)),
+        cid,
       }
     },
   },
