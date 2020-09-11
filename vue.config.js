@@ -1,11 +1,14 @@
 
+process.env.VUE_APP_NAME = 'LibreScore'
+process.env.VUE_APP_ID = 'librescore.org'
+
 module.exports = {
   publicPath: './',
   filenameHashing: true,
   productionSourceMap: false,
   integrity: true,
   pwa: {
-    name: 'LibreScore',
+    name: process.env.VUE_APP_NAME,
     themeColor: '#3880FF',
     msTileColor: '#FFFFFF',
     manifestOptions: {
