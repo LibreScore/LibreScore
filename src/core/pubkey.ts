@@ -13,13 +13,26 @@ export const marshal = (pubKey: crypto.PublicKey): Buffer => {
   return crypto.keys.marshalPublicKey(pubKey)
 }
 
-export const hash = (pubKey: crypto.PublicKey): Promise<Buffer> => {
-  return pubKey.hash()
+const MAX_INLINE_KEY_LENGTH = 42
+const KEY_PREFIX = Buffer.from([0x00, 0x24])
+
+/**
+ * @param enableInlining see https://github.com/libp2p/go-libp2p-core/blob/master/peer/peer.go#L23-L34
+ */
+export const id = async (pubKey: crypto.PublicKey, enableInlining = false): Promise<string> => {
+  let h: Buffer
+  if (enableInlining && pubKey.bytes.length <= MAX_INLINE_KEY_LENGTH) {
+    // see https://github.com/libp2p/go-libp2p-core/blob/master/peer/peer.go#L228
+    h = Buffer.concat([KEY_PREFIX, pubKey.bytes]) // `mh.ID` is simply no hashing 
+  } else {
+    h = await pubKey.hash()
+  }
+  return multibase.encode('base58btc', h).toString().slice(1)
 }
 
-export const id = async (pubKey: crypto.PublicKey): Promise<string> => {
-  const h = await hash(pubKey)
-  return multibase.encode('base58btc', h).toString().slice(1)
+export const ipnsAddr = async (pubKey: crypto.PublicKey): Promise<string> => {
+  // IPNS name is simply the id of a public key
+  return `/ipns/${await id(pubKey, true)}`
 }
 
 /**

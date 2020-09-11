@@ -5,3 +5,6 @@ export interface Identity {
   publicKey (): Promise<crypto.PublicKey>;
   sign (data: Buffer): Promise<Buffer>;
 }
+
+export * from './provider'
+export * from './user-profile'

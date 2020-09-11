@@ -30,6 +30,7 @@
       >
         <score-info
           :description="description"
+          :userShortId="user && user.shortId"
           :userAvatar="user && user.avatar"
           :userName="user && user.name"
           :userUrl="user && user.url"
@@ -54,10 +55,13 @@ import ScoreComments from './ScoreComments.vue'
 
 import type { ScoreMetadata } from 'webmscore/schemas'
 import ScorePack from '@/core/scorepack'
-import { resolveUserProfile, UserProfile } from '@/core/identity/name'
-import { ipfsFetch, IPFS_CLIENT_INFURA } from '@/ipfs'
+import { resolveUserProfile, UserProfile } from '@/core/identity'
+import { ipfsFetch } from '@/ipfs'
 
 export default defineComponent({
+  inject: [
+    'ipfs',
+  ],
   components: {
     IonGrid,
     IonRow,
@@ -119,8 +123,11 @@ export default defineComponent({
         this._scorepack = await this.scorepack
         if (!this._scorepack) throw new Error('No ScorePack')
 
-        this.mscz = ipfsFetch(this._scorepack.score, IPFS_CLIENT_INFURA)
-        this.user = await resolveUserProfile(this._scorepack)
+        this.mscz = ipfsFetch(this._scorepack.score, this['ipfs'])
+
+        for await (const profile of resolveUserProfile(this._scorepack._sig!.publicKey, this['ipfs'])) {
+          this.user = profile
+        }
       } catch (err) {
         console.error(err)
       }

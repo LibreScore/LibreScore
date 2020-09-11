@@ -6,7 +6,7 @@
   >
     <ion-grid>
 
-      <ion-row v-if="userName">
+      <ion-row v-if="userShortId">
         <ion-col size="4">
           <ion-note>Uploader</ion-note>
         </ion-col>
@@ -17,9 +17,19 @@
           >
             <ion-chip class="ion-no-margin">
               <ion-avatar>
-                <img :src="userAvatar">
+                <ipfs-img
+                  :ipfs="ipfs"
+                  :cid="userAvatar"
+                  fallbackUrl="/img/icons/logo.svg"
+                />
               </ion-avatar>
-              <ion-label class="ion-text-center">{{ userName }}</ion-label>
+              <ion-label class="ion-text-center">
+                <template v-if="userName">
+                  {{ userName }}
+                  <br>
+                </template>
+                <ion-text color="primary">{{ userShortId }}</ion-text>
+              </ion-label>
             </ion-chip>
           </a>
         </ion-col>
@@ -98,12 +108,18 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
+import CID from 'cids'
 import type { ScoreMetadata } from 'webmscore/schemas'
 
-import { IonToolbar, IonGrid, IonRow, IonCol, IonChip, IonAvatar, IonLabel, IonNote, IonBadge, IonItemDivider } from '@ionic/vue'
+import { IonToolbar, IonGrid, IonRow, IonCol, IonChip, IonAvatar, IonLabel, IonText, IonNote, IonBadge, IonItemDivider } from '@ionic/vue'
 import { PrintTimeMixin, FmtTimeMixin } from '../mixins/str-fmt'
 
+import IpfsImg from '../components/IpfsImg.vue'
+
 export default defineComponent({
+  inject: [
+    'ipfs',
+  ],
   mixins: [
     PrintTimeMixin,
     FmtTimeMixin,
@@ -116,21 +132,25 @@ export default defineComponent({
     IonChip,
     IonAvatar,
     IonLabel,
+    IonText,
     IonNote,
     IonBadge,
     IonItemDivider,
+    IpfsImg,
   },
   props: {
     description: {
       type: String,
     },
     /** uploader */
+    userShortId: {
+      type: String,
+    },
     userName: {
       type: String,
     },
     userAvatar: {
-      type: String,
-      default: '/img/icons/logo.svg',
+      type: CID,
     },
     userUrl: {
       type: String,
