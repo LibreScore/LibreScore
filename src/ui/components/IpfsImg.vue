@@ -16,7 +16,7 @@ export default defineComponent({
       required: true,
     },
     cid: {
-      type: CID,
+      type: undefined as any as PropType<CID>,
     },
     fallbackUrl: {
       type: String,

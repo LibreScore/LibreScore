@@ -150,7 +150,7 @@ export default defineComponent({
       type: String,
     },
     userAvatar: {
-      type: CID,
+      type: undefined as any as PropType<CID>,
     },
     userUrl: {
       type: String,
