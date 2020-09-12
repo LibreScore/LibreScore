@@ -121,7 +121,7 @@
 <script lang="ts">
 import { defineComponent, createApp } from 'vue'
 import { IonCardHeader, IonCardSubtitle, IonList, IonItem, IonAvatar, IonImg, IonLabel, IonIcon, IonInput, IonSelect, IonSelectOption, IonSpinner, IonButtons, IonButton } from '@ionic/vue'
-import { Identity, listProviders, IdentityProvider, isProviderAvailable } from '@/core/identity'
+import { Identity, listProviders, IdentityProvider, isProviderAvailable } from '@/identity'
 import { chevronUp, chevronDown } from 'ionicons/icons'
 
 import { showModal } from '../mixins/modal'

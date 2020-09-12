@@ -8,8 +8,8 @@ import { MetamaskIdentityProvider } from './metamask'
  */
 export const PROVIDERS: IdentityProvider[] = [
   // default identity providers
-  WebauthnIdentityProvider,
   MetamaskIdentityProvider,
+  WebauthnIdentityProvider,
 ]
 
 interface BaseInput {

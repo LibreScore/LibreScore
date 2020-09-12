@@ -56,7 +56,7 @@ import ScoreComments from './ScoreComments.vue'
 import type { ScoreMetadata } from 'webmscore/schemas'
 import ScorePack from '@/core/scorepack'
 import { fromCid as loadScorePack } from '@/core/scorepack/load'
-import { resolveUserProfile, UserProfile } from '@/core/identity'
+import { resolveUserProfile, UserProfile } from '@/identity'
 import { ipfsFetch } from '@/ipfs'
 
 export default defineComponent({

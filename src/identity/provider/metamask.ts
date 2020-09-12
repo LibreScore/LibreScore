@@ -25,6 +25,7 @@ export const metamaskAvailable = (): boolean => {
 export const MetamaskIdentityProvider: IdentityProvider<'version'> = {
   type: 'metamask',
   displayName: 'MetaMask',
+  summary: 'Go Passwordless!',
   logo: MetaMaskLogo,
 
   available: metamaskAvailable,

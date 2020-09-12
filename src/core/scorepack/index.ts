@@ -3,7 +3,7 @@
 import CID from 'cids'
 import dagCBOR from 'ipld-dag-cbor'
 import { FunctionKeys } from 'utility-types'
-import { Identity } from '../identity'
+import { Identity } from '@/identity'
 import * as PublicKey from '../pubkey'
 
 /**
