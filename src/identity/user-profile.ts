@@ -24,6 +24,8 @@ interface CustomProfile {
   url?: string;
 }
 
+export const FALLBACK_AVATAR = '/img/icons/logo.svg'
+
 /**
  * Resolve user profile
  */

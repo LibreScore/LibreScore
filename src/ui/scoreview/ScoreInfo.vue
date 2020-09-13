@@ -20,7 +20,7 @@
                 <ipfs-img
                   :ipfs="ipfs"
                   :cid="userAvatar"
-                  fallbackUrl="/img/icons/logo.svg"
+                  :fallbackUrl="fallbackUserAvatar"
                 />
               </ion-avatar>
               <ion-label class="ion-text-center">
@@ -110,6 +110,7 @@
 import { defineComponent, PropType } from 'vue'
 import CID from 'cids'
 import type { ScoreMetadata } from 'webmscore/schemas'
+import { FALLBACK_AVATAR } from '@/identity'
 
 import { IonToolbar, IonGrid, IonRow, IonCol, IonChip, IonAvatar, IonLabel, IonText, IonNote, IonBadge, IonItemDivider } from '@ionic/vue'
 import { PrintTimeMixin, FmtTimeMixin } from '../mixins/str-fmt'
@@ -170,6 +171,11 @@ export default defineComponent({
     metadata: {
       type: Object as PropType<ScoreMetadata>,
     },
+  },
+  data () {
+    return {
+      fallbackUserAvatar: FALLBACK_AVATAR,
+    }
   },
   computed: {
     instruments (): string[] {
