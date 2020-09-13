@@ -28,13 +28,18 @@ export const FALLBACK_AVATAR = '/img/icons/logo.svg'
 
 export type UserPubKeyType = PublicKey.PublicKey | Buffer
 
+export const normalizeKey = (pubKey: UserPubKeyType): PublicKey.PublicKey => {
+  if (Buffer.isBuffer(pubKey)) {
+    pubKey = PublicKey.unmarshal(pubKey)
+  }
+  return pubKey
+}
+
 /**
  * Resolve user profile
  */
 export const resolveUserProfile = async function* (pubKey: UserPubKeyType, ipfs: IPFS): AsyncGenerator<UserProfile> {
-  if (Buffer.isBuffer(pubKey)) {
-    pubKey = PublicKey.unmarshal(pubKey)
-  }
+  pubKey = normalizeKey(pubKey)
 
   const shortId = await PublicKey.shortId(pubKey)
 

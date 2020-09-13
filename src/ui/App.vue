@@ -87,6 +87,11 @@ export default defineComponent({
     top: 1.8px;
   }
 
+  .text-center {
+    display: block;
+    text-align: center;
+  }
+
   .app-bg {
     background: var(--ion-color-base, #f4f5f8);
   }

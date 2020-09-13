@@ -1,5 +1,4 @@
 <template>
-  <!-- todo: refactor -->
   <div v-show="false">
     <div
       ref="root"
@@ -32,6 +31,11 @@
         style="align-self: center; flex: 1;"
       />
 
+      <user-profile-box
+        v-if="stage === 2"
+        :publicKey="pubKey"
+      />
+
       <ion-buttons
         v-if="stage === 0 || stage === 2"
         class="app-modal-buttons"
@@ -54,9 +58,11 @@
 <script lang="ts">
 import { defineComponent, createApp } from 'vue'
 import { IonCardHeader, IonCardSubtitle, IonList, IonSpinner, IonButtons, IonButton } from '@ionic/vue'
-import { Identity, listProviders, IdentityProvider } from '@/identity'
+import { Identity, listProviders, IdentityProvider, UserPubKeyType } from '@/identity'
+import type IPFS from 'ipfs'
 
 import AuthMethodItem from './AuthMethodItem.vue'
+import UserProfileBox from './UserProfileBox.vue'
 import { showModal } from '../mixins/modal'
 
 type AuthMethod = IdentityProvider
@@ -72,12 +78,14 @@ const AuthModal = defineComponent({
     IonButtons,
     IonButton,
     AuthMethodItem,
+    UserProfileBox,
   },
   data () {
     return {
       modalTitle: '',
       authMethods: [] as AuthMethod[],
       stage: 0,
+      pubKey: undefined as UserPubKeyType | undefined,
       continueCb: (() => undefined) as (provider: IdentityProvider, inputs: object) => void,
       cancelCb: (): void => undefined,
       modalTitles: [
@@ -114,7 +122,7 @@ const AuthModal = defineComponent({
 
         // load user profile
         const pubKey = await identity.publicKey()
-        console.log(pubKey)
+        this.pubKey = pubKey
         this.stage++
 
         // wait for user response
@@ -141,11 +149,15 @@ const AuthModal = defineComponent({
 
 export default AuthModal
 
-export const requestIdentity = async (): Promise<Identity> => {
+/**
+ * @param ipfs - the `ipfs` injection
+ */
+export const requestIdentity = async (ipfs: IPFS): Promise<Identity> => {
   // create a void HTML element, and trick Vue 
   // to instantiate the `AuthModal` component
   const voidEl = document.createElement('div')
   const c = createApp(AuthModal)
+  c.provide('ipfs', ipfs)
   const vm = c.mount(voidEl) as InstanceType<typeof AuthModal>
 
   const identity = await vm.requestIdentity()
@@ -177,10 +189,6 @@ export const requestIdentity = async (): Promise<Identity> => {
   .app-modal-content {
     padding: 0;
     overflow-y: auto;
-  }
-
-  .app-modal-content > div {
-    border-bottom: solid 1px rgba(0, 0, 0, 0.13);
   }
 
   .app-modal-buttons {

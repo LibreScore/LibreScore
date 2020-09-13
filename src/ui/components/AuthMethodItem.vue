@@ -1,5 +1,5 @@
 <template>
-  <div class="app-bg">
+  <div class="app-bg auth-method-container">
     <ion-item
       :disabled="!available"
       button
@@ -145,6 +145,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
+  .auth-method-container {
+    border-bottom: solid 1px rgba(0, 0, 0, 0.13);
+  }
+
   .dropdown-item {
     margin-left: 2em;
     --border-width: 0 0 1px 2px;

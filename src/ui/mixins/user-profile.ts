@@ -17,6 +17,7 @@ export const UserProfileMixin = defineComponent({
   data () {
     return {
       profile: undefined as UserProfile | undefined,
+      status: '',
       fallbackUserAvatar: FALLBACK_AVATAR,
     }
   },
@@ -41,10 +42,18 @@ export const UserProfileMixin = defineComponent({
     async init (): Promise<void> {
       // reset 
       this.profile = undefined
+      this.status = 'loading'
 
-      for await (const profile of resolveUserProfile(this.publicKey, this['ipfs'])) {
-        this.profile = profile
+      try {
+        for await (const profile of resolveUserProfile(this.publicKey, this['ipfs'])) {
+          this.profile = profile
+        }
+      } catch (err) {
+        this.status = 'error'
+        throw err
       }
+
+      this.status = 'loaded'
     },
   },
   created () {
