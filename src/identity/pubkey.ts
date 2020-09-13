@@ -48,3 +48,12 @@ export const shortId = async (pubKey: crypto.PublicKey): Promise<string> => {
 }
 
 export type PublicKey = crypto.PublicKey
+
+export type PubKeyType = PublicKey | Buffer
+
+export const normalizeKey = (pubKey: PubKeyType): PublicKey => {
+  if (Buffer.isBuffer(pubKey)) {
+    pubKey = unmarshal(pubKey)
+  }
+  return pubKey
+}

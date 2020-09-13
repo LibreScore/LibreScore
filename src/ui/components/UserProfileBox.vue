@@ -72,8 +72,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { normalizeKey } from '@/identity'
-import { id } from '@/core/pubkey'
+import { normalizeKey, id } from '@/identity/pubkey'
 import IpfsImg from '../components/IpfsImg.vue'
 import { UserProfileMixin } from '../mixins/user-profile'
 
