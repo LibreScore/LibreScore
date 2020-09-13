@@ -24,16 +24,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import type CID from 'cids'
-import { FALLBACK_AVATAR, resolveUserProfile, UserProfile, UserPubKeyType } from '@/identity'
-
+import { defineComponent } from 'vue'
 import { IonChip, IonAvatar, IonLabel, IonText } from '@ionic/vue'
 import IpfsImg from '../components/IpfsImg.vue'
+import { UserProfileMixin } from '../mixins/user-profile'
 
 export default defineComponent({
   inject: [
     'ipfs',
+  ],
+  mixins: [
+    UserProfileMixin,
   ],
   components: {
     IonChip,
@@ -41,49 +42,6 @@ export default defineComponent({
     IonLabel,
     IonText,
     IpfsImg,
-  },
-  props: {
-    publicKey: {
-      type: undefined as any as PropType<UserPubKeyType>,
-      required: true,
-    },
-  },
-  data () {
-    return {
-      profile: undefined as UserProfile | undefined,
-      fallbackUserAvatar: FALLBACK_AVATAR,
-    }
-  },
-  computed: {
-    userShortId (): string | undefined {
-      return this.profile?.shortId
-    },
-    userName (): string | undefined {
-      return this.profile?.name
-    },
-    userAvatar (): CID | undefined {
-      return this.profile?.avatar
-    },
-    userUrl (): string | undefined {
-      return this.profile?.url
-    },
-  },
-  watch: {
-    publicKey: 'init',
-  },
-  methods: {
-    async init (): Promise<void> {
-      // reset 
-      this.profile = undefined
-
-      for await (const profile of resolveUserProfile(this.publicKey, this['ipfs'])) {
-        this.profile = profile
-      }
-    },
-  },
-  created () {
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
-    this.init()
   },
 })
 </script>
