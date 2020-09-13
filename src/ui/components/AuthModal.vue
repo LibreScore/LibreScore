@@ -19,9 +19,8 @@
         lines="full"
       >
         <auth-method-item
-          v-for="[p, available] of authMethods"
+          v-for="p of authMethods"
           :provider="p"
-          :available="available"
           :key="p.type"
           @continue="continueCb"
         ></auth-method-item>
@@ -55,13 +54,12 @@
 <script lang="ts">
 import { defineComponent, createApp } from 'vue'
 import { IonCardHeader, IonCardSubtitle, IonList, IonSpinner, IonButtons, IonButton } from '@ionic/vue'
-import { Identity, listProviders, IdentityProvider, isProviderAvailable } from '@/identity'
+import { Identity, listProviders, IdentityProvider } from '@/identity'
 
 import AuthMethodItem from './AuthMethodItem.vue'
 import { showModal } from '../mixins/modal'
 
-/** [provider, available] */
-type AuthMethod = [IdentityProvider, boolean]
+type AuthMethod = IdentityProvider
 
 export const ERR_USER_ABORTED = new Error('user aborted')
 
@@ -136,9 +134,7 @@ const AuthModal = defineComponent({
     },
     init (): void {
       this.stage = 0
-      this.authMethods = listProviders(false).map(p => {
-        return [p, isProviderAvailable(p)]
-      })
+      this.authMethods = listProviders(false)
     },
   },
 })
