@@ -192,15 +192,4 @@ export const requestIdentity = async (): Promise<Identity> => {
   .app-modal-buttons > ion-button {
     margin: 0;
   }
-
-  .dropdown-item {
-    margin-left: 2em;
-    --border-width: 0 0 1px 2px;
-    /* --background: #d7d8da; */
-  }
-
-  .dropdown-icon {
-    color: var(--ion-color-base);
-    font-size: 1.2em;
-  }
 </style>

@@ -10,11 +10,14 @@
       </ion-avatar>
       <ion-label>
         <h2>{{ provider.displayName }}</h2>
-        <p v-if="provider.summary">{{ provider.summary }}</p>
+        <p
+          v-if="provider.summary"
+          class="item-summary"
+        >{{ provider.summary }}</p>
       </ion-label>
       <ion-icon
         slot="end"
-        class="ion-color-dark dropdown-icon"
+        class="ion-color-dark dropdown-btn"
         :icon="show ? icons.chevronUp : icons.chevronDown"
       />
     </ion-item>
@@ -140,3 +143,19 @@ export default defineComponent({
   },
 })
 </script>
+
+<style scoped>
+  .dropdown-item {
+    margin-left: 2em;
+    --border-width: 0 0 1px 2px;
+  }
+
+  .dropdown-btn {
+    color: var(--ion-color-base);
+    font-size: 1.2em;
+  }
+
+  .item-summary {
+    white-space: normal;
+  }
+</style>
