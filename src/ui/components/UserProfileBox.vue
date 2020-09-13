@@ -16,14 +16,6 @@
         </ion-avatar>
 
         <ion-grid>
-          <ion-row>
-            <ion-col size="4">
-              <ion-note>User Name</ion-note>
-            </ion-col>
-            <ion-col>
-              {{ userName }}
-            </ion-col>
-          </ion-row>
 
           <ion-row>
             <ion-col size="4">
@@ -42,6 +34,16 @@
               <ion-text>{{ userFullId }}</ion-text>
             </ion-col>
           </ion-row>
+
+          <ion-row>
+            <ion-col size="4">
+              <ion-note>User Name</ion-note>
+            </ion-col>
+            <ion-col>
+              {{ userName }}
+            </ion-col>
+          </ion-row>
+
         </ion-grid>
 
       </ion-item>
