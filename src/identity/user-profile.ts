@@ -26,10 +26,12 @@ interface CustomProfile {
 
 export const FALLBACK_AVATAR = '/img/icons/logo.svg'
 
+export type UserPubKeyType = PublicKey.PublicKey | Buffer
+
 /**
  * Resolve user profile
  */
-export const resolveUserProfile = async function* (pubKey: PublicKey.PublicKey | Buffer, ipfs: IPFS): AsyncGenerator<UserProfile> {
+export const resolveUserProfile = async function* (pubKey: UserPubKeyType, ipfs: IPFS): AsyncGenerator<UserProfile> {
   if (Buffer.isBuffer(pubKey)) {
     pubKey = PublicKey.unmarshal(pubKey)
   }

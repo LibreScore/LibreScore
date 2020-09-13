@@ -30,10 +30,7 @@
       >
         <score-info
           :description="description"
-          :userShortId="user && user.shortId"
-          :userAvatar="user && user.avatar"
-          :userName="user && user.name"
-          :userUrl="user && user.url"
+          :userPublicKey="user"
           :tags="tags"
           :date="date"
           :metadata="metadata"
@@ -56,7 +53,7 @@ import ScoreComments from './ScoreComments.vue'
 import type { ScoreMetadata } from 'webmscore/schemas'
 import ScorePack from '@/core/scorepack'
 import { fromCid as loadScorePack } from '@/core/scorepack/load'
-import { resolveUserProfile, UserProfile } from '@/identity'
+import { UserPubKeyType } from '@/identity'
 import { ipfsFetch } from '@/ipfs'
 
 export default defineComponent({
@@ -82,7 +79,7 @@ export default defineComponent({
     return {
       // eslint-disable-next-line vue/no-reserved-keys
       _scorepack: undefined as ScorePack | undefined,
-      user: undefined as UserProfile | undefined,
+      user: undefined as UserPubKeyType | undefined,
       mscz: undefined as Promise<Uint8Array> | undefined,
       metadata: undefined as ScoreMetadata | undefined,
 
@@ -126,9 +123,7 @@ export default defineComponent({
 
         this.mscz = ipfsFetch(this._scorepack.score, this['ipfs'])
 
-        for await (const profile of resolveUserProfile(this._scorepack._sig!.publicKey, this['ipfs'])) {
-          this.user = profile
-        }
+        this.user = this._scorepack._sig?.publicKey
       } catch (err) {
         console.error(err)
       }

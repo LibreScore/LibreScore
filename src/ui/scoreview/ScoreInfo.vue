@@ -6,32 +6,12 @@
   >
     <ion-grid>
 
-      <ion-row v-if="userShortId">
+      <ion-row v-if="userPublicKey">
         <ion-col size="4">
           <ion-note>Uploader</ion-note>
         </ion-col>
         <ion-col>
-          <a
-            :href="userUrl"
-            target="_blank"
-          >
-            <ion-chip class="ion-no-margin">
-              <ion-avatar>
-                <ipfs-img
-                  :ipfs="ipfs"
-                  :cid="userAvatar"
-                  :fallbackUrl="fallbackUserAvatar"
-                />
-              </ion-avatar>
-              <ion-label class="ion-text-center">
-                <template v-if="userName">
-                  {{ userName }}
-                  <br>
-                </template>
-                <ion-text color="primary">{{ userShortId }}</ion-text>
-              </ion-label>
-            </ion-chip>
-          </a>
+          <user-chip :publicKey="userPublicKey" />
         </ion-col>
       </ion-row>
 
@@ -108,14 +88,12 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import CID from 'cids'
 import type { ScoreMetadata } from 'webmscore/schemas'
-import { FALLBACK_AVATAR } from '@/identity'
+import { UserPubKeyType } from '@/identity'
 
-import { IonToolbar, IonGrid, IonRow, IonCol, IonChip, IonAvatar, IonLabel, IonText, IonNote, IonBadge, IonItemDivider } from '@ionic/vue'
+import { IonToolbar, IonGrid, IonRow, IonCol, IonNote, IonBadge, IonItemDivider } from '@ionic/vue'
+import UserChip from '../components/UserChip.vue'
 import { PrintTimeMixin, FmtTimeMixin } from '../mixins/str-fmt'
-
-import IpfsImg from '../components/IpfsImg.vue'
 
 export default defineComponent({
   inject: [
@@ -130,31 +108,18 @@ export default defineComponent({
     IonGrid,
     IonRow,
     IonCol,
-    IonChip,
-    IonAvatar,
-    IonLabel,
-    IonText,
     IonNote,
     IonBadge,
     IonItemDivider,
-    IpfsImg,
+    UserChip,
   },
   props: {
     description: {
       type: String,
     },
     /** uploader */
-    userShortId: {
-      type: String,
-    },
-    userName: {
-      type: String,
-    },
-    userAvatar: {
-      type: undefined as any as PropType<CID>,
-    },
-    userUrl: {
-      type: String,
+    userPublicKey: {
+      type: undefined as any as PropType<UserPubKeyType>,
     },
     /** Tags */
     tags: {
@@ -171,11 +136,6 @@ export default defineComponent({
     metadata: {
       type: Object as PropType<ScoreMetadata>,
     },
-  },
-  data () {
-    return {
-      fallbackUserAvatar: FALLBACK_AVATAR,
-    }
   },
   computed: {
     instruments (): string[] {
