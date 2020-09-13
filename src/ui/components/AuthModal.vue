@@ -18,79 +18,13 @@
         class="app-modal-content"
         lines="full"
       >
-        <div
-          v-for="[p, available, states] of authMethods"
+        <auth-method-item
+          v-for="[p, available] of authMethods"
+          :provider="p"
+          :available="available"
           :key="p.type"
-          class="app-bg"
-        >
-          <ion-item
-            :disabled="!available"
-            button
-            @click="states.show = !states.show"
-          >
-            <ion-avatar slot="start">
-              <ion-img :src="p.logo" />
-            </ion-avatar>
-            <ion-label>
-              <h2>{{ p.displayName }}</h2>
-              <p v-if="p.summary">{{ p.summary }}</p>
-            </ion-label>
-            <ion-icon
-              slot="end"
-              class="ion-color-dark dropdown-icon"
-              :icon="states.show ? icons.chevronUp : icons.chevronDown"
-            />
-          </ion-item>
-
-          <ion-item
-            class="dropdown-item"
-            v-show="states.show"
-            v-for="(config, name) in p.inputs"
-            :key="name"
-          >
-            <ion-label position="stacked">{{ config.description }}</ion-label>
-            <ion-select
-              v-if="config.type == 'select'"
-              interface="popover"
-              :disabled="config.disabled"
-              :value="config.default"
-              @ionChange="(e) => states.inputs[name] = e.detail.value"
-            >
-              <ion-select-option
-                v-for="o of config.options"
-                :value="o"
-                :key="o"
-              >{{ o }}</ion-select-option>
-            </ion-select>
-            <ion-input
-              v-else
-              :placeholder="config.placeholder"
-              :disabled="config.disabled"
-              :required="config.required"
-              :value="config.default"
-              @ionChange="(e) => states.inputs[name] = e.detail.value"
-            />
-          </ion-item>
-
-          <ion-item
-            v-if="typeof p.createIdentity === 'function'"
-            v-show="states.show"
-            class="dropdown-item"
-            color="secondary"
-            button
-            detail
-            @click="p.createIdentity(states.inputs)"
-          >Create Credential</ion-item>
-
-          <ion-item
-            v-show="states.show"
-            class="dropdown-item"
-            color="primary"
-            button
-            detail
-            @click="continueCb(p, states.inputs)"
-          >Authenticate</ion-item>
-        </div>
+          @continue="continueCb"
+        ></auth-method-item>
       </ion-list>
 
       <ion-spinner
@@ -120,14 +54,14 @@
 
 <script lang="ts">
 import { defineComponent, createApp } from 'vue'
-import { IonCardHeader, IonCardSubtitle, IonList, IonItem, IonAvatar, IonImg, IonLabel, IonIcon, IonInput, IonSelect, IonSelectOption, IonSpinner, IonButtons, IonButton } from '@ionic/vue'
+import { IonCardHeader, IonCardSubtitle, IonList, IonSpinner, IonButtons, IonButton } from '@ionic/vue'
 import { Identity, listProviders, IdentityProvider, isProviderAvailable } from '@/identity'
-import { chevronUp, chevronDown } from 'ionicons/icons'
 
+import AuthMethodItem from './AuthMethodItem.vue'
 import { showModal } from '../mixins/modal'
 
-/** [provider, available, states] */
-type AuthMethod = [IdentityProvider, boolean, object]
+/** [provider, available] */
+type AuthMethod = [IdentityProvider, boolean]
 
 export const ERR_USER_ABORTED = new Error('user aborted')
 
@@ -136,17 +70,10 @@ const AuthModal = defineComponent({
     IonCardHeader,
     IonCardSubtitle,
     IonList,
-    IonItem,
-    IonAvatar,
-    IonImg,
-    IonLabel,
-    IonIcon,
-    IonInput,
-    IonSelect,
-    IonSelectOption,
     IonSpinner,
     IonButtons,
     IonButton,
+    AuthMethodItem,
   },
   data () {
     return {
@@ -158,12 +85,8 @@ const AuthModal = defineComponent({
       modalTitles: [
         'Select an Authentication Method',
         'Authorizing...',
-        'Confirmation',
+        'Confirmation. Is that you?',
       ],
-      icons: {
-        chevronUp,
-        chevronDown,
-      },
     }
   },
   methods: {
@@ -214,11 +137,7 @@ const AuthModal = defineComponent({
     init (): void {
       this.stage = 0
       this.authMethods = listProviders(false).map(p => {
-        const inputFields = Object.keys(p.inputs)
-        const inputs = {}
-        // assign keys for Vue reactivity hooks
-        inputFields.forEach(f => { inputs[f] = p.inputs[f].default })
-        return [p, isProviderAvailable(p), { show: false, inputs }]
+        return [p, isProviderAvailable(p)]
       })
     },
   },
