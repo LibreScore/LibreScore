@@ -2,6 +2,7 @@
 import { Identity } from '../'
 import { WebauthnIdentityProvider } from './webauthn'
 import { MetamaskIdentityProvider } from './metamask'
+import { KeyStringIdentityProvider } from './key'
 
 /**
  * The immutable registry of all identity providers
@@ -10,6 +11,7 @@ export const PROVIDERS: IdentityProvider[] = [
   // default identity providers
   MetamaskIdentityProvider,
   WebauthnIdentityProvider,
+  KeyStringIdentityProvider,
 ]
 
 interface BaseInput {
