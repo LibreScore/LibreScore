@@ -73,6 +73,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { normalizeKey, id } from '@/identity/pubkey'
+
+import { IonList, IonItem, IonAvatar, IonGrid, IonRow, IonCol, IonNote, IonText, IonProgressBar } from '@ionic/vue'
 import IpfsImg from '../components/IpfsImg.vue'
 import { UserProfileMixin } from '../mixins/user-profile'
 
@@ -84,6 +86,15 @@ export default defineComponent({
     UserProfileMixin,
   ],
   components: {
+    IonList,
+    IonItem,
+    IonAvatar,
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonNote,
+    IonText,
+    IonProgressBar,
     IpfsImg,
   },
   data () {
