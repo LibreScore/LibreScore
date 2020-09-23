@@ -1,6 +1,7 @@
 
 import crypto from 'libp2p-crypto'
 import multibase from 'multibase'
+import varint from 'varint'
 
 /**
  * future-proof to support more key types 
@@ -18,7 +19,7 @@ export const hex = (pubKey: crypto.PublicKey): string => {
 }
 
 const MAX_INLINE_KEY_LENGTH = 42
-const KEY_PREFIX = Buffer.from([0x00, 0x24])
+const IDENTITY_PREFIX = Buffer.from([0x00])
 
 /**
  * @param enableInlining see https://github.com/libp2p/go-libp2p-core/blob/master/peer/peer.go#L23-L34
@@ -27,7 +28,8 @@ export const id = async (pubKey: crypto.PublicKey, enableInlining = false): Prom
   let h: Buffer
   if (enableInlining && pubKey.bytes.length <= MAX_INLINE_KEY_LENGTH) {
     // see https://github.com/libp2p/go-libp2p-core/blob/master/peer/peer.go#L228
-    h = Buffer.concat([KEY_PREFIX, pubKey.bytes]) // `mh.ID` is simply no hashing 
+    const len = Buffer.from(varint.encode(pubKey.bytes.length))
+    h = Buffer.concat([IDENTITY_PREFIX, len, pubKey.bytes]) // `mh.ID` is simply no hashing 
   } else {
     h = await pubKey.hash()
   }
