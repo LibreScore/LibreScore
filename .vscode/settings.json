@@ -5,6 +5,7 @@
         "typescript",
         "vue",
     ],
+    "vetur.validation.template": false,
     "editor.tabSize": 2,
     "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
     "typescript.format.insertSpaceBeforeFunctionParenthesis": true,
