@@ -4,7 +4,7 @@
     class="page404"
   >
     <ion-text
-      class="main-text"
+      class="main-text text-center"
       color="primary"
     >404 Not Found</ion-text>
   </ion-toolbar>
@@ -24,8 +24,6 @@ export default defineComponent({
   }
 
   .main-text {
-    display: block;
-    text-align: center;
     font-size: var(--main-text-size);
     font-weight: var(--main-text-weight);
   }
