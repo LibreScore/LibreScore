@@ -64,6 +64,22 @@
         </ion-col>
       </ion-row>
 
+      <ion-row v-if="sources && sources.length">
+        <ion-col size="4">
+          <ion-note>Sources</ion-note>
+        </ion-col>
+        <ion-col>
+          <a
+            v-for="s of sources"
+            :key="s.name"
+            :href="s.url"
+            target="_blank"
+          >
+            <ion-badge class="score-tag">{{ s.name }}</ion-badge>
+          </a>
+        </ion-col>
+      </ion-row>
+
       <ion-row style="margin-bottom: 0.5em;">
         <ion-col>
           <ion-item-divider
@@ -90,6 +106,7 @@
 import { defineComponent, PropType } from 'vue'
 import type { ScoreMetadata } from 'webmscore/schemas'
 import { UserPubKeyType } from '@/identity'
+import { Source } from '@/core/scorepack'
 
 import { IonToolbar, IonGrid, IonRow, IonCol, IonNote, IonBadge, IonItemDivider } from '@ionic/vue'
 import UserChip from '../components/UserChip.vue'
@@ -124,6 +141,10 @@ export default defineComponent({
     /** Tags */
     tags: {
       type: Array as PropType<string[]>,
+    },
+    /** Sources */
+    sources: {
+      type: Array as PropType<Source[]>,
     },
     /** Upload Date */
     date: {

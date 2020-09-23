@@ -32,6 +32,7 @@
           :description="description"
           :userPublicKey="user"
           :tags="tags"
+          :sources="sources"
           :date="date"
           :metadata="metadata"
         ></score-info>
@@ -51,7 +52,7 @@ import ScoreInfo from './ScoreInfo.vue'
 import ScoreComments from './ScoreComments.vue'
 
 import type { ScoreMetadata } from 'webmscore/schemas'
-import ScorePack from '@/core/scorepack'
+import ScorePack, { Source } from '@/core/scorepack'
 import { fromCid as loadScorePack } from '@/core/scorepack/load'
 import { UserPubKeyType } from '@/identity'
 import { ipfsFetch } from '@/ipfs'
@@ -98,6 +99,9 @@ export default defineComponent({
     },
     tags (): string[] | undefined {
       return this._scorepack?.tags
+    },
+    sources (): Source[] | undefined {
+      return this._scorepack?.source
     },
     date (): Date | undefined {
       if (!this._scorepack) return // no scorepack
