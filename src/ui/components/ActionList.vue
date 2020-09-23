@@ -1,17 +1,22 @@
 <template>
   <ion-list>
-    <template v-for="group of groups">
-      <ion-item-divider :key="group.name">
+    <template
+      v-for="group of groups"
+      :key="group.name"
+    >
+      <ion-item-divider>
         <ion-label>
           {{ group.name }}
         </ion-label>
       </ion-item-divider>
 
-      <template v-for="(action, i) of group.list">
+      <template
+        v-for="(action, i) of group.list"
+        :key="action.label"
+      >
         <action-item
           :lines="i + 1 >= group.list.length ? 'none' : undefined"
           :actionFn="action.fn"
-          :key="group.name + action.label"
         >{{ action.label }}</action-item>
       </template>
     </template>
