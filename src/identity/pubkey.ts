@@ -11,7 +11,7 @@ export const unmarshal = (buf: Buffer): crypto.PublicKey => {
 }
 
 export const marshal = (pubKey: crypto.PublicKey): Buffer => {
-  return crypto.keys.marshalPublicKey(pubKey)
+  return Buffer.from(crypto.keys.marshalPublicKey(pubKey))
 }
 
 export const hex = (pubKey: crypto.PublicKey): string => {
@@ -31,7 +31,7 @@ export const id = async (pubKey: crypto.PublicKey, enableInlining = false): Prom
     const len = Buffer.from(varint.encode(pubKey.bytes.length))
     h = Buffer.concat([IDENTITY_PREFIX, len, pubKey.bytes]) // `mh.ID` is simply no hashing 
   } else {
-    h = await pubKey.hash()
+    h = Buffer.from(await pubKey.hash())
   }
   return multibase.encode('base58btc', h).toString().slice(1)
 }

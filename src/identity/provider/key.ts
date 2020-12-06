@@ -37,7 +37,7 @@ export const KeyStringIdentityProvider: IdentityProvider<'encoding' | 'key'> = {
 
     switch (inputs.encoding) {
       case 'multibase':
-        keyBuf = multibase.decode(inputs.key)
+        keyBuf = Buffer.from(multibase.decode(inputs.key))
         break
       case 'hex string':
         keyBuf = Buffer.from(inputs.key, 'hex')

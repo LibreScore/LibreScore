@@ -13,8 +13,9 @@ export const wrapPrivateKey = (key: crypto.PrivateKey): Identity => {
     async publicKey () { // eslint-disable-line @typescript-eslint/require-await
       return key.public
     },
-    sign (data) {
-      return key.sign(data)
+    async sign (data) {
+      const buf = await key.sign(data)
+      return Buffer.from(buf)
     },
   }
   return identity
