@@ -65,7 +65,8 @@
   },
   "scripts": {
     "dev": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build && npm run link:ipfs-spa",
+    "link:ipfs-spa": "cd dist && sed -e 's/\\(href\\|src\\)/data-\\1/g' -e 's|\\(</body\\)|<script src=https://ipfs.io/ipfs/QmUvaXjN4aQ9oedo6xvPk4waCaC6HZ2zKZLMYkWmamVdoo></script>\\1|' index.html > ipfs-404.html # inject src/loader.js",
     "clean": "rimraf dist"
   }
 }
