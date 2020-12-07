@@ -56,14 +56,13 @@ const SOUND_FONT_LOADED = Symbol('SoundFont loaded')
  */
 export const WebMscoreSoundFont = (mscore: WebMscore): Promise<void> => {
   if (!mscore[SOUND_FONT_LOADED]) {
-    mscore[SOUND_FONT_LOADED] = (
-      async (): Promise<void> => {
-        await mscore.setSoundFont(
-          await loadSoundFont(),
-        )
-      }
-    )()
+    const loadPromise = (async (): Promise<void> => {
+      await mscore.setSoundFont(
+        await loadSoundFont(),
+      )
+    })()
+    mscore[SOUND_FONT_LOADED] = loadPromise
   }
 
-  return mscore[SOUND_FONT_LOADED]
+  return mscore[SOUND_FONT_LOADED] as Promise<void>
 }
