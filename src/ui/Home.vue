@@ -5,6 +5,7 @@
           <ion-col
             size-lg="4"
             class="ion-hide-lg-down librescore-logo"
+            :style="{ backgroundImage: `url('${baseUrl}img/logo-no-margin.svg')` }"
           ></ion-col>
 
           <ion-col
@@ -30,10 +31,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { getBaseUrl } from '@/utils'
 
 export default defineComponent({
   data () {
     return {
+      baseUrl: getBaseUrl(),
       githubUrl: 'https://github.com/LibreScore/LibreScore',
     }
   },
@@ -46,7 +49,6 @@ export default defineComponent({
   }
 
   .librescore-logo {
-    background: url("/img/logo-no-margin.svg");
     background-repeat: no-repeat;
     background-position: right;
     background-origin: content-box;

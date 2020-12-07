@@ -5,7 +5,7 @@
         <ion-title>
           <router-link to="/">
             <img
-              :src="publicPath+'img/logo-text.svg'"
+              :src="baseUrl+'img/logo-text.svg'"
               class="librescore-text-logo"
             >
           </router-link>
@@ -24,6 +24,7 @@ import { defineComponent } from 'vue'
 import { IonApp, IonHeader, IonToolbar, IonContent, IonTitle } from '@ionic/vue'
 
 import { IPFS_CLIENT_INFURA } from '@/ipfs'
+import { getBaseUrl } from '@/utils'
 
 export default defineComponent({
   components: {
@@ -40,7 +41,7 @@ export default defineComponent({
   },
   data () {
     return {
-      publicPath: process.env.BASE_URL,
+      baseUrl: getBaseUrl(),
     }
   },
 })

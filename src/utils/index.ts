@@ -15,3 +15,18 @@ export const sleep = (ms: number): Promise<void> => {
 export const isDev = (): boolean => {
   return process?.env?.NODE_ENV === 'development'
 }
+
+export const getBaseUrl = (): string | '' => {
+  // respect `BASE_URL` environment variable
+  if (process?.env?.BASE_URL) {
+    return process.env.BASE_URL
+  }
+
+  // respect <base> tag
+  const baseEl = document.querySelector('base')
+  if (baseEl) {
+    return baseEl.href
+  }
+
+  return ''
+}
