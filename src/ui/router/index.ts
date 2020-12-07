@@ -27,8 +27,21 @@ const routes: RouteRecordRaw[] = [
   },
 ]
 
+/**
+ * Workaround for HTML5 history routing on IPFS HTTP Gateways  
+ * see @/loader.js
+ */
+const getRouterBase = (pathname: string = location?.pathname): string | undefined => {
+  const l = pathname.split('/')
+  // ['', 'ipfs', 'QmHash...', ...]
+  const isOnGateway = l.length >= 4 && ['ipfs', 'ipns'].includes(l[1])
+  if (isOnGateway) {
+    return l.slice(0, 3).join('/')
+  }
+}
+
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(getRouterBase()),
   routes,
 })
 
