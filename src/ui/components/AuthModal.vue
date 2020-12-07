@@ -86,7 +86,7 @@ const AuthModal = defineComponent({
       authMethods: [] as AuthMethod[],
       stage: 0,
       pubKey: undefined as UserPubKeyType | undefined,
-      continueCb: (() => undefined) as (provider: IdentityProvider, inputs: object) => void,
+      continueCb: (() => undefined) as (provider: IdentityProvider, inputs: Record<string, any>) => void,
       cancelCb: (): void => undefined,
       modalTitles: [
         'Select an Authentication Method',
@@ -105,7 +105,7 @@ const AuthModal = defineComponent({
 
       try {
         // wait for user response
-        const [provider, inputs]: [IdentityProvider, object] = await new Promise((resolve, reject) => {
+        const [provider, inputs]: [IdentityProvider, Record<string, any>] = await new Promise((resolve, reject) => {
           this.continueCb = (...args): void => {
             resolve(args)
           }
