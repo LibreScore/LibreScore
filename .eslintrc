@@ -14,6 +14,9 @@
     "rules": {
         "no-useless-constructor": "off",
         "@typescript-eslint/no-useless-constructor": "error",
+        "no-use-before-define": "off",
+        "@typescript-eslint/no-use-before-define": "error",
+        "no-undef": "off",
         "no-dupe-class-members": "off",
         "no-void": "off",
         "dot-notation": "off",
@@ -29,6 +32,8 @@
         "@typescript-eslint/no-unsafe-return": "off",
         "@typescript-eslint/no-unsafe-member-access": "off",
         "vue/no-deprecated-slot-attribute": "off",
+        // "@typescript-eslint/member-ordering": "warn",
+        // "@typescript-eslint/consistent-type-imports": "warn",
         "no-trailing-spaces": [
             "error",
             {
