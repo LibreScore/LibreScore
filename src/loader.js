@@ -9,26 +9,15 @@
 
 // Written in ES5 for compatibility
 (function () {
-  function loadResources (attrName) {
-    document.querySelectorAll('[data-' + attrName + ']').forEach(function (e) {
-      e[attrName] = e.dataset[attrName]
-      delete e.dataset[attrName]
-    })
-  }
+  var l = location.pathname.split('/') // ['', 'ipfs', 'QmHash...', ...]
+  var isOnGateway = l.length >= 4 && (l[1] == 'ipfs' || l[1] == 'ipns')
 
-  var l = location.pathname.split('/'); // ['', 'ipfs', 'QmHash...', ...]
-  var isOnGateway = l.length >= 4 && (l[1] == 'ipfs' || l[1] == 'ipns');
-
-  var base = isOnGateway ? l.slice(0, 3).join('/') : '';
+  var base = isOnGateway ? l.slice(0, 3).join('/') : ''
   base += '/'
 
   // set document base url
-  var baseEl = document.createElement('base')
+  var baseEl = document.querySelector('base')
   baseEl.href = base
-  document.head.appendChild(baseEl)
-
-  loadResources('href') // css (<link>)
-  loadResources('src')  // js  (<script>)
 
   document.currentScript.remove()
 })()

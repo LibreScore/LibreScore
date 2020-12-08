@@ -2,11 +2,15 @@
 <html lang="en">
 
 <head>
+  <base href="/">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <link rel="icon" href="<%= BASE_URL %>favicon.ico">
   <title><%= VUE_APP_NAME %></title>
+
+  <script><%= htmlWebpackPlugin.options.loaderScript %></script>
+
+  <link rel="icon" href="<%= BASE_URL %>favicon.ico">
 
   <link href="<%= BASE_URL %>webmscore.lib.data" rel="prefetch">
   <link href="<%= BASE_URL %>webmscore.lib.wasm" rel="prefetch">
@@ -20,7 +24,5 @@
   <div id="app"></div>
   <!-- built files will be auto injected -->
 </body>
-
-<script><%= htmlWebpackPlugin.options.loaderScript %></script>
 
 </html>
