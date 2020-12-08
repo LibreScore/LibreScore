@@ -8,5 +8,5 @@ import { ScorePack } from '@/core/scorepack'
  */
 export const fromCid = async (cid: CID | string, ipfs: IPFS): Promise<ScorePack> => {
   const block = await ipfs.block.get(cid)
-  return ScorePack.from(block.data)
+  return ScorePack.from(Buffer.from(block.data))
 }
