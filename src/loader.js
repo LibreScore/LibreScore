@@ -19,13 +19,16 @@
   var l = location.pathname.split('/'); // ['', 'ipfs', 'QmHash...', ...]
   var isOnGateway = l.length >= 4 && (l[1] == 'ipfs' || l[1] == 'ipns');
 
-  if (isOnGateway) {
-    var base = l.slice(0, 3).join('/') + '/';
-    // set document base url
-    document.head.innerHTML += '<base href="' + base + '">'
-    loadResources('href') // css (<link href>)
-    loadResources('src')  // js  (<script src>)
-  }
+  var base = isOnGateway ? l.slice(0, 3).join('/') : '';
+  base += '/'
+
+  // set document base url
+  var baseEl = document.createElement('base')
+  baseEl.href = base
+  document.head.appendChild(baseEl)
+
+  loadResources('href') // css (<link>)
+  loadResources('src')  // js  (<script>)
 
   document.currentScript.remove()
 })()

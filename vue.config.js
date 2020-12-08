@@ -1,9 +1,13 @@
 
+const fs = require('fs')
+const LOADER_SCRIPT = fs.readFileSync('./src/loader.js', 'utf-8')
+
 process.env.VUE_APP_NAME = 'LibreScore'
 process.env.VUE_APP_ID = 'librescore.org'
+process.env.VUE_APP_VERSION = require('./package.json').version
 
 module.exports = {
-  publicPath: '/',
+  publicPath: './',
   filenameHashing: true,
   productionSourceMap: false,
   integrity: true,
@@ -32,5 +36,15 @@ module.exports = {
       appleTouchIcon: 'img/icons/logo.svg',
       msTileImage: 'img/icons/logo.svg',
     },
+  },
+  chainWebpack: config => {
+    config.plugin('html')
+      .tap(args => {
+        // disable minification
+        args[0].minify = false
+        // custom property
+        args[0].loaderScript = LOADER_SCRIPT
+        return args
+      })
   },
 }

@@ -17,26 +17,5 @@ export const isDev = (): boolean => {
 }
 
 export const getBaseUrl = (): string | '' => {
-  // respect `BASE_URL` environment variable
-  if (process?.env?.BASE_URL) {
-    return process.env.BASE_URL
-  }
-
-  // respect <base> tag
-  const baseEl = document.querySelector('base')
-  if (baseEl) {
-    return baseEl.href
-  }
-
-  // Workaround for HTML5 history routing on IPFS HTTP Gateways  
-  // see @/loader.js
-  const l = location.pathname.split('/')
-  // ['', 'ipfs', 'QmHash...', ...]
-  const isOnGateway = l.length >= 4 && ['ipfs', 'ipns'].includes(l[1])
-  if (isOnGateway) {
-    return l.slice(0, 3).join('/')
-  }
-
-  // origin root
-  return '/'
+  return process?.env?.BASE_URL || ''
 }
