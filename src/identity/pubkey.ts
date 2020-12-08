@@ -29,11 +29,12 @@ export const id = async (pubKey: crypto.PublicKey, enableInlining = false): Prom
   if (enableInlining && pubKey.bytes.length <= MAX_INLINE_KEY_LENGTH) {
     // see https://github.com/libp2p/go-libp2p-core/blob/master/peer/peer.go#L228
     const len = Buffer.from(varint.encode(pubKey.bytes.length))
-    h = Buffer.concat([IDENTITY_PREFIX, len, pubKey.bytes]) // `mh.ID` is simply no hashing 
+    h = Buffer.concat([IDENTITY_PREFIX, len, Buffer.from(pubKey.bytes)]) // `mh.ID` is simply no hashing 
   } else {
     h = Buffer.from(await pubKey.hash())
   }
-  return multibase.encode('base58btc', h).toString().slice(1)
+  const encoded: Buffer = Buffer.from(multibase.encode('base58btc', h))
+  return encoded.toString().slice(1)
 }
 
 export const ipnsAddr = async (pubKey: crypto.PublicKey): Promise<string> => {
