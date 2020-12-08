@@ -1,6 +1,9 @@
 
 const fs = require('fs')
+const { minify } = require('terser')
+
 const LOADER_SCRIPT = fs.readFileSync('./src/loader.js', 'utf-8')
+const LOADER_SCRIPT_MIN = minify(LOADER_SCRIPT).code
 
 process.env.VUE_APP_NAME = 'LibreScore'
 process.env.VUE_APP_ID = 'librescore.org'
@@ -40,10 +43,8 @@ module.exports = {
   chainWebpack: config => {
     config.plugin('html')
       .tap(args => {
-        // disable minification
-        args[0].minify = false
         // custom property
-        args[0].loaderScript = LOADER_SCRIPT
+        args[0].loaderScript = LOADER_SCRIPT_MIN
         return args
       })
   },
