@@ -28,5 +28,15 @@ export const getBaseUrl = (): string | '' => {
     return baseEl.href
   }
 
-  return ''
+  // Workaround for HTML5 history routing on IPFS HTTP Gateways  
+  // see @/loader.js
+  const l = location.pathname.split('/')
+  // ['', 'ipfs', 'QmHash...', ...]
+  const isOnGateway = l.length >= 4 && ['ipfs', 'ipns'].includes(l[1])
+  if (isOnGateway) {
+    return l.slice(0, 3).join('/')
+  }
+
+  // origin root
+  return '/'
 }

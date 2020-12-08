@@ -3,7 +3,7 @@ process.env.VUE_APP_NAME = 'LibreScore'
 process.env.VUE_APP_ID = 'librescore.org'
 
 module.exports = {
-  publicPath: './',
+  publicPath: '/',
   filenameHashing: true,
   productionSourceMap: false,
   integrity: true,
