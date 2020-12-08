@@ -1,5 +1,5 @@
 
-import { popoverController } from '@ionic/vue/dist/index'
+import { popoverController } from '@ionic/vue'
 
 export const showPopover = async (ev: MouseEvent, slot: HTMLElement): Promise<void> => {
   const popover = await popoverController.create({
@@ -7,6 +7,7 @@ export const showPopover = async (ev: MouseEvent, slot: HTMLElement): Promise<vo
     event: ev,
     showBackdrop: true,
   })
+  popover.delegate = undefined
   await popover.present()
 }
 

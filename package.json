@@ -22,7 +22,7 @@
     ".eslintrc"
   ],
   "dependencies": {
-    "@ionic/vue": "^5.3.0-dev.202007242208.cd66b6b",
+    "@ionic/vue": "^5.5.1",
     "@librescore/fonts": "^0.2.1",
     "@librescore/sf3": "^0.2.1",
     "file-saver": "^2.0.5",

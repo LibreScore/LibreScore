@@ -44,7 +44,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import { IonRange, IonLabel, IonToolbar, IonButtons, IonButton, IonIcon } from '@ionic/vue/dist/index'
+import { IonRange, IonLabel, IonToolbar, IonButtons, IonButton, IonIcon } from '@ionic/vue'
 import { pauseOutline, playOutline, playSkipBackOutline, expandOutline } from 'ionicons/icons'
 
 import type WebMscore from 'webmscore'

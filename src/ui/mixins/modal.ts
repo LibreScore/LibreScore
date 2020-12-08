@@ -1,5 +1,5 @@
 
-import { modalController } from '@ionic/vue/dist/index'
+import { modalController } from '@ionic/vue'
 
 /**
  * A temporary workaround for `@ionic/vue` modal until the package reaches stable
@@ -11,6 +11,7 @@ export const showModal = async (slot: HTMLElement, cssClass?: string | string[])
     backdropDismiss: false,
     cssClass,
   })
+  modal.delegate = undefined
   await modal.present()
   return modal
 }

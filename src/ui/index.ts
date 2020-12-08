@@ -1,6 +1,6 @@
 
 import { createApp } from 'vue'
-import { IonicVue } from '@ionic/vue/dist/index'
+import { IonicVue } from '@ionic/vue'
 import router from './router'
 
 import App from './App.vue'
