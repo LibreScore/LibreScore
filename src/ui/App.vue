@@ -23,7 +23,7 @@
 import { defineComponent } from 'vue'
 import { IonApp, IonHeader, IonToolbar, IonContent, IonTitle } from '@ionic/vue'
 
-import { IPFS_CLIENT_INFURA } from '@/ipfs'
+import { ipfsInstance } from '@/ipfs'
 import { getBaseUrl } from '@/utils'
 
 export default defineComponent({
@@ -36,7 +36,7 @@ export default defineComponent({
   },
   provide () {
     return {
-      ipfs: IPFS_CLIENT_INFURA,
+      ipfs: ipfsInstance,
     }
   },
   data () {
