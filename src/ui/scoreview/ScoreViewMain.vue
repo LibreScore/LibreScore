@@ -222,8 +222,8 @@ export default defineComponent({
     async downloadMIDI (): Promise<void> {
       await this._saveFile('midiFile', 'saveMidi', [], 'midi', 'audio/midi')
     },
-    async downloadAudio (format: Parameters<WebMscore['saveAudio']>[0]): Promise<void> {
-      await this._saveFile('audioFile', 'saveAudio', [format], format, `audio/${format}`)
+    async downloadAudio (format: Parameters<WebMscore['saveAudio']>[0], mime = `audio/${format}`): Promise<void> {
+      await this._saveFile('audioFile', 'saveAudio', [format], format, mime)
     },
     async printPDF (): Promise<void> {
       if (!this.pdfUrl) {
@@ -256,7 +256,7 @@ export default defineComponent({
         [
           { label: 'Print', fn: (): Promise<void> => this.printPDF(), disabled: true },
           { label: 'Share', fn: (): void => { void 0 }, disabled: true },
-          { label: 'Download Audio', fn: (): Promise<void> => this.downloadAudio('ogg'), disabled: true },
+          { label: 'Download Audio', fn: (): Promise<void> => this.downloadAudio('mp3', 'audio/mpeg'), disabled: true },
         ],
       ]
 
@@ -294,7 +294,7 @@ export default defineComponent({
   created () {
     // single instance only (no component reusing)
     // set `key` attribute on this component
-    return this.init()
+    return this['init']()
   },
   async beforeUnmount () {
     // release resources
