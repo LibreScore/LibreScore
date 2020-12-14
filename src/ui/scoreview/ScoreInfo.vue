@@ -160,7 +160,12 @@ export default defineComponent({
   },
   computed: {
     instruments (): string[] {
-      return []
+      if (!this.metadata) return []
+      const names = new Set<string>()
+      this.metadata.parts.forEach(p => {
+        names.add(p.instrumentName)
+      })
+      return [...names.values()]
     },
     pages (): number | undefined {
       return this.metadata?.pages
