@@ -64,8 +64,8 @@
   },
   "scripts": {
     "dev": "vue-cli-service serve",
-    "build:spa": "vue-cli-service build",
-    "build": "npm run build:spa && npm run link:ipfs-spa",
+    "build": "vue-cli-service build",
+    "build:dev": "npm run build -- --mode development",
     "link:ipfs-spa": "cd dist && ln index.html ipfs-404.html",
     "clean": "rimraf dist"
   }
