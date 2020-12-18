@@ -52,6 +52,14 @@ module.exports = {
       appleTouchIcon: 'img/icons/logo.svg',
       msTileImage: 'img/icons/logo.svg',
     },
+    workboxOptions: {
+      // https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-webpack-plugin.GenerateSW
+      exclude: [
+        '_redirects',
+        'webmscore.lib.wasm.js',
+        'webmscore.lib.js.mem',
+      ],
+    },
   },
   chainWebpack: config => {
     config.plugin('html')
