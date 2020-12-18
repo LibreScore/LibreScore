@@ -144,8 +144,8 @@ export default defineComponent({
      * Request the sheet slides to be fullscreen
      */
     fullScreen (): Promise<void> {
-      const el = this.$parent?.$refs.slides as HTMLElement
-      return el.requestFullscreen()
+      const { $el } = this.$parent?.$refs.slides as { $el: HTMLIonSlidesElement }
+      return $el.requestFullscreen()
     },
   },
   mounted () {

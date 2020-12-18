@@ -197,7 +197,7 @@ export default defineComponent({
     },
 
     async slideIndexChanged (): Promise<void> {
-      const sidesEl = this.$refs.slides as any
+      const { $el: sidesEl } = this.$refs.slides as { $el: HTMLIonSlidesElement }
       const index = await sidesEl.getActiveIndex()
       this.currentPage = index
     },
@@ -205,7 +205,7 @@ export default defineComponent({
      * Transition to the specified sheet page slide
      */
     slideTo (pageIndex: number): Promise<void> {
-      const sidesEl = this.$refs.slides as any
+      const { $el: sidesEl } = this.$refs.slides as { $el: HTMLIonSlidesElement }
       return sidesEl.slideTo(pageIndex, 0 /* speed */) // also changes `this.currentPage`
     },
 
