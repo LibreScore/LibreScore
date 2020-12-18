@@ -4,6 +4,7 @@ import type WebMscore from 'webmscore'
 import type { SynthRes } from 'webmscore/schemas'
 import type { PromiseType } from 'utility-types'
 import createTree from 'functional-red-black-tree'
+import { AudioContext } from '@/utils/audio-ctx'
 import { sleep } from '@/utils'
 
 type SynthFn = PromiseType<ReturnType<WebMscore['synthAudio']>>
