@@ -15,7 +15,6 @@ module.exports = {
   productionSourceMap: false,
   integrity: true,
   transpileDependencies: [
-    'webmscore',
     /@?(ipfs|ipld|libp2p|multi|it).*/,
     '@ionic/vue',
     '@vue/reactivity',
