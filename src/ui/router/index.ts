@@ -1,6 +1,8 @@
 
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import { getBaseUrl } from '@/utils'
+import { updatePageMetadata } from '@/ui/seo'
+
 import Home from '../Home.vue'
 import NotFoundPage from '../404.vue'
 
@@ -31,6 +33,14 @@ const routes: RouteRecordRaw[] = [
 const router = createRouter({
   history: createWebHistory(getBaseUrl()),
   routes,
+})
+
+router.afterEach(() => {
+  // clear page metadata
+  updatePageMetadata({
+    title: undefined,
+    description: undefined,
+  })
 })
 
 export default router

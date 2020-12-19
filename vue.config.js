@@ -3,6 +3,7 @@ const fs = require('fs')
 const { minify } = require('terser')
 
 process.env.VUE_APP_NAME = 'LibreScore'
+process.env.VUE_APP_DESC = 'Sheet music. Free. Forever.'
 process.env.VUE_APP_ID = 'librescore.org'
 process.env.VUE_APP_VERSION = require('./package.json').version
 

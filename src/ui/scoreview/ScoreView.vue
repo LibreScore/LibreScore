@@ -56,6 +56,7 @@ import ScorePack, { Source } from '@/core/scorepack'
 import { fromCid as loadScorePack } from '@/core/scorepack/load'
 import { UserPubKeyType } from '@/identity'
 import { ipfsFetch } from '@/ipfs'
+import { updatePageMetadata } from '@/ui/seo'
 
 export default defineComponent({
   inject: [
@@ -112,6 +113,11 @@ export default defineComponent({
   },
   watch: {
     cid: 'init',
+    _scorepack (scorepack: ScorePack | undefined) {
+      const title = scorepack?.title
+      const desc = scorepack?.summary || scorepack?.description
+      updatePageMetadata({ title: title?.trim(), description: desc?.trim() || '' })
+    },
   },
   methods: {
     async init (): Promise<void> {

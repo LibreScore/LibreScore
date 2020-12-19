@@ -15,7 +15,7 @@
             <ion-text
               class="main-text"
               color="primary"
-            >Sheet music. Free. Forever.</ion-text>
+            >{{ appDesc }}</ion-text>
             <ion-text>
               With LibreScore, you can get all the sheet music you need – <b>for free</b>.
               <br>
@@ -37,6 +37,7 @@ export default defineComponent({
   data () {
     return {
       baseUrl: getBaseUrl(),
+      appDesc: process.env.VUE_APP_DESC || '',
       githubUrl: 'https://github.com/LibreScore/LibreScore',
     }
   },
