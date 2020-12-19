@@ -2,12 +2,21 @@
 const fs = require('fs')
 const { minify } = require('terser')
 
-const LOADER_SCRIPT = fs.readFileSync('./src/loader.js', 'utf-8')
-const LOADER_SCRIPT_MIN = minify(LOADER_SCRIPT).code
-
 process.env.VUE_APP_NAME = 'LibreScore'
 process.env.VUE_APP_ID = 'librescore.org'
 process.env.VUE_APP_VERSION = require('./package.json').version
+
+const LOADER_SCRIPT = fs.readFileSync('./src/loader.js', 'utf-8')
+const LOADER_SCRIPT_MIN = minify(LOADER_SCRIPT).code
+
+const LANDING_SCRIPT = `
+var el = document.getElementById('app-err')
+if (typeof WebAssembly === 'undefined') {
+  el.textContent = 'Please Update Your Browser'
+} else {
+  el.textContent = '${process.env.VUE_APP_NAME} is loading…'
+}`
+const LANDING_SCRIPT_MIN = minify(LANDING_SCRIPT).code
 
 module.exports = {
   publicPath: './',
@@ -66,6 +75,7 @@ module.exports = {
       .tap(args => {
         // custom property
         args[0].loaderScript = LOADER_SCRIPT_MIN
+        args[0].landingScript = LANDING_SCRIPT_MIN
         return args
       })
   },
