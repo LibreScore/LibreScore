@@ -1,7 +1,7 @@
 <template>
   <ion-toolbar
     color="light"
-    class="page404"
+    class="app-err-page"
   >
     <ion-text
       class="main-text text-center"
@@ -17,13 +17,13 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
-  .page404 {
+<style>
+  .app-err-page {
     display: flex;
     height: 100%;
   }
 
-  .main-text {
+  .app-err-page > .main-text {
     font-size: var(--main-text-size);
     font-weight: var(--main-text-weight);
   }
