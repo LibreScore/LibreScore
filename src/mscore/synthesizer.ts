@@ -201,27 +201,31 @@ export class Synthesizer {
       for (; when < end; when += f.duration) {
         const sourceEnd = Math.min(when + f.duration, end)
 
-        // smoothing
-        // 
-        // think of a simple sine wave
-        //  .-.   -.
-        // /   \    \   
-        //      '-   '-'
-        // discontinuity -> audible clicks
-        // 
-        // reduce the amplitude (gain) at the point of discontinuity  
-        //  -> less discontinuous  
-        //  -> smoother
-        const gainNode = this.audioCtx.createGain()
-        gainNode.gain.value = 0
-        gainNode.gain.setTargetAtTime(1, when, this.GAIN_TIME_CONSTANT)
-        gainNode.gain.setTargetAtTime(0, sourceEnd - this.GAIN_TIME_CONSTANT * this.GAIN_TIME_N, this.GAIN_TIME_CONSTANT)
-        gainNode.connect(this.destination)
+        let dest = this.destination
+        if (speed !== 1.0) { // not default speed
+          // smoothing
+          // 
+          // think of a simple sine wave
+          //  .-.   -.
+          // /   \    \   
+          //      '-   '-'
+          // discontinuity -> audible clicks
+          // 
+          // reduce the amplitude (gain) at the point of discontinuity  
+          //  -> less discontinuous  
+          //  -> smoother
+          const gainNode = this.audioCtx.createGain()
+          gainNode.gain.value = 0
+          gainNode.gain.setTargetAtTime(1, when, this.GAIN_TIME_CONSTANT)
+          gainNode.gain.setTargetAtTime(0, sourceEnd - this.GAIN_TIME_CONSTANT * this.GAIN_TIME_N, this.GAIN_TIME_CONSTANT)
+          gainNode.connect(dest)
+          dest = gainNode
+        }
 
         // An AudioBufferSourceNode can only be played once
         source = this.audioCtx.createBufferSource()
         source.buffer = f.audioBuffer
-        source.connect(gainNode)
+        source.connect(dest)
 
         source.start(when)
         source.stop(sourceEnd)
