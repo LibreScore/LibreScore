@@ -94,7 +94,8 @@
       </ion-row>
       <ion-row style="margin-bottom: 0;">
         <ion-col>
-          <ion-note>{{ description }}</ion-note>
+          <!-- pre-wrap: Sequences of white space are preserved. Lines are broken at newline characters, and as necessary to fill line boxes. -->
+          <ion-note style=" white-space: pre-wrap;">{{ description }}</ion-note>
         </ion-col>
       </ion-row>
 
