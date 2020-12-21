@@ -108,6 +108,7 @@ export default defineComponent({
 
       pdfFile: undefined as Promise<File> | undefined,
       midiFile: undefined as Promise<File> | undefined,
+      mxlFile: undefined as Promise<File> | undefined,
       audioFile: undefined as Promise<File> | undefined,
 
       actions: undefined as ActionGroups[] | undefined,
@@ -222,6 +223,9 @@ export default defineComponent({
     async downloadMIDI (): Promise<void> {
       await this._saveFile('midiFile', 'saveMidi', [], 'midi', 'audio/midi')
     },
+    async downloadMusicXml (): Promise<void> {
+      await this._saveFile('mxlFile', 'saveMxl', [], 'mxl', 'application/vnd.recordare.musicxml')
+    },
     async downloadAudio (format: Parameters<WebMscore['saveAudio']>[0], mime = `audio/${format}`): Promise<void> {
       await this._saveFile('audioFile', 'saveAudio', [format], format, mime)
     },
@@ -232,8 +236,9 @@ export default defineComponent({
       }
       window.open(this.pdfUrl)
     },
-    async _saveFile (varName: string, fnName: string, args: any[], ext: string, mime?: string, download = true): Promise<File> {
+    async _saveFile<Fn extends 'savePdf' | 'saveMidi' | 'saveAudio' | 'saveMxl'> (varName: string, fnName: Fn, args: Parameters<WebMscore[Fn]>, ext: string, mime?: string, download = true): Promise<File> {
       if (!this[varName]) {
+        // @ts-ignore
         this[varName] = this.mscore[fnName](...args).then((data) => {
           return new File([data], `${this.filename}.${ext}`, { type: mime })
         })
@@ -255,7 +260,7 @@ export default defineComponent({
         ],
         [
           { label: 'Print', fn: (): Promise<void> => this.printPDF(), disabled: true },
-          { label: 'Share', fn: (): void => { void 0 }, disabled: true },
+          { label: 'Download MXL', fn: (): Promise<void> => this.downloadMusicXml(), disabled: true },
           { label: 'Download Audio', fn: (): Promise<void> => this.downloadAudio('mp3', 'audio/mpeg'), disabled: true },
         ],
       ]
