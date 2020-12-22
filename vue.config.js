@@ -14,6 +14,7 @@ const LANDING_SCRIPT = `
 var el = document.getElementById('app-err')
 if (typeof WebAssembly === 'undefined') {
   el.textContent = 'Please Update Your Browser'
+  document.getElementById('app').removeAttribute('id') // persist notice
 } else {
   el.textContent = '${process.env.VUE_APP_NAME} is loading…'
 }`
