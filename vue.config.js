@@ -23,7 +23,7 @@ const LANDING_SCRIPT_MIN = minify(LANDING_SCRIPT).code
 module.exports = {
   publicPath: './',
   filenameHashing: true,
-  productionSourceMap: false,
+  productionSourceMap: true,
   integrity: true,
   transpileDependencies: [
     /@?(ipfs|ipld|libp2p|multi|it).*/,
