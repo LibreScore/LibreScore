@@ -11,6 +11,7 @@
           :ipfs="ipfs"
           :cid="userAvatar"
           :fallbackUrl="fallbackUserAvatar"
+          :alt="'profile picture of user ' + userShortId"
         />
       </ion-avatar>
       <ion-label class="ion-text-center">

@@ -3,6 +3,7 @@
     <img
       class="sheet-img"
       :src="img"
+      :alt="alt"
     >
 
     <div
@@ -47,6 +48,9 @@ export default defineComponent({
     currentTime: {
       type: Number,
       default: NaN,
+    },
+    alt: {
+      type: String,
     },
   },
   emits: [

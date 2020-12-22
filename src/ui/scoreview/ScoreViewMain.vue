@@ -27,6 +27,7 @@
               :img="imgUrls[p]"
               :currentTime="currentTime"
               @seek="updatePlaybackTime"
+              :alt="`${filename} – page ${p + 1} of ${imgUrls.length}`"
             ></sheet-view>
 
             <!-- image loading -->

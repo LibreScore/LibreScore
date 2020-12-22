@@ -4,6 +4,7 @@
       class="thumbnail-img"
       :ipfs="ipfs"
       :cid="cid"
+      :alt="alt"
     />
   </div>
 </template>
@@ -24,6 +25,9 @@ export default defineComponent({
     cid: {
       type: undefined as any as PropType<CID>,
       required: true,
+    },
+    alt: {
+      type: String,
     },
   },
 })

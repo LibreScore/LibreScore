@@ -7,6 +7,7 @@
             <img
               :src="baseUrl+'img/logo-text.svg'"
               class="librescore-text-logo"
+              alt="LibreScore Logo"
             >
           </router-link>
         </ion-title>

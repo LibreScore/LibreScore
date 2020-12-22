@@ -1,6 +1,9 @@
 <template>
   <router-link :to="'/score/'+s.scorepack">
-    <score-thumbnail :cid="s.thumbnail" />
+    <score-thumbnail
+      :cid="s.thumbnail"
+      :alt="'Thumbnail of ' + s.title"
+    />
     <ion-title
       color="dark"
       class="ion-text-center"
