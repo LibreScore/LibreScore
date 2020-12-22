@@ -3,6 +3,7 @@
   <a
     :href="userUrl"
     target="_blank"
+    rel="noopener"
   >
     <ion-chip class="ion-no-margin">
       <ion-avatar>

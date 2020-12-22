@@ -74,6 +74,7 @@
             :key="s.name"
             :href="s.url"
             target="_blank"
+            rel="noopener"
           >
             <ion-badge class="score-tag">{{ s.name }}</ion-badge>
           </a>
