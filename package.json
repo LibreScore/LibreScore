@@ -34,6 +34,7 @@
     "register-service-worker": "^1.7.1",
     "vue": "^3.0.4",
     "vue-router": "^4.0.1",
+    "web-streams-polyfill": "^3.0.1",
     "webmscore": "^0.14.0"
   },
   "devDependencies": {
