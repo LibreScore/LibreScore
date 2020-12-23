@@ -154,11 +154,11 @@ export class Synthesizer {
 
     // create AudioBuffer
     // AudioBuffers can be reused for multiple plays of the sound
-    const buf = new AudioBuffer({
-      length: this.FRAME_LENGTH * synthResL.length,
-      numberOfChannels: this.CHANNELS,
-      sampleRate: this.SAMPLE_RATE,
-    })
+    const buf = this.audioCtx.createBuffer( // Safari does not support `AudioBuffer` constructor
+      this.CHANNELS, // numberOfChannels
+      this.FRAME_LENGTH * synthResL.length, // length
+      this.SAMPLE_RATE, // sampleRate
+    )
 
     const channelDataL = Array.from({ length: this.CHANNELS }).map((_, c) => {
       return buf.getChannelData(c)
