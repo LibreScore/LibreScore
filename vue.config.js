@@ -24,7 +24,7 @@ module.exports = {
   publicPath: './',
   filenameHashing: true,
   productionSourceMap: true,
-  integrity: true,
+  integrity: false,
   transpileDependencies: [
     /@?(ipfs|ipld|libp2p|multi|it).*/,
     '@ionic/vue',
