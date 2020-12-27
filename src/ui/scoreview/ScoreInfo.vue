@@ -72,7 +72,7 @@
           <a
             v-for="s of sources"
             :key="s.name"
-            :href="s.url"
+            :href="fmtUrl(s.url)"
             target="_blank"
             rel="noopener"
           >
@@ -112,7 +112,7 @@ import { Source } from '@/core/scorepack'
 
 import { IonToolbar, IonGrid, IonRow, IonCol, IonNote, IonBadge, IonItemDivider } from '@ionic/vue'
 import UserChip from '../components/UserChip.vue'
-import { PrintTimeMixin, FmtTimeMixin } from '../mixins/str-fmt'
+import { PrintTimeMixin, FmtTimeMixin, FmtUrlMixin } from '../mixins/str-fmt'
 
 export default defineComponent({
   inject: [
@@ -121,6 +121,7 @@ export default defineComponent({
   mixins: [
     PrintTimeMixin,
     FmtTimeMixin,
+    FmtUrlMixin,
   ],
   components: {
     IonToolbar,

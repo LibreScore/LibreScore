@@ -1,5 +1,5 @@
 
-import { printTime, fmtDate } from '@/utils/fmt'
+import { printTime, fmtDate, fmtUrl } from '@/utils/fmt'
 
 export const PrintTimeMixin = {
   methods: {
@@ -13,6 +13,14 @@ export const FmtTimeMixin = {
   methods: {
     fmtDate (date: Date): string {
       return fmtDate(date)
+    },
+  },
+}
+
+export const FmtUrlMixin = {
+  methods: {
+    fmtUrl (url: string): string {
+      return fmtUrl(url)
     },
   },
 }

@@ -21,3 +21,25 @@ export const fmtDate = (date: Date, locales = 'en-US'): string => {
     day: 'numeric',
   }).format(date)
 }
+
+/**
+ * Format ill-formed URL string
+ * 
+ * @example
+ * "https://example.comhttps://example.com/xxx" -> "https://example.com/xxx"
+ */
+export const fmtUrl = (url: string): string => {
+  try {
+    // is valid URL?
+    void new URL(url)
+
+    const m = url.match(/^(.*)\1/)
+    if (!m) {
+      return url
+    }
+
+    return url.replace(m[0], m[1])
+  } catch {
+    return url
+  }
+}
