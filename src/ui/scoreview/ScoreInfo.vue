@@ -81,24 +81,26 @@
         </ion-col>
       </ion-row>
 
-      <ion-row style="margin-bottom: 0.5em;">
-        <ion-col>
-          <ion-item-divider
-            color="light"
-            class="ion-no-padding"
-          >
-            <ion-note style="position: relative; bottom: -1em;">
-              Description
-            </ion-note>
-          </ion-item-divider>
-        </ion-col>
-      </ion-row>
-      <ion-row style="margin-bottom: 0;">
-        <ion-col>
-          <!-- pre-wrap: Sequences of white space are preserved. Lines are broken at newline characters, and as necessary to fill line boxes. -->
-          <ion-note style=" white-space: pre-wrap;">{{ description }}</ion-note>
-        </ion-col>
-      </ion-row>
+      <template v-if="description">
+        <ion-row style="margin-bottom: 0.5em;">
+          <ion-col>
+            <ion-item-divider
+              color="light"
+              class="ion-no-padding"
+            >
+              <ion-note style="position: relative; bottom: -1em;">
+                Description
+              </ion-note>
+            </ion-item-divider>
+          </ion-col>
+        </ion-row>
+        <ion-row style="margin-bottom: 0;">
+          <ion-col>
+            <!-- pre-wrap: Sequences of white space are preserved. Lines are broken at newline characters, and as necessary to fill line boxes. -->
+            <ion-note style="white-space: pre-wrap;">{{ description }}</ion-note>
+          </ion-col>
+        </ion-row>
+      </template>
 
     </ion-grid>
   </ion-toolbar>
