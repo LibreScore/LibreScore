@@ -11,4 +11,9 @@ export const ipfsInstance = Object.assign({}, IPFS_CLIENT_INFURA, {
     resolve: IPFS_CLIENT_IPFS_IO.dag.resolve,
     get: IPFS_CLIENT_IPFS_IO.dag.get,
   }),
+  // replace all read-only methods with the implementations from ipfs.io
+  cat: IPFS_CLIENT_IPFS_IO.cat,
+  block: Object.assign({}, IPFS_CLIENT_INFURA.block, {
+    get: IPFS_CLIENT_IPFS_IO.block.get,
+  }),
 })
