@@ -1,5 +1,6 @@
 
 import Dexie from 'dexie'
+import { idbReady } from '@/utils/idb-polyfill' // IndexedDB shim for Firefox private mode
 import { IndexingInfo } from './index'
 
 export type SORTING =
@@ -15,7 +16,10 @@ export class LocalIndex extends Dexie {
   db: Dexie.Table<IndexingInfo, string>;
 
   constructor () {
-    super('indexing')
+    super('indexing', {
+      indexedDB, // refresh its value
+      IDBKeyRange,
+    })
 
     // define indexes
     this.version(1).stores({
@@ -68,4 +72,4 @@ export class LocalIndex extends Dexie {
   }
 }
 
-export const localIndex = new LocalIndex()
+export const localIndex = idbReady.then(() => new LocalIndex())

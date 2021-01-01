@@ -56,11 +56,13 @@ export default defineComponent({
     sort: 'init',
   },
   methods: {
-    init () {
+    async init () {
       this.sheets = []
-      this.it = localIndex.iterate(this.sort)
+      this.it = (await localIndex).iterate(this.sort)
     },
     async fetchSheets (ev?: { target: HTMLIonInfiniteScrollElement }) {
+      await localIndex // secure that `localIndex` and `this.it` are ready
+
       const { value: results, done } = await this.it.next()
       if (results) {
         this.sheets.push(...results)
@@ -75,8 +77,8 @@ export default defineComponent({
       }
     },
   },
-  created () {
-    this.init()
+  async created () {
+    await this.init()
     void this.fetchSheets()
   },
 })
