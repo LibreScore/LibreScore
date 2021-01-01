@@ -26,6 +26,7 @@
     "@librescore/fonts": "^0.2.1",
     "@librescore/sf3": "^0.4.0",
     "abort-controller": "^3.0.0",
+    "dexie": "^3.0.3",
     "fast-text-encoding": "^1.0.3",
     "file-saver": "^2.0.5",
     "functional-red-black-tree": "^1.0.1",

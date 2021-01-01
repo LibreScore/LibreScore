@@ -1,4 +1,5 @@
 <template>
+  <div>
     <ion-toolbar color="light">
       <ion-grid id="home-header">
         <ion-row>
@@ -27,13 +28,43 @@
         </ion-row>
       </ion-grid>
     </ion-toolbar>
+
+    <div id="home-contents">
+      <ion-toolbar>
+        <ion-title
+          size="large"
+          style="font-size: 24px;"
+        >Newest sheets</ion-title>
+
+        <router-link
+          to="/upload"
+          slot="end"
+        >
+          <ion-text color="primary">upload ></ion-text>
+        </router-link>
+      </ion-toolbar>
+
+      <score-list />
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { IonGrid, IonRow, IonCol, IonText, IonToolbar, IonTitle } from '@ionic/vue'
 import { getBaseUrl } from '@/utils'
+import ScoreList from './scorelist/ScoreList.vue'
 
 export default defineComponent({
+  components: {
+    IonGrid,
+    IonRow,
+    IonCol,
+    IonText,
+    IonToolbar,
+    IonTitle,
+    ScoreList,
+  },
   data () {
     return {
       baseUrl: getBaseUrl(),
@@ -68,5 +99,9 @@ export default defineComponent({
     font-size: var(--main-text-size);
     font-weight: var(--main-text-weight);
     margin-bottom: 10px;
+  }
+
+  #home-contents {
+    margin: 3rem;
   }
 </style>

@@ -13,11 +13,13 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
+import { IonTitle } from '@ionic/vue'
 import { IndexingInfo } from '@/core/indexing'
 import ScoreThumbnail from './ScoreThumbnail.vue'
 
 export default defineComponent({
   components: {
+    IonTitle,
     ScoreThumbnail,
   },
   props: {
