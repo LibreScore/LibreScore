@@ -43,8 +43,8 @@ export const resolveUserProfile = async function* (pubKey: PublicKey.PubKeyType,
 
   const ref = await PublicKey.ipnsAddr(pubKey)
   // resolve CID by IPNS ref
-  const { cid } = await ipfs.dag.resolve(ref)
-  const result = await ipfs.dag.get(cid)
+  // const { cid } = await ipfs.dag.resolve(ref) // no need, as `dag.get` is implemented using `dag.resolve` and `block.get`
+  const result = await ipfs.dag.get(ref)
   const obj = result.value as CustomProfile
 
   yield {
