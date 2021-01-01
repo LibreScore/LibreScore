@@ -25,9 +25,7 @@
     "@ionic/vue": "^5.5.1",
     "@librescore/fonts": "^0.2.1",
     "@librescore/sf3": "^0.4.0",
-    "abort-controller": "^3.0.0",
     "dexie": "^3.0.3",
-    "fast-text-encoding": "^1.0.3",
     "file-saver": "^2.0.5",
     "functional-red-black-tree": "^1.0.1",
     "ipfs": "npm:@xmader/ipfs-core@^0.3.3",
@@ -35,7 +33,6 @@
     "register-service-worker": "^1.7.1",
     "vue": "^3.0.4",
     "vue-router": "^4.0.1",
-    "web-streams-polyfill": "^3.0.1",
     "webmscore": "^0.14.2"
   },
   "devDependencies": {
@@ -55,16 +52,19 @@
     "@vue/eslint-config-standard": "^6.0.0",
     "@vue/eslint-config-typescript": "^7.0.0",
     "@vue/test-utils": "^2.0.0-0",
+    "abort-controller": "^3.0.0",
     "eslint": "^7.15.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^5.0.0",
     "eslint-plugin-vue": "^7.2.0",
+    "fast-text-encoding": "^1.0.3",
     "rimraf": "^3.0.2",
     "typescript": "^4.1.2",
     "utility-types": "^3.10.0",
-    "vue-jest": "^5.0.0-0"
+    "vue-jest": "^5.0.0-0",
+    "web-streams-polyfill": "^3.0.1"
   },
   "scripts": {
     "serve": "vue-cli-service serve",
