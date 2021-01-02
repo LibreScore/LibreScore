@@ -1,4 +1,10 @@
 > 1%
-last 2 versions
-not IE 11
+last 2 versions and supports wasm
 not dead
+
+# Limited Support
+Firefox >= 52
+Chrome >= 66
+Opera >= 53 # based on Chromium 66
+Edge >= 18
+Safari >= 11
