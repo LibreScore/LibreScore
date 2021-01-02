@@ -48,7 +48,7 @@ import { IonRange, IonLabel, IonToolbar, IonButtons, IonButton, IonIcon } from '
 import { pauseOutline, playOutline, playSkipBackOutline, expandOutline } from 'ionicons/icons'
 
 import type WebMscore from 'webmscore'
-import { Synthesizer } from '@/mscore'
+import { Synthesizer } from '@/mscore/synthesizer'
 import { PrintTimeMixin } from '../mixins/str-fmt'
 
 export default defineComponent({

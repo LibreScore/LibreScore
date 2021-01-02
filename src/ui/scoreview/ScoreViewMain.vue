@@ -61,7 +61,8 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 
-import { WebMscoreLoad, Measures } from '@/mscore'
+import { WebMscoreLoad } from '@/mscore/init'
+import { Measures } from '@/mscore/measures'
 import type WebMscore from 'webmscore'
 import type { ScoreMetadata } from 'webmscore/schemas'
 import FileSaver from 'file-saver'

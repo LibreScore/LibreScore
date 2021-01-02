@@ -1,5 +1,5 @@
 
-import crypto from 'libp2p-crypto'
+import type crypto from 'libp2p-crypto'
 
 export interface Identity {
   publicKey (): Promise<crypto.PublicKey>;
@@ -7,6 +7,3 @@ export interface Identity {
 }
 
 export type { PubKeyType as UserPubKeyType } from './pubkey'
-
-export * from './provider'
-export * from './user-profile'

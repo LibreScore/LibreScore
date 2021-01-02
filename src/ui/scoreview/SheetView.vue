@@ -20,7 +20,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { toPercentage } from '@/utils/css'
-import { Measures, MeasureEl } from '@/mscore'
+import { Measures, MeasureEl } from '@/mscore/measures'
 
 export default defineComponent({
   props: {

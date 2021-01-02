@@ -77,7 +77,7 @@
 import { defineComponent, PropType } from 'vue'
 import { IonItem, IonAvatar, IonImg, IonLabel, IonIcon, IonInput, IonSelect, IonSelectOption } from '@ionic/vue'
 import { chevronUp, chevronDown } from 'ionicons/icons'
-import { IdentityProvider, isProviderAvailable } from '@/identity'
+import { IdentityProvider, isProviderAvailable } from '@/identity/provider'
 
 type ProviderOptions = Record<string, string | undefined>
 
