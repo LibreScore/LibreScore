@@ -366,7 +366,7 @@ prefersDark.addListener((mediaQuery) => toggleDarkTheme(mediaQuery.matches))
 
   @media screen and (prefers-color-scheme: dark) {
     .swiper-wrapper {
-      filter: invert(1) hue-rotate(180deg);
+      filter: opacity(0.6);
     }
   }
 
