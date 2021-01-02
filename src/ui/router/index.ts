@@ -4,6 +4,7 @@ import { getBaseUrl } from '@/utils'
 import { updatePageMetadata } from '@/ui/seo'
 
 import Home from '../Home.vue'
+import ScoreView from '../scoreview/ScoreView.vue'
 import NotFoundPage from '../404.vue'
 
 const routes: RouteRecordRaw[] = [
@@ -15,7 +16,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/score/:cid',
     name: 'Score',
-    component: () => import('../scoreview/ScoreView.vue'),
+    component: ScoreView,
     props: (route) => {
       const cid = route.params.cid as string
       return {
