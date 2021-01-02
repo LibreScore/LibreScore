@@ -2,7 +2,7 @@
 
 import type IPFS from 'ipfs'
 import CID from 'cids'
-import * as PublicKey from './pubkey'
+import type { PubKeyType } from './pubkey'
 
 export interface UserProfile extends CustomProfile {
   // generic profile
@@ -29,7 +29,9 @@ export const FALLBACK_AVATAR = '/img/icons/logo.svg'
 /**
  * Resolve user profile
  */
-export const resolveUserProfile = async function* (pubKey: PublicKey.PubKeyType, ipfs: IPFS): AsyncGenerator<UserProfile> {
+export const resolveUserProfile = async function* (pubKey: PubKeyType, ipfs: IPFS): AsyncGenerator<UserProfile> {
+  const PublicKey = await import('./pubkey') // code splitting
+
   pubKey = PublicKey.normalizeKey(pubKey)
 
   const shortId = await PublicKey.shortId(pubKey)
