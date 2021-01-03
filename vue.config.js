@@ -43,6 +43,7 @@ module.exports = {
     themeColor: '#3880FF',
     msTileColor: '#FFFFFF',
     manifestOptions: {
+      background_color: '#FFFFFF',
       icons: [
         {
           src: './img/icons/logo-192.png',
