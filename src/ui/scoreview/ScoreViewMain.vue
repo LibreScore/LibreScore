@@ -8,7 +8,10 @@
     </div>
 
     <template v-if="ready">
-      <div id="slides-container">
+      <div
+        id="slides-container"
+        ref="slides-container"
+      >
         <ion-slides
           ref="slides"
           :scrollbar="true"
@@ -150,9 +153,24 @@ export default defineComponent({
     },
     async currentTime (): Promise<void> {
       if (!isFinite(this.currentTime)) { return }
+
       const currentEl = this.measures.getElByTime(this.currentTime)
+      const { imgHeight } = this.measures
+
       if (currentEl.page !== this.currentPage) {
         return this.slideTo(currentEl.page)
+      }
+
+      // scroll the current measure element (highlighted) into the center of the viewport
+      const ctn = this.$refs['slides-container'] as HTMLDivElement
+      const scrollable = ctn.scrollHeight > ctn.clientHeight
+      if (scrollable) { // not in fullscreen mode
+        // only vertically scroll
+        // get the actual y-coordinate on page
+        const actualY = (currentEl.y + currentEl.sy / 2) / imgHeight * ctn.scrollHeight
+        // scroll top = top of the element - half of the scrollable viewport
+        const centralY = actualY - (ctn.clientHeight / 2)
+        ctn.scrollTo(0, centralY)
       }
     },
     mscz: 'init',
