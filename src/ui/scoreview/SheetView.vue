@@ -1,5 +1,8 @@
 <template>
-  <div class="sheet-container">
+  <div
+    class="sheet-container"
+    :class="{ 'full-height': isFullHeight }"
+  >
     <img
       class="sheet-img"
       :src="img"
@@ -56,6 +59,11 @@ export default defineComponent({
   emits: [
     'seek', // seek to time (ms)
   ],
+  data () {
+    return {
+      isFullHeight: true,
+    }
+  },
   computed: {
     /**
      * measure elements on the sheet page
@@ -103,10 +111,31 @@ export default defineComponent({
         left: toPercentage(e.x / this.imgWidth),
       }
     },
+    calRatio () {
+      const slideParent = this.$parent?.$el as HTMLIonSlideElement | undefined
+      if (slideParent) {
+        // calculate the aspect ratio of the container parent <ion-slide>
+        const { width, height } = slideParent.getBoundingClientRect()
+        const ratio = width / height
+
+        // is the sheet image consuming the whole height of .sheet-container?
+        this.isFullHeight = ratio > (this.imgWidth / this.imgHeight)
+      }
+    },
     onClick (e: MeasureEl): void {
       const time = this.measures.getTimeByEl(e)
       this.$emit('seek', time)
     },
+  },
+  mounted () {
+    /* eslint-disable @typescript-eslint/unbound-method */
+    document.addEventListener('fullscreenchange', this.calRatio) // on entering/exiting fullscreen mode
+    window.addEventListener('resize', this.calRatio) // on viewport resizes
+  },
+  beforeUnmount () {
+    // cleanup
+    document.removeEventListener('fullscreenchange', this.calRatio)
+    window.removeEventListener('resize', this.calRatio)
   },
 })
 </script>
@@ -118,6 +147,9 @@ export default defineComponent({
     /** https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_Block */
     /** So set to 'relative' here */
     position: relative;
+  }
+
+  .sheet-container.full-height {
     height: 100%;
   }
 
