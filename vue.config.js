@@ -55,6 +55,12 @@ module.exports = {
           sizes: '512x512',
           type: 'image/png',
         },
+        {
+          src: './img/icons/logo-maskable.png',
+          sizes: '192x192 512x512',
+          type: 'image/png',
+          purpose: 'maskable',
+        },
       ],
     },
     iconPaths: {
