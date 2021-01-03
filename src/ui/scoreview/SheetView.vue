@@ -62,6 +62,8 @@ export default defineComponent({
   data () {
     return {
       isFullHeight: true,
+      // https://davidwalsh.name/orientation-change
+      mql: window.matchMedia('(orientation: portrait)'),
     }
   },
   computed: {
@@ -131,15 +133,13 @@ export default defineComponent({
     /* eslint-disable @typescript-eslint/unbound-method */
     document.addEventListener('fullscreenchange', this.calRatio) // on entering/exiting fullscreen mode
     window.addEventListener('resize', this.calRatio) // on viewport resizes
-    // https://developer.mozilla.org/en-US/docs/Web/API/Window/orientationchange_event
-    // mobile browsers only
-    window.addEventListener('orientationchange', this.calRatio) // on device orientation changes
+    this.mql.addEventListener('change', this.calRatio) // on device orientation changes
   },
   beforeUnmount () {
     // cleanup
     document.removeEventListener('fullscreenchange', this.calRatio)
     window.removeEventListener('resize', this.calRatio)
-    window.removeEventListener('orientationchange', this.calRatio)
+    this.mql.removeEventListener('change', this.calRatio)
   },
 })
 </script>
