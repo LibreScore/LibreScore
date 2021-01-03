@@ -124,8 +124,6 @@ export default defineComponent({
   .sheet-img {
     background-size: contain;
     display: block;
-    width: 100%;
-    height: 100%;
     /** prevent dragging the image itself */
     pointer-events: none;
   }
