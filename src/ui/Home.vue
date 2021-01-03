@@ -50,10 +50,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, defineAsyncComponent } from 'vue'
 import { IonGrid, IonRow, IonCol, IonText, IonToolbar, IonTitle } from '@ionic/vue'
 import { getBaseUrl } from '@/utils'
-import ScoreList from './scorelist/ScoreList.vue'
 
 export default defineComponent({
   components: {
@@ -63,7 +62,7 @@ export default defineComponent({
     IonText,
     IonToolbar,
     IonTitle,
-    ScoreList,
+    ScoreList: defineAsyncComponent(() => import('./scorelist/ScoreList.vue')),
   },
   data () {
     return {

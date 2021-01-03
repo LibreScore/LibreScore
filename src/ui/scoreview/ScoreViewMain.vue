@@ -8,7 +8,11 @@
     </div>
 
     <template v-if="ready">
-      <div id="slides-container">
+      <div
+        id="slides-container"
+        ref="slides-container"
+        @wheel="sheetScrLk = false /** unlock upon a mousewheel scroll */"
+      >
         <ion-slides
           ref="slides"
           :scrollbar="true"
@@ -61,7 +65,8 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 
-import { WebMscoreLoad, Measures } from '@/mscore'
+import { WebMscoreLoad, soundFontReady } from '@/mscore/init'
+import { Measures } from '@/mscore/measures'
 import type WebMscore from 'webmscore'
 import type { ScoreMetadata } from 'webmscore/schemas'
 import FileSaver from 'file-saver'
@@ -114,6 +119,9 @@ export default defineComponent({
 
       actions: undefined as ActionGroups[] | undefined,
       pdfUrl: undefined as string | undefined,
+
+      /** scroll lock of the sheet slides-container */
+      sheetScrLk: true,
     }
   },
   computed: {
@@ -149,9 +157,24 @@ export default defineComponent({
     },
     async currentTime (): Promise<void> {
       if (!isFinite(this.currentTime)) { return }
+
       const currentEl = this.measures.getElByTime(this.currentTime)
+      const { imgHeight } = this.measures
+
       if (currentEl.page !== this.currentPage) {
         return this.slideTo(currentEl.page)
+      }
+
+      // scroll the current measure element (highlighted) into the center of the viewport
+      const ctn = this.$refs['slides-container'] as HTMLDivElement
+      const scrollable = ctn.scrollHeight > ctn.clientHeight
+      if (scrollable && this.sheetScrLk) { // not in fullscreen mode && scroll locked
+        // only vertically scroll
+        // get the actual y-coordinate on page
+        const actualY = (currentEl.y + currentEl.sy / 2) / imgHeight * ctn.scrollHeight
+        // scroll top = top of the element - half of the scrollable viewport
+        const centralY = actualY - (ctn.clientHeight / 2)
+        ctn.scrollTo(0, centralY)
       }
     },
     mscz: 'init',
@@ -202,6 +225,7 @@ export default defineComponent({
       const { $el: sidesEl } = this.$refs.slides as { $el: HTMLIonSlidesElement }
       const index = await sidesEl.getActiveIndex()
       this.currentPage = index
+      this.sheetScrLk = true // re-lock when switching between pages
     },
     /**
      * Transition to the specified sheet page slide
@@ -228,6 +252,8 @@ export default defineComponent({
       await this._saveFile('mxlFile', 'saveMxl', [], 'mxl', 'application/vnd.recordare.musicxml')
     },
     async downloadAudio (format: Parameters<WebMscore['saveAudio']>[0], mime = `audio/${format}`): Promise<void> {
+      // ensure the soundfont is loaded on this WebMscore instance 
+      await soundFontReady(this.mscore)
       await this._saveFile('audioFile', 'saveAudio', [format], format, mime)
     },
     async printPDF (): Promise<void> {

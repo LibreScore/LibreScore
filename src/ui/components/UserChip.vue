@@ -1,6 +1,7 @@
 
 <template>
-  <a
+  <component
+    :is="userUrl ? 'a' : 'div'"
     :href="userUrl"
     target="_blank"
     rel="noopener"
@@ -22,7 +23,7 @@
         <ion-text color="primary">{{ userShortId }}</ion-text>
       </ion-label>
     </ion-chip>
-  </a>
+  </component>
 </template>
 
 <script lang="ts">

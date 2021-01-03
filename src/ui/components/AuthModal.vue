@@ -58,7 +58,8 @@
 <script lang="ts">
 import { defineComponent, createApp } from 'vue'
 import { IonCardHeader, IonCardSubtitle, IonList, IonSpinner, IonButtons, IonButton } from '@ionic/vue'
-import { Identity, listProviders, IdentityProvider, UserPubKeyType } from '@/identity'
+import { Identity, UserPubKeyType } from '@/identity'
+import { listProviders, IdentityProvider } from '@/identity/provider'
 import type IPFS from 'ipfs'
 
 import AuthMethodItem from './AuthMethodItem.vue'

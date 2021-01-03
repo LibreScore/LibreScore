@@ -2,7 +2,8 @@
 import { defineComponent, PropType } from 'vue'
 
 import type CID from 'cids'
-import { FALLBACK_AVATAR, resolveUserProfile, UserProfile, UserPubKeyType } from '@/identity'
+import { UserPubKeyType } from '@/identity'
+import { FALLBACK_AVATAR, resolveUserProfile, UserProfile } from '@/identity/user-profile'
 
 /**
  * Require `this.ipfs` on component

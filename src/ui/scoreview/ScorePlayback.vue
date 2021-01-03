@@ -48,7 +48,8 @@ import { IonRange, IonLabel, IonToolbar, IonButtons, IonButton, IonIcon } from '
 import { pauseOutline, playOutline, playSkipBackOutline, expandOutline } from 'ionicons/icons'
 
 import type WebMscore from 'webmscore'
-import { Synthesizer } from '@/mscore'
+import { soundFontReady } from '@/mscore/init'
+import { Synthesizer } from '@/mscore/synthesizer'
 import { PrintTimeMixin } from '../mixins/str-fmt'
 
 export default defineComponent({
@@ -88,6 +89,7 @@ export default defineComponent({
     return {
       synthesizer: null as any as Synthesizer,
       playing: false,
+      seeking: false,
       playOnEnded: undefined as Promise<void> | undefined,
       abortCtrl: undefined as AbortController | undefined,
       icons: {
@@ -99,14 +101,33 @@ export default defineComponent({
     }
   },
   watch: {
-    currentTime (ms: number): void {
-      if (isFinite(ms)) {
-        this.synthesizer.time = ms / 1000 // convert to s
+    currentTime (ms: number, oldValue: number): void {
+      if (this.seeking) { // lock
+        return
+      }
+
+      oldValue = oldValue || 0
+      if (!isFinite(ms)) { // NaN
+        return
+      }
+
+      if (
+        ms > oldValue && // the new value is later in time
+        ms - oldValue < 500 // threshold = 500ms
+      ) { // normal playback
+        // noop
+      } else {
+        // trigger a force seek
+        void this.forceSeek(ms)
       }
     },
   },
   methods: {
     async play (): Promise<void> {
+      // ensure the soundfont is loaded on this WebMscore instance 
+      // the loading is already initiated when creating the WebMscore instance
+      await soundFontReady(this.mscore)
+
       this.playing = true
       this.abortCtrl = new AbortController()
 
@@ -127,18 +148,26 @@ export default defineComponent({
         this.play()
       }
     },
-    async reset (): Promise<void> {
+    async forceSeek (ms: number): Promise<void> {
       const playing = this.playing
+      this.seeking = true
 
       this.pause()
       await this.playOnEnded
 
-      this.$emit('seek', 0) // reset time
+      // seek/reset playback time
+      this.$emit('seek', ms)
+      this.synthesizer.time = ms / 1000 // convert to s
 
       await this.$nextTick()
       if (playing) {
         this.play()
       }
+
+      this.seeking = false
+    },
+    reset (): Promise<void> {
+      return this.forceSeek(0)
     },
     /**
      * Request the sheet slides to be fullscreen

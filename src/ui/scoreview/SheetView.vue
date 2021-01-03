@@ -1,5 +1,8 @@
 <template>
-  <div class="sheet-container">
+  <div
+    class="sheet-container"
+    :class="{ 'full-height': isFullHeight }"
+  >
     <img
       class="sheet-img"
       :src="img"
@@ -20,7 +23,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 import { toPercentage } from '@/utils/css'
-import { Measures, MeasureEl } from '@/mscore'
+import { Measures, MeasureEl } from '@/mscore/measures'
 
 export default defineComponent({
   props: {
@@ -56,6 +59,11 @@ export default defineComponent({
   emits: [
     'seek', // seek to time (ms)
   ],
+  data () {
+    return {
+      isFullHeight: true,
+    }
+  },
   computed: {
     /**
      * measure elements on the sheet page
@@ -103,10 +111,46 @@ export default defineComponent({
         left: toPercentage(e.x / this.imgWidth),
       }
     },
+    calRatio () {
+      const slideParent = this.$parent?.$el as HTMLIonSlideElement | undefined
+      if (slideParent) {
+        // calculate the aspect ratio of the container parent <ion-slide>
+        const { width, height } = slideParent.getBoundingClientRect()
+        const ratio = width / height
+
+        // is the sheet image consuming the whole height of .sheet-container?
+        this.isFullHeight = ratio > (this.imgWidth / this.imgHeight)
+      }
+    },
     onClick (e: MeasureEl): void {
       const time = this.measures.getTimeByEl(e)
       this.$emit('seek', time)
     },
+    async getSwiper () {
+      // the parent <ion-slides>
+      const slidesParent = this.$parent?.$parent?.$el as HTMLIonSlidesElement | undefined
+      if (slidesParent) {
+        const swiper = await slidesParent.getSwiper()
+        return swiper
+      }
+    },
+  },
+  async mounted () {
+    /* eslint-disable @typescript-eslint/unbound-method */
+
+    // on entering/exiting fullscreen mode
+    document.addEventListener('fullscreenchange', this.calRatio)
+
+    // listen the `resize` event on the underlying `swiper`
+    // see https://swiperjs.com/api/#events
+    const swiper = await this.getSwiper()
+    swiper?.on('resize', this.calRatio)
+  },
+  async beforeUnmount () {
+    // cleanup
+    document.removeEventListener('fullscreenchange', this.calRatio)
+    const swiper = await this.getSwiper()
+    swiper?.off('resize', this.calRatio)
   },
 })
 </script>
@@ -118,14 +162,15 @@ export default defineComponent({
     /** https://developer.mozilla.org/en-US/docs/Web/CSS/Containing_Block */
     /** So set to 'relative' here */
     position: relative;
+  }
+
+  .sheet-container.full-height {
     height: 100%;
   }
 
   .sheet-img {
     background-size: contain;
     display: block;
-    width: 100%;
-    height: 100%;
     /** prevent dragging the image itself */
     pointer-events: none;
   }

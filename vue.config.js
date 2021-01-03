@@ -43,6 +43,7 @@ module.exports = {
     themeColor: '#3880FF',
     msTileColor: '#FFFFFF',
     manifestOptions: {
+      background_color: '#FFFFFF',
       icons: [
         {
           src: './img/icons/logo-192.png',
@@ -53,6 +54,12 @@ module.exports = {
           src: './img/icons/logo-512.png',
           sizes: '512x512',
           type: 'image/png',
+        },
+        {
+          src: './img/icons/logo-maskable.png',
+          sizes: '192x192 512x512',
+          type: 'image/png',
+          purpose: 'maskable',
         },
       ],
     },

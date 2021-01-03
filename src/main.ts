@@ -1,4 +1,8 @@
 
+// PWA Service Worker
+// https://developers.google.com/web/tools/workbox/
+import './registerServiceWorker'
+
 // polyfills
 import 'fast-text-encoding' // TextEncoder & TextDecoder
 import 'abort-controller/polyfill' // AbortController
@@ -7,7 +11,6 @@ import '@/utils/body-polyfill' // Response.prototype.body
 import '@/utils/idb-polyfill' // IndexedDB shim for Firefox private mode
 
 import UI from './ui'
-import './registerServiceWorker'
 
 UI.mount('#app')
 
