@@ -11,6 +11,7 @@
       <div
         id="slides-container"
         ref="slides-container"
+        @wheel="sheetScrLk = false /** unlock upon a mousewheel scroll */"
       >
         <ion-slides
           ref="slides"
@@ -118,6 +119,9 @@ export default defineComponent({
 
       actions: undefined as ActionGroups[] | undefined,
       pdfUrl: undefined as string | undefined,
+
+      /** scroll lock of the sheet slides-container */
+      sheetScrLk: true,
     }
   },
   computed: {
@@ -164,7 +168,7 @@ export default defineComponent({
       // scroll the current measure element (highlighted) into the center of the viewport
       const ctn = this.$refs['slides-container'] as HTMLDivElement
       const scrollable = ctn.scrollHeight > ctn.clientHeight
-      if (scrollable) { // not in fullscreen mode
+      if (scrollable && this.sheetScrLk) { // not in fullscreen mode && scroll locked
         // only vertically scroll
         // get the actual y-coordinate on page
         const actualY = (currentEl.y + currentEl.sy / 2) / imgHeight * ctn.scrollHeight
@@ -221,6 +225,7 @@ export default defineComponent({
       const { $el: sidesEl } = this.$refs.slides as { $el: HTMLIonSlidesElement }
       const index = await sidesEl.getActiveIndex()
       this.currentPage = index
+      this.sheetScrLk = true // re-lock when switching between pages
     },
     /**
      * Transition to the specified sheet page slide
