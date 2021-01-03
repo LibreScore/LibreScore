@@ -48,6 +48,7 @@ import { IonRange, IonLabel, IonToolbar, IonButtons, IonButton, IonIcon } from '
 import { pauseOutline, playOutline, playSkipBackOutline, expandOutline } from 'ionicons/icons'
 
 import type WebMscore from 'webmscore'
+import { WebMscoreSoundFont } from '@/mscore/init'
 import { Synthesizer } from '@/mscore/synthesizer'
 import { PrintTimeMixin } from '../mixins/str-fmt'
 
@@ -107,6 +108,10 @@ export default defineComponent({
   },
   methods: {
     async play (): Promise<void> {
+      // ensure the soundfont is loaded on this WebMscore instance 
+      // the loading is already initiated when creating the WebMscore instance
+      await WebMscoreSoundFont(this.mscore)
+
       this.playing = true
       this.abortCtrl = new AbortController()
 

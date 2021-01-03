@@ -61,7 +61,7 @@
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
 
-import { WebMscoreLoad } from '@/mscore/init'
+import { WebMscoreLoad, WebMscoreSoundFont } from '@/mscore/init'
 import { Measures } from '@/mscore/measures'
 import type WebMscore from 'webmscore'
 import type { ScoreMetadata } from 'webmscore/schemas'
@@ -229,6 +229,8 @@ export default defineComponent({
       await this._saveFile('mxlFile', 'saveMxl', [], 'mxl', 'application/vnd.recordare.musicxml')
     },
     async downloadAudio (format: Parameters<WebMscore['saveAudio']>[0], mime = `audio/${format}`): Promise<void> {
+      // ensure the soundfont is loaded on this WebMscore instance 
+      await WebMscoreSoundFont(this.mscore)
       await this._saveFile('audioFile', 'saveAudio', [format], format, mime)
     },
     async printPDF (): Promise<void> {
