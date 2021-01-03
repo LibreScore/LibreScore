@@ -62,8 +62,6 @@ export default defineComponent({
   data () {
     return {
       isFullHeight: true,
-      // https://davidwalsh.name/orientation-change
-      mql: window.matchMedia('(orientation: portrait)'),
     }
   },
   computed: {
@@ -128,18 +126,31 @@ export default defineComponent({
       const time = this.measures.getTimeByEl(e)
       this.$emit('seek', time)
     },
+    async getSwiper () {
+      // the parent <ion-slides>
+      const slidesParent = this.$parent?.$parent?.$el as HTMLIonSlidesElement | undefined
+      if (slidesParent) {
+        const swiper = await slidesParent.getSwiper()
+        return swiper
+      }
+    },
   },
-  mounted () {
+  async mounted () {
     /* eslint-disable @typescript-eslint/unbound-method */
-    document.addEventListener('fullscreenchange', this.calRatio) // on entering/exiting fullscreen mode
-    window.addEventListener('resize', this.calRatio) // on viewport resizes
-    this.mql.addEventListener('change', this.calRatio) // on device orientation changes
+
+    // on entering/exiting fullscreen mode
+    document.addEventListener('fullscreenchange', this.calRatio)
+
+    // listen the `resize` event on the underlying `swiper`
+    // see https://swiperjs.com/api/#events
+    const swiper = await this.getSwiper()
+    swiper?.on('resize', this.calRatio)
   },
-  beforeUnmount () {
+  async beforeUnmount () {
     // cleanup
     document.removeEventListener('fullscreenchange', this.calRatio)
-    window.removeEventListener('resize', this.calRatio)
-    this.mql.removeEventListener('change', this.calRatio)
+    const swiper = await this.getSwiper()
+    swiper?.off('resize', this.calRatio)
   },
 })
 </script>
