@@ -11,7 +11,7 @@
       <div
         id="slides-container"
         ref="slides-container"
-        @wheel="sheetScrLk = false /** unlock upon a mousewheel scroll */"
+        @wheel.passive="sheetScrLk = false /** unlock upon a mousewheel scroll */"
       >
         <ion-slides
           ref="slides"
