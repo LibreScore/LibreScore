@@ -15,7 +15,9 @@ const FONT_URLS = [
  */
 const loadFonts = (): Promise<Uint8Array[]> => {
   return Promise.all(
-    FONT_URLS.map(u => fetchData(u as string)),
+    FONT_URLS.map(u => fetchData(u as string, {
+      cache: 'force-cache',
+    })),
   )
 }
 
@@ -23,7 +25,9 @@ const loadFonts = (): Promise<Uint8Array[]> => {
  * Load the SoundFont (.sf3) file
  */
 const loadSoundFont = (): Promise<Uint8Array> => {
-  return fetchData(SF3_URL as string)
+  return fetchData(SF3_URL as string, {
+    cache: 'force-cache',
+  })
 }
 
 /**
