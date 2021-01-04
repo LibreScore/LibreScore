@@ -49,6 +49,7 @@
         :duration="duration"
         :currentTime="currentTime"
         @seek="updatePlaybackTime"
+        @play="sheetScrLk = true /** re-lock highlighted measure focus when playback starts */"
       ></score-playback>
     </template>
 
@@ -225,7 +226,6 @@ export default defineComponent({
       const { $el: sidesEl } = this.$refs.slides as { $el: HTMLIonSlidesElement }
       const index = await sidesEl.getActiveIndex()
       this.currentPage = index
-      this.sheetScrLk = true // re-lock when switching between pages
     },
     /**
      * Transition to the specified sheet page slide
