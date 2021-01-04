@@ -84,6 +84,9 @@ export default defineComponent({
   },
   emits: [
     'seek', // the playback time updates
+    'play', // playback has begun
+    'pause', // playback has been paused
+    // TODO: compatible with <audio> tag events https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio#Events
   ],
   data () {
     return {
@@ -128,6 +131,7 @@ export default defineComponent({
       // the loading is already initiated when creating the WebMscore instance
       await soundFontReady(this.mscore)
 
+      this.$emit('play')
       this.playing = true
       this.abortCtrl = new AbortController()
 
@@ -135,7 +139,8 @@ export default defineComponent({
         this.$emit('seek', time * 1000 /* convert to ms */)
       })
       await this.playOnEnded
-      // promise resolves once finished or aborted
+      // promise resolves once finished or aborted (by `this.pause()`)
+      this.$emit('pause')
       this.playing = false
     },
     pause (): void {

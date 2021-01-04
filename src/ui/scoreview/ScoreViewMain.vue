@@ -11,13 +11,14 @@
       <div
         id="slides-container"
         ref="slides-container"
-        @wheel="sheetScrLk = false /** unlock upon a mousewheel scroll */"
+        @wheel.passive="sheetScrLk = false /** unlock upon a mousewheel scroll */"
       >
         <ion-slides
           ref="slides"
           :scrollbar="true"
           :pager="imgUrls.length <= 15"
           @ionSlideDidChange="slideIndexChanged"
+          @ionSlideDrag="sheetScrLk = false /** unlock upon manually switching between pages */"
         >
           <ion-slide
             v-for="(_, p) of imgUrls"
@@ -49,6 +50,7 @@
         :duration="duration"
         :currentTime="currentTime"
         @seek="updatePlaybackTime"
+        @play="sheetScrLk = true /** re-lock highlighted measure focus when playback starts */"
       ></score-playback>
     </template>
 
@@ -157,6 +159,7 @@ export default defineComponent({
     },
     async currentTime (): Promise<void> {
       if (!isFinite(this.currentTime)) { return }
+      if (!this.sheetScrLk) { return } // scroll unlocked
 
       const currentEl = this.measures.getElByTime(this.currentTime)
       const { imgHeight } = this.measures
@@ -168,7 +171,7 @@ export default defineComponent({
       // scroll the current measure element (highlighted) into the center of the viewport
       const ctn = this.$refs['slides-container'] as HTMLDivElement
       const scrollable = ctn.scrollHeight > ctn.clientHeight
-      if (scrollable && this.sheetScrLk) { // not in fullscreen mode && scroll locked
+      if (scrollable) { // not in fullscreen mode
         // only vertically scroll
         // get the actual y-coordinate on page
         const actualY = (currentEl.y + currentEl.sy / 2) / imgHeight * ctn.scrollHeight
@@ -225,7 +228,6 @@ export default defineComponent({
       const { $el: sidesEl } = this.$refs.slides as { $el: HTMLIonSlidesElement }
       const index = await sidesEl.getActiveIndex()
       this.currentPage = index
-      this.sheetScrLk = true // re-lock when switching between pages
     },
     /**
      * Transition to the specified sheet page slide
