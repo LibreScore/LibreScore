@@ -33,7 +33,7 @@
     "register-service-worker": "^1.7.1",
     "vue": "^3.0.4",
     "vue-router": "^4.0.1",
-    "webmscore": "^0.14.2"
+    "webmscore": "^0.16.0"
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.1",
@@ -73,6 +73,7 @@
     "build": "vue-cli-service build",
     "build:dev": "npm run build -- --mode development",
     "link:ipfs-spa": "cd dist && ln index.html ipfs-404.html",
-    "clean": "rimraf dist"
+    "clean": "rimraf dist",
+    "postinstall": "cd node_modules/webmscore && npm run install:webpack"
   }
 }
