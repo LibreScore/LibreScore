@@ -138,7 +138,9 @@ export default defineComponent({
       this.playOnEnded = this.synthesizer.play(this.abortCtrl.signal, (time) => {
         this.$emit('seek', time * 1000 /* convert to ms */)
       })
-      await this.playOnEnded
+      try {
+        await this.playOnEnded
+      } catch (err) { console.error(err) }
       // promise resolves once finished or aborted (by `this.pause()`)
       this.$emit('pause')
       this.playing = false

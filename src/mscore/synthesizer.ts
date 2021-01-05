@@ -265,8 +265,8 @@ export class Synthesizer {
       let fragment = this.findFragment(this.time)
       if (!fragment) {
         // get the synth worklet ready for this playback time, and get its first fragment processed
-        const [f, ended] = await new Promise((resolve: (args: [(AudioFragment | undefined), boolean]) => void) => {
-          this.startSynth(this.time, (...args) => resolve(args))
+        const [f, ended] = await new Promise((resolve: (args: [(AudioFragment | undefined), boolean]) => void, reject) => {
+          this.startSynth(this.time, (...args) => resolve(args)).catch(reject)
         })
         if (ended || !f) {
           return
