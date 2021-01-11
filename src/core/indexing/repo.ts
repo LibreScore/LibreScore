@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
 import type CID from 'cids'
 import type { IPFS } from 'ipfs'
@@ -13,7 +14,7 @@ export type EntriesIterator = AsyncIterable<{ entries: IndexingInfo[]; lastKey: 
 export abstract class Repo {
   constructor (protected _localIndex: LocalIndex) { }
 
-  abstract readonly type: string;
+  abstract get type (): string;
 
   /**
    * repo address
@@ -75,7 +76,7 @@ export abstract class Repo {
 }
 
 export class RepoDagKV extends Repo {
-  readonly type = 'dag-kv';
+  get type () { return 'dag-kv' as const }
 
   get addr (): string {
     return `/${this.type}/ipfs/${this._cid.toString()}`
@@ -119,7 +120,7 @@ export interface KVMap {
 
 export class RepoDagKVSharded extends RepoDagKV {
   // @ts-expect-error This overrides `RepoDagKV`'s `type`
-  readonly type = 'dag-kv-sharded';
+  get type () { return 'dag-kv-sharded' as const }
 
   protected async * _getIterator (keySet: Set<string> | null): EntriesIterator {
     if (!keySet) keySet = new Set<string>()
