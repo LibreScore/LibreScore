@@ -46,15 +46,16 @@ export abstract class Repo {
     let lastKey: LastKey = await this._getLastKey()
     const it = this._getIterator(lastKey)
 
-    try {
-      for await (const { entries, lastKey: lk } of it) {
-        const idList = await this._localIndex.db.bulkPut(entries, { allKeys: true })
-        lastKey = lk // update `lastKey` after success
-        yield idList
-      }
-    } finally { // save `lastKey` regardless of whether an exception was thrown
+    for await (const { entries, lastKey: lk } of it) {
+      // save the previous `lastKey`
       await this._saveLastKey(lastKey)
+      // put entries to the local index
+      const idList = await this._localIndex.db.bulkPut(entries, { allKeys: true })
+      // update `lastKey` after success
+      lastKey = lk
+      yield idList
     }
+    await this._saveLastKey(lastKey)
   }
 
   /**
@@ -100,24 +101,21 @@ export class RepoDagKV extends Repo {
     const res = await this._ipfs.dag.get(mapCid)
     const m = res.value as KVMap
 
+    const entries = [] as IndexingInfo[]
     for (const _id of Object.keys(m)) {
       // reconstruct IndexingInfo
-      const entry = {
+      entries.push({
         ...m[_id],
         _repo: this.addr,
         _id,
-      } as IndexingInfo
-
-      yield {
-        entries: [entry],
-        lastKey: keySet,
-      }
+      })
     }
 
-    // update lastKey
-    keySet.add(mapCid) // by ref
-    // additively save lastKey on each KVMap has finished
-    await this._saveLastKey(keySet)
+    yield {
+      entries,
+      // update lastKey
+      lastKey: keySet.add(mapCid), // by ref
+    }
   }
 }
 
