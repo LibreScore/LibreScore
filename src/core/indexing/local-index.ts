@@ -57,7 +57,7 @@ export class LocalIndex {
 
         // A query will be executed when calling Promise methods
         const query = this.db
-          .where('updated').below(now) // implies ORDER BY `updated`
+          .where('created').below(now) // implies ORDER BY `created`
           .reverse() // DESC
 
         return query
