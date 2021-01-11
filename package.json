@@ -33,7 +33,7 @@
     "register-service-worker": "^1.7.1",
     "vue": "^3.0.4",
     "vue-router": "^4.0.1",
-    "webmscore": "^0.16.0"
+    "webmscore": "^0.16.2"
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.1",
