@@ -12,24 +12,23 @@ export type SORTING =
  * 
  * This also enables offline score indexing.
  */
-export class LocalIndex extends Dexie {
+export class LocalIndex {
   db: Dexie.Table<IndexingInfo, string>;
 
   constructor () {
-    super('indexing', {
+    const dexie = new Dexie('indexing', {
       indexedDB, // refresh its value
       IDBKeyRange,
     })
 
     // define indexes
-    this.version(1).stores({
+    dexie.version(1).stores({
       // https://dexie.org/docs/Version/Version.stores()#detailed-schema-syntax
       db: '[_repo+_id], _uploader, title, duration, npages, nparts, *instruments, updated, created',
       // `scorepack` and `thumbnail` properties are not indexed but stored
     })
 
-    // The following lines are needed for it to work across typescipt using babel-preset-typescript:
-    this.db = this.table('db')
+    this.db = dexie.table('db')
   }
 
   private async * _iterator<T, Key> (query: Dexie.Collection<T, Key>, pageSize: number) {
