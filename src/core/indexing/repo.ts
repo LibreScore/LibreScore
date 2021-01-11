@@ -1,5 +1,7 @@
+/* eslint-disable yield-star-spacing */
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 
+import mergeIt from 'mergeiterator'
 import type CID from 'cids'
 import type { IPFS } from 'ipfs'
 import type { IndexingInfo } from './'
@@ -130,10 +132,11 @@ export class RepoDagKVSharded extends RepoDagKV {
     const shardedMap = res.value as ShardedMap
 
     // iterate over KVMaps the ShardedMap contains
-    for (const mapCid of Object.values(shardedMap)) {
-      // eslint-disable-next-line yield-star-spacing
-      yield* super._getIterator(keySet /* by ref */, mapCid.toString())
-    }
+    yield* mergeIt(
+      Object.values(shardedMap).map((mapCid) => {
+        return super._getIterator(keySet /* by ref */, mapCid.toString())
+      }),
+    )
   }
 }
 
