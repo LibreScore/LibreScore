@@ -1,7 +1,8 @@
 
 import Dexie from 'dexie'
 import { idbReady } from '@/utils/idb-polyfill' // IndexedDB shim for Firefox private mode
-import { IndexingInfo } from './index'
+import type { IndexingInfo } from './'
+import type { LastKey } from './repo'
 
 export type SORTING =
   | 'latest'
@@ -14,6 +15,7 @@ export type SORTING =
  */
 export class LocalIndex {
   db: Dexie.Table<IndexingInfo, string>;
+  repos: Dexie.Table<{ _repo: string; lastKey: LastKey }, string>;
 
   constructor () {
     const dexie = new Dexie('indexing', {
@@ -23,12 +25,15 @@ export class LocalIndex {
 
     // define indexes
     dexie.version(1).stores({
+      repos: '_repo, lastKey',
+
       // https://dexie.org/docs/Version/Version.stores()#detailed-schema-syntax
       db: '[_repo+_id], _uploader, title, duration, npages, nparts, *instruments, updated, created',
       // `scorepack` and `thumbnail` properties are not indexed but stored
     })
 
     this.db = dexie.table('db')
+    this.repos = dexie.table('repos')
   }
 
   private async * _iterator<T, Key> (query: Dexie.Collection<T, Key>, pageSize: number) {
