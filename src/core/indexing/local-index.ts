@@ -24,7 +24,7 @@ export class LocalIndex {
     })
 
     // define indexes
-    dexie.version(1).stores({
+    dexie.version(2).stores({
       repos: '_repo, lastKey',
 
       // https://dexie.org/docs/Version/Version.stores()#detailed-schema-syntax
