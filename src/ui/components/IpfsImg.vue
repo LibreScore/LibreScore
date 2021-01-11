@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { defineComponent, PropType } from 'vue'
-import type IPFS from 'ipfs'
+import type { IPFS } from 'ipfs'
 import CID from 'cids'
 
 import { ipfsFetch } from '@/ipfs'

@@ -1,6 +1,6 @@
 
 import type CID from 'cids'
-import type IPFS from 'ipfs'
+import type { IPFS } from 'ipfs'
 import { ScorePack } from '@/core/scorepack'
 
 /**

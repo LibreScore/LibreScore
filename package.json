@@ -28,7 +28,7 @@
     "dexie": "^3.0.3",
     "file-saver": "^2.0.5",
     "functional-red-black-tree": "^1.0.1",
-    "ipfs": "npm:@xmader/ipfs-core@^0.3.3",
+    "ipfs": "npm:ipfs-core@^0.3.1",
     "ipfs-http-client": "^48.1.2",
     "register-service-worker": "^1.7.1",
     "vue": "^3.0.4",

@@ -60,7 +60,7 @@ import { defineComponent, createApp } from 'vue'
 import { IonCardHeader, IonCardSubtitle, IonList, IonSpinner, IonButtons, IonButton } from '@ionic/vue'
 import { Identity, UserPubKeyType } from '@/identity'
 import { listProviders, IdentityProvider } from '@/identity/provider'
-import type IPFS from 'ipfs'
+import type { IPFS } from 'ipfs'
 
 import AuthMethodItem from './AuthMethodItem.vue'
 import UserProfileBox from './UserProfileBox.vue'
