@@ -100,19 +100,24 @@ export class RepoDagKV extends Repo {
     const res = await this._ipfs.dag.get(mapCid)
     const m = res.value as KVMap
 
-    const entries: IndexingInfo[] = Object.keys(m).map((_id) => {
+    for (const _id of Object.keys(m)) {
       // reconstruct IndexingInfo
-      return {
+      const entry = {
         ...m[_id],
         _repo: this.addr,
         _id,
-      }
-    })
+      } as IndexingInfo
 
-    yield {
-      entries,
-      lastKey: keySet.add(mapCid), // by ref
+      yield {
+        entries: [entry],
+        lastKey: keySet,
+      }
     }
+
+    // update lastKey
+    keySet.add(mapCid) // by ref
+    // additively save lastKey on each KVMap has finished
+    await this._saveLastKey(keySet)
   }
 }
 
