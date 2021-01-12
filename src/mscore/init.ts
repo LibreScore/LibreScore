@@ -41,12 +41,10 @@ export const WebMscoreLoad = async (mscz: Uint8Array): Promise<WebMscore> => {
   const WebMscore = (await import('webmscore')).default
 
   // load wasm and the data file
-  await WebMscore.ready
-
   const mscore = await WebMscore.load(
     'mscz',
     mscz,
-    await loadFonts(), // load CJK fonts
+    loadFonts(), // load CJK fonts
   )
 
   // attach the SoundFont loading promise to the mscore instance
