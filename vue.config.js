@@ -72,6 +72,8 @@ module.exports = {
     },
     workboxOptions: {
       // https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-webpack-plugin.GenerateSW
+      cleanupOutdatedCaches: true,
+      maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MiB
       exclude: [
         '_redirects',
         'webmscore.lib.wasm.js',
