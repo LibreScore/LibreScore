@@ -24,7 +24,7 @@
   "dependencies": {
     "@ionic/vue": "^5.5.1",
     "@librescore/fonts": "^0.3.0",
-    "@librescore/sf3": "^0.4.0",
+    "@librescore/sf3": "^0.6.0",
     "dexie": "^3.0.3",
     "file-saver": "^2.0.5",
     "functional-red-black-tree": "^1.0.1",
