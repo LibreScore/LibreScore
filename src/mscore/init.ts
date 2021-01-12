@@ -3,7 +3,7 @@ import type WebMscore from 'webmscore'
 import { fetchData } from '../utils'
 
 import { FluidR3Mono as SF3_URL } from '@librescore/sf3'
-import { CN as FONT_URL_CN, KR as FONT_URL_KR } from '@librescore/fonts'
+import { CN as FONT_URL_CN, KR as FONT_URL_KR } from '@librescore/fonts/cdn'
 
 const FONT_URLS = [
   FONT_URL_CN,
