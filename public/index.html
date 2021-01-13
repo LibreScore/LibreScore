@@ -15,6 +15,26 @@
   <script><%= htmlWebpackPlugin.options.loaderScript %></script>
 
   <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+
+  <style>
+    .app-err-page {
+      background: #f4f5f8;
+    }
+
+    #app-err {
+      color: #3880ff;
+    }
+
+    @media screen and (prefers-color-scheme: dark) {
+      .app-err-page {
+        background: #222428;
+      }
+
+      #app-err {
+        color: #428cff;
+      }
+    }
+  </style>
 </head>
 
 <body>

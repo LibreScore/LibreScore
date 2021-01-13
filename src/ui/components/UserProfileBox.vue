@@ -123,11 +123,10 @@ export default defineComponent({
     flex-direction: column;
   }
 
-  @media screen and (prefers-color-scheme: dark) {
-    .user-profile-box {
+  body.dark .user-profile-box {
     background: #000000;
-    }
   }
+
 
   .user-profile-box ion-text {
     word-break: break-all;

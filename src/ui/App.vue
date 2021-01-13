@@ -11,6 +11,11 @@
             >
           </router-link>
         </ion-title>
+        <ion-buttons slot="secondary">
+          <ion-toggle color="light" id="themeToggle" @ionChange="toggleChange($event.detail.checked)">
+            <ion-icon slot="icon-only" :icon="sunny"></ion-icon>
+          </ion-toggle>
+        </ion-buttons>
       </ion-toolbar>
     </ion-header>
 
@@ -22,7 +27,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { IonApp, IonHeader, IonToolbar, IonContent, IonTitle } from '@ionic/vue'
+import { IonApp, IonHeader, IonToolbar, IonContent, IonTitle, IonButtons, IonToggle, IonIcon } from '@ionic/vue'
+import { moon, sunny } from 'ionicons/icons'
 
 import { ipfsInstance } from '@/ipfs'
 import { getBaseUrl } from '@/utils'
@@ -34,6 +40,9 @@ export default defineComponent({
     IonToolbar,
     IonContent,
     IonTitle,
+    IonButtons,
+    IonToggle,
+    IonIcon,
   },
   provide () {
     return {
@@ -45,20 +54,46 @@ export default defineComponent({
       baseUrl: getBaseUrl(),
     }
   },
+  setup () {
+    return { moon, sunny }
+  },
+  methods: {
+    // Listen for the toggle check/uncheck to toggle the dark class on the <body>
+    toggleChange (ev: CustomEvent) {
+      document.body.classList.toggle('dark', (<any>ev))
+      let theme
+      if (ev) {
+        theme = 'dark'
+      } else {
+        theme = 'light'
+      }
+      document.querySelector('meta[name="color-scheme"]')!.setAttribute('content', theme)
+    }
+  },
+  mounted () {
+    this.$nextTick(function () {
+      // Query for the toggle that is used to change between themes
+      const toggle = document.querySelector('#themeToggle')
+
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)')
+
+      // Called by the media query to check/uncheck the toggle
+      function checkToggle (shouldCheck) {
+        (<any>toggle)!.checked = shouldCheck
+      }
+
+      // Called when the app loads
+      checkToggle(prefersDark.matches)
+      if (prefersDark.matches) {
+        document.body.classList.toggle('dark', prefersDark.matches)
+        document.querySelector('meta[name="color-scheme"]')!.setAttribute('content', 'dark')
+      }
+
+      // Listen for changes to the prefers-color-scheme media query
+      prefersDark.addListener((e) => checkToggle(e.matches))
+    })
+  },
 })
-
-// Add or remove the "dark" class based on if the media query matches
-function toggleDarkTheme (shouldAdd) {
-  document.body.classList.toggle('dark', shouldAdd)
-}
-
-// Use matchMedia to check the user preference
-const prefersDark = window.matchMedia('(prefers-color-scheme: dark)')
-
-toggleDarkTheme(prefersDark.matches)
-
-// Listen for changes to the prefers-color-scheme media query
-prefersDark.addListener((mediaQuery) => toggleDarkTheme(mediaQuery.matches))
 </script>
 
 <style>
@@ -144,6 +179,8 @@ prefersDark.addListener((mediaQuery) => toggleDarkTheme(mediaQuery.matches))
     --ion-color-light-shade: #d7d8da;
     --ion-color-light-tint: #f5f6f9;
 
+    --color-light-low-contrast: #d7d8da;
+
     --app-border: 2px solid #bdc2c6;
     --app-background-color: #ffffff;
     --app-border-color: #dee2e6;
@@ -214,7 +251,7 @@ prefersDark.addListener((mediaQuery) => toggleDarkTheme(mediaQuery.matches))
 
     --ion-item-background: #f3f3f3;
 
-    --ion-toolbar-background: #f2f2f2;
+    /* --ion-toolbar-background: #f2f2f2; */
 
     --ion-tab-bar-background: #f2f2f2;
 
@@ -287,6 +324,8 @@ prefersDark.addListener((mediaQuery) => toggleDarkTheme(mediaQuery.matches))
     --ion-color-light-shade: #1e2023;
     --ion-color-light-tint: #383a3e;
 
+    --color-light-low-contrast: #383a3e;
+
     --app-border: 2px solid #393e42;
     --app-background-color: #000000;
     --app-border-color: #191d21;
@@ -357,17 +396,15 @@ prefersDark.addListener((mediaQuery) => toggleDarkTheme(mediaQuery.matches))
 
     --ion-item-background: #1e1e1e;
 
-    --ion-toolbar-background: #1f1f1f;
+    /* --ion-toolbar-background: #1f1f1f; */
 
     --ion-tab-bar-background: #1f1f1f;
 
     --ion-card-background: #1e1e1e;
   }
 
-  @media screen and (prefers-color-scheme: dark) {
-    .swiper-wrapper {
-      filter: opacity(0.6);
-    }
+  body.dark .swiper-wrapper {
+    filter: opacity(0.6);
   }
 
   :root {

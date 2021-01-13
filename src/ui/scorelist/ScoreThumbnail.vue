@@ -40,10 +40,8 @@ export default defineComponent({
     border: 2px solid #797d81;
   }
 
-  @media screen and (prefers-color-scheme: dark) {
-    .thumbnail-container {
-      border: 2px solid #7e8286;
-    }
+  body.dark .thumbnail-container {
+    border: 2px solid #7e8286;
   }
 
   /* Create a pseudo element that uses padding-bottom to take up space */
