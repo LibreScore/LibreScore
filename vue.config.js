@@ -72,10 +72,27 @@ module.exports = {
     },
     workboxOptions: {
       // https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-webpack-plugin.GenerateSW
+      cleanupOutdatedCaches: true,
+      maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MiB
       exclude: [
         '_redirects',
-        'webmscore.lib.wasm.js',
-        'webmscore.lib.js.mem',
+      ],
+      // https://web.dev/runtime-caching-with-workbox/
+      // https://developers.google.com/web/tools/workbox/reference-docs/latest/module-workbox-build#.RuntimeCachingEntry
+      runtimeCaching: [
+        {
+          handler: 'CacheFirst',
+          // match npm versioned jsdelivr cdn urls
+          // e.g. https://cdn.jsdelivr.net/npm/example@0.1.0/xxx, but not https://cdn.jsdelivr.net/npm/example/xxx
+          urlPattern: /^https:\/\/cdn\.jsdelivr\.net\/npm\/((?:@[^/]+?[/])?[^/@]+)@(.+)\//,
+        },
+        {
+          handler: 'CacheFirst',
+          // match static ipfs api urls
+          // e.g. https://ipfs.io/api/v0/cat?arg=/ipfs/cid, https://ipfs.io/api/v0/block/get?arg=cid, https://ipfs.io/api/v0/dag/resolve?arg=cid
+          urlPattern: /^https:\/\/ipfs\.io\/api\/v0\/(cat|block\/get|dag\/resolve)\?arg=((?:\/ipfs\/)?\w+)/,
+          method: 'POST',
+        },
       ],
     },
   },

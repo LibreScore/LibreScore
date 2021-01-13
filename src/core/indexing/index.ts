@@ -1,5 +1,5 @@
 
-import { UserPubKeyType } from '@/identity'
+import type { UserPubKeyType } from '@/identity'
 
 export interface IndexingInfo {
 

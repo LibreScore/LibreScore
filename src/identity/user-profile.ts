@@ -1,6 +1,6 @@
 /* eslint-disable generator-star-spacing */
 
-import type IPFS from 'ipfs'
+import type { IPFS } from 'ipfs'
 import CID from 'cids'
 import type { PubKeyType } from './pubkey'
 

@@ -1,6 +1,6 @@
 
 import CID from 'cids'
-import IPFS from 'ipfs'
+import type { IPFS } from 'ipfs'
 
 /**
  * Retrieve file from the IPFS instance   

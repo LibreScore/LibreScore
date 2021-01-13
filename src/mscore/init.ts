@@ -2,8 +2,8 @@
 import type WebMscore from 'webmscore'
 import { fetchData } from '../utils'
 
-import { FluidR3Mono as SF3_URL } from '@librescore/sf3'
-import { CN as FONT_URL_CN, KR as FONT_URL_KR } from '@librescore/fonts'
+import { FluidR3Mono as SF3_URL } from '@librescore/sf3/cdn'
+import { CN as FONT_URL_CN, KR as FONT_URL_KR } from '@librescore/fonts/cdn'
 
 const FONT_URLS = [
   FONT_URL_CN,
@@ -41,12 +41,10 @@ export const WebMscoreLoad = async (mscz: Uint8Array): Promise<WebMscore> => {
   const WebMscore = (await import('webmscore')).default
 
   // load wasm and the data file
-  await WebMscore.ready
-
   const mscore = await WebMscore.load(
     'mscz',
     mscz,
-    await loadFonts(), // load CJK fonts
+    loadFonts(), // load CJK fonts
   )
 
   // attach the SoundFont loading promise to the mscore instance
