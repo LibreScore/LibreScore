@@ -116,17 +116,12 @@ export default defineComponent({
 
 <style scoped>
   .user-profile-box {
-    background: #ffffff;
+    background: var(--app-background-color);
     height: 100%;
     display: flex;
     justify-content: flex-start;
     flex-direction: column;
   }
-
-  body.dark .user-profile-box {
-    background: #000000;
-  }
-
 
   .user-profile-box ion-text {
     word-break: break-all;

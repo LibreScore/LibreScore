@@ -201,13 +201,8 @@ export default defineComponent({
   }
 
   .score-tag {
-    --background: #6c757d;
-    --color: #ffffff;
+    --background: var(--ion-color-medium);
+    --color: var(--app-background-color);
     margin-right: 0.5em;
-  }
-
-  body.dark .score-tag {
-    --background: #828b93;
-    --color: #000000;
   }
 </style>

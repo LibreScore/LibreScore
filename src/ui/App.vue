@@ -12,9 +12,7 @@
           </router-link>
         </ion-title>
         <ion-buttons slot="secondary">
-          <ion-toggle color="light" id="themeToggle" @ionChange="toggleChange($event.detail.checked)">
-            <ion-icon slot="icon-only" :icon="sunny"></ion-icon>
-          </ion-toggle>
+          <ion-toggle color="dark" id="themeToggle" @ionChange="toggleChange($event.detail.checked)"></ion-toggle>
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
@@ -27,8 +25,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-import { IonApp, IonHeader, IonToolbar, IonContent, IonTitle, IonButtons, IonToggle, IonIcon } from '@ionic/vue'
-import { moon, sunny } from 'ionicons/icons'
+import { IonApp, IonHeader, IonToolbar, IonContent, IonTitle, IonButtons, IonToggle } from '@ionic/vue'
 
 import { ipfsInstance } from '@/ipfs'
 import { getBaseUrl } from '@/utils'
@@ -42,7 +39,6 @@ export default defineComponent({
     IonTitle,
     IonButtons,
     IonToggle,
-    IonIcon,
   },
   provide () {
     return {
@@ -53,9 +49,6 @@ export default defineComponent({
     return {
       baseUrl: getBaseUrl(),
     }
-  },
-  setup () {
-    return { moon, sunny }
   },
   methods: {
     // Listen for the toggle check/uncheck to toggle the dark class on the <body>
@@ -68,30 +61,28 @@ export default defineComponent({
         theme = 'light'
       }
       document.querySelector('meta[name="color-scheme"]')!.setAttribute('content', theme)
-    }
+    },
   },
   mounted () {
-    this.$nextTick(function () {
-      // Query for the toggle that is used to change between themes
-      const toggle = document.querySelector('#themeToggle')
+    // Query for the toggle that is used to change between themes
+    const toggle = document.querySelector('#themeToggle')
 
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)')
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)')
 
-      // Called by the media query to check/uncheck the toggle
-      function checkToggle (shouldCheck) {
-        (<any>toggle)!.checked = shouldCheck
-      }
+    // Called by the media query to check/uncheck the toggle
+    function checkToggle (shouldCheck) {
+      (<any>toggle)!.checked = shouldCheck
+    }
 
-      // Called when the app loads
-      checkToggle(prefersDark.matches)
-      if (prefersDark.matches) {
-        document.body.classList.toggle('dark', prefersDark.matches)
-        document.querySelector('meta[name="color-scheme"]')!.setAttribute('content', 'dark')
-      }
+    // Called when the app loads
+    checkToggle(prefersDark.matches)
+    if (prefersDark.matches) {
+      document.body.classList.toggle('dark', prefersDark.matches)
+      document.querySelector('meta[name="color-scheme"]')!.setAttribute('content', 'dark')
+    }
 
-      // Listen for changes to the prefers-color-scheme media query
-      prefersDark.addListener((e) => checkToggle(e.matches))
-    })
+    // Listen for changes to the prefers-color-scheme media query
+    prefersDark.addListener((e) => checkToggle(e.matches))
   },
 })
 </script>

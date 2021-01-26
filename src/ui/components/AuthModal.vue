@@ -176,6 +176,10 @@ export const requestIdentity = async (ipfs: IPFS): Promise<Identity> => {
     --box-shadow: 0 28px 48px rgba(0, 0, 0, 0.4);
     padding: 1em;
   }
+
+  body.dark .app-modal-root {
+    --box-shadow: 0 28px 48px rgba(255, 255, 255, 0.4);
+  }
 </style>
 
 <style scoped>
