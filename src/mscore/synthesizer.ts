@@ -23,8 +23,9 @@ export class Synthesizer {
   private readonly FRAME_LENGTH = 512;
   private readonly SAMPLE_RATE = 44100; // 44.1 kHz
 
-  private readonly BATCH_SIZE = 8;
-  private readonly SYNTH_FN_BATCH_SIZE = 32; // 0.3712 s
+  private readonly BATCH_SIZE = 8; // number of chunks (512 frames) in a AudioFragment, to be played together
+  private readonly SYNTH_FN_BATCH_SIZE = 32; // 0.3712 s, number of chunks to be synthed at once from webmscore `synthAudioBatch`
+  private readonly PLAY_QUEUE_SIZE = 4;
   /**
    * The duration (s) of one AudioFragment  
    * ~ 0.0116 s * `BATCH_SIZE`
@@ -240,8 +241,7 @@ export class Synthesizer {
    * @returns the promise resolves once the score ended, or user aborted
    */
   async play (abort?: AbortSignal, onUpdate?: (time: number) => any): Promise<void> {
-    let cur: Promise<void> | undefined
-    let prev: Promise<void> | undefined
+    const queue = new Array<Promise<void>>()
 
     let ctxTime = 0
     let played = 0
@@ -282,20 +282,23 @@ export class Synthesizer {
         speed = this.speed
       }
 
-      if (prev) {
-        // wait the previous play request to be finished
-        await prev
-      } else {
-        await sleep(this.FRAGMENT_DURATION * 1000)
+      let when = ctxTime + played * this.FRAGMENT_DURATION / speed
+      if (this.audioCtx.currentTime > when) { // current time is ahead of scheduled time (`when`)
+        resetClock()
+        when = ctxTime
       }
-      prev = cur
+
+      if (queue.length > this.PLAY_QUEUE_SIZE) {
+        // wait the previous play request to be finished
+        await queue.shift()
+      }
 
       // update the playback time
       this.time = fragment.endTime
       void onUpdate?.(this.time)
 
       // request to play one fragment
-      cur = this.playFragment(fragment, ctxTime + played * this.FRAGMENT_DURATION / speed)
+      queue.push(this.playFragment(fragment, when))
       played++
     }
   }
