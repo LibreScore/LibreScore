@@ -2,12 +2,9 @@
 
 import type WebMscore from 'webmscore'
 import type { SynthRes } from 'webmscore/schemas'
-import type { PromiseType } from 'utility-types'
 import createTree from 'functional-red-black-tree'
 import { AudioContext } from '@/utils/audio-ctx'
 import { sleep } from '@/utils'
-
-type SynthFn = PromiseType<ReturnType<WebMscore['synthAudio']>>
 
 export interface AudioFragment {
   startTime: number; // in seconds
@@ -27,6 +24,7 @@ export class Synthesizer {
   private readonly SAMPLE_RATE = 44100; // 44.1 kHz
 
   private readonly BATCH_SIZE = 8;
+  private readonly SYNTH_FN_BATCH_SIZE = 32; // 0.3712 s
   /**
    * The duration (s) of one AudioFragment  
    * ~ 0.0116 s * `BATCH_SIZE`
@@ -77,7 +75,7 @@ export class Synthesizer {
     }
 
     // init the synth worklet
-    const synthFn = await this.mscore.synthAudio(startTime)
+    const synthFn = await this.mscore.synthAudioBatch(startTime, this.SYNTH_FN_BATCH_SIZE)
     this.worklet = {
       async cancel (): Promise<void> {
         aborted = true
@@ -102,27 +100,29 @@ export class Synthesizer {
       }
 
       // process synth
-      const synthRes: SynthRes = await synthFn()
+      // returns an array of SynthRes
+      const synthResArr: SynthRes[] = await synthFn()
 
-      if (synthRes.endTime < 0) {
+      if (synthResArr.some(r => r.endTime < 0)) { // the score ends previously in past synth calls
         console.warn('The score has ended.')
         aborted = true
         continue
       }
 
-      synthResL.push(synthRes)
-      if (synthResL.length >= this.BATCH_SIZE) {
-        const [result, existed] = this.buildFragment(synthResL)
+      synthResL.push(...synthResArr)
+      while (synthResL.length >= this.BATCH_SIZE) {
+        const [result, existed] = this.buildFragment(synthResL.slice(0, this.BATCH_SIZE))
         void onUpdate?.(result, existed)
         if (existed) {
           // cache exists for this playback time
           // so stop synth further
           await this.worklet.cancel() // set aborted = true, and release resources
+          break
         }
-        synthResL = []
+        synthResL = synthResL.slice(this.BATCH_SIZE)
       }
 
-      if (synthRes.done) { // the score ends, no more fragments available
+      if (synthResArr.some(r => r.done)) { // the score ends, no more fragments available
         aborted = true
       }
     }
