@@ -6,7 +6,7 @@
     <ion-text
       class="main-text text-center"
       color="primary"
-    >404 Not Found</ion-text>
+    >{{ $t("404") }}</ion-text>
   </ion-toolbar>
 </template>
 

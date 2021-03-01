@@ -283,14 +283,14 @@ export default defineComponent({
       // init action buttons
       this.actions = [
         [
-          { label: 'Download MSCZ', fn: (): Promise<void> => this.downloadMSCZ(), disabled: true },
-          { label: 'Download MIDI', fn: (): Promise<void> => this.downloadMIDI(), disabled: true },
-          { label: 'Download PDF', fn: async (): Promise<void> => { await this.downloadPDF() }, disabled: true },
+          { label: this.$t('ScoreViewActions.download', { type: 'MSCZ' }), fn: (): Promise<void> => this.downloadMSCZ(), disabled: true },
+          { label: this.$t('ScoreViewActions.download', { type: 'MIDI' }), fn: (): Promise<void> => this.downloadMIDI(), disabled: true },
+          { label: this.$t('ScoreViewActions.download', { type: 'PDF' }), fn: async (): Promise<void> => { await this.downloadPDF() }, disabled: true },
         ],
         [
-          { label: 'Print', fn: (): Promise<void> => this.printPDF(), disabled: true },
-          { label: 'Download MXL', fn: (): Promise<void> => this.downloadMusicXml(), disabled: true },
-          { label: 'Download Audio', fn: (): Promise<void> => this.downloadAudio('mp3', 'audio/mpeg'), disabled: true },
+          { label: this.$t('ScoreViewActions.print'), fn: (): Promise<void> => this.printPDF(), disabled: true },
+          { label: this.$t('ScoreViewActions.download', { type: 'MXL' }), fn: (): Promise<void> => this.downloadMusicXml(), disabled: true },
+          { label: this.$t('ScoreViewActions.downloadAudio'), fn: (): Promise<void> => this.downloadAudio('mp3', 'audio/mpeg'), disabled: true },
         ],
       ]
 

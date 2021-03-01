@@ -8,7 +8,7 @@
 
       <ion-row v-if="userPublicKey">
         <ion-col size="4">
-          <ion-note>Uploader</ion-note>
+          <ion-note>{{ $t("ScoreInfo.uploader") }}</ion-note>
         </ion-col>
         <ion-col>
           <user-chip :publicKey="userPublicKey" />
@@ -17,7 +17,7 @@
 
       <ion-row v-if="tags">
         <ion-col size="4">
-          <ion-note>Tags</ion-note>
+          <ion-note>{{ $t("ScoreInfo.tags") }}</ion-note>
         </ion-col>
         <ion-col>
           <ion-badge
@@ -30,7 +30,7 @@
 
       <ion-row v-if="date">
         <ion-col size="4">
-          <ion-note>Upload Date</ion-note>
+          <ion-note>{{ $t("ScoreInfo.date") }}</ion-note>
         </ion-col>
         <ion-col>
           <ion-note>{{ fmtDate(date) }}</ion-note>
@@ -39,7 +39,7 @@
 
       <ion-row v-if="instruments && instruments.length">
         <ion-col size="4">
-          <ion-note>Instruments</ion-note>
+          <ion-note>{{ $t("ScoreInfo.instruments") }}</ion-note>
         </ion-col>
         <ion-col>
           <ion-note>{{ instruments.join(', ') }}</ion-note>
@@ -48,7 +48,7 @@
 
       <ion-row v-if="pages">
         <ion-col size="4">
-          <ion-note>Pages</ion-note>
+          <ion-note>{{ $t("ScoreInfo.pages") }}</ion-note>
         </ion-col>
         <ion-col>
           <ion-note>{{ pages }}</ion-note>
@@ -57,7 +57,7 @@
 
       <ion-row v-if="duration">
         <ion-col size="4">
-          <ion-note>Duration</ion-note>
+          <ion-note>{{ $t("ScoreInfo.duration") }}</ion-note>
         </ion-col>
         <ion-col>
           <ion-note>{{ printTime(duration) }}</ion-note>
@@ -66,7 +66,7 @@
 
       <ion-row v-if="sources && sources.length">
         <ion-col size="4">
-          <ion-note>Sources</ion-note>
+          <ion-note>{{ $t("ScoreInfo.sources") }}</ion-note>
         </ion-col>
         <ion-col>
           <a
@@ -89,7 +89,7 @@
               class="ion-no-padding"
             >
               <ion-note style="position: relative; bottom: -1em;">
-                Description
+                {{ $t("ScoreInfo.description") }}
               </ion-note>
             </ion-item-divider>
           </ion-col>

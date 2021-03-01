@@ -20,7 +20,7 @@
 
           <ion-row>
             <ion-col size="4">
-              <ion-note>Short ID</ion-note>
+              <ion-note>{{ $t("UserProfile.shortId") }}</ion-note>
             </ion-col>
             <ion-col>
               <ion-text color="primary">{{ userShortId }}</ion-text>
@@ -29,7 +29,7 @@
 
           <ion-row>
             <ion-col size="4">
-              <ion-note>Full ID <br>(IPNS Key ID)</ion-note>
+              <ion-note>{{ $t("UserProfile.fullId") }} <br>({{ $t("UserProfile.ipnsKeyId") }})</ion-note>
             </ion-col>
             <ion-col>
               <ion-text>{{ userFullId }}</ion-text>
@@ -38,7 +38,7 @@
 
           <ion-row>
             <ion-col size="4">
-              <ion-note>User Name</ion-note>
+              <ion-note>{{ $t("UserProfile.username") }}</ion-note>
             </ion-col>
             <ion-col>
               {{ userName }}
@@ -54,7 +54,7 @@
       class="box-footer"
       v-if="status === 'loading'"
     >
-      <ion-note class="text-center">Fetching detailed user profile from IPNS …</ion-note>
+      <ion-note class="text-center">{{ $t("UserProfile.fetching") }}</ion-note>
       <ion-progress-bar type="indeterminate"></ion-progress-bar>
     </div>
 
@@ -62,7 +62,7 @@
       class="box-footer"
       v-else-if="status === 'error'"
     >
-      <ion-note class="text-center">Error loading detailed user profile from IPNS</ion-note>
+      <ion-note class="text-center">{{ $t("UserProfile.error") }}</ion-note>
       <ion-progress-bar
         color="danger"
         :value="1"

@@ -1,0 +1,57 @@
+{
+  "APP_DESC": "Sheet music. Free. Forever.",
+  "Home": {
+    "desc": [
+      "With LibreScore, you can get all the sheet music you need – {0}.",
+      "In contrast to other music sharing platforms, we don't charge you any money for getting notes. We are compatible with {0}, which is a free music writing software.",
+      "To top it all off, all of what you see right here is open source! If you feel like contributing, check out {0}."
+    ],
+    "descForFree": "for free",
+    "descGithubPage": "this page",
+    "newest": "Newest sheets",
+    "upload": "upload"
+  },
+  "404": "404 Not Found",
+  "ScoreList": {
+    "loading": "Loading more sheets..."
+  },
+  "ScoreComments": {
+    "title": "Comments",
+    "placeholder": "Write your comment here!",
+    "submit": "Submit"
+  },
+  "ScoreViewActions": {
+    "download": "Download {type}",
+    "downloadAudio": "Download Audio",
+    "print": "Print"
+  },
+  "ScoreInfo": {
+    "uploader": "Uploader",
+    "tags": "Tags",
+    "date": "Upload Date",
+    "instruments": "Instruments",
+    "pages": "Pages",
+    "duration": "Duration",
+    "sources": "Sources",
+    "description": "Description"
+  },
+  "UserProfile": {
+    "shortId": "Short ID",
+    "fullId": "Full ID",
+    "ipnsKeyId": "IPNS Key ID",
+    "username": "User Name",
+    "fetching": "Fetching detailed user profile from IPNS …",
+    "error": "Error loading detailed user profile from IPNS"
+  },
+  "AuthModal": {
+    "cancel": "Cancel",
+    "continue": "Continue",
+    "stages": [
+      "Select an Authentication Method",
+      "Authorizing...",
+      "Confirmation. Is that you?"
+    ],
+    "createCred": "Create Credential",
+    "authenticate": "Authenticate"
+  }
+}

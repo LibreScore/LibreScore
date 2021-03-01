@@ -1,12 +1,12 @@
 <template>
   <div class="score-comments-sidebar">
     <ion-card-title style="font-size: 16px;">
-      Comments
+      {{ $t("ScoreComments.title") }}
     </ion-card-title>
 
     <ion-textarea
       class="app-textarea"
-      placeholder="Write your comment here!"
+      :placeholder="$t('ScoreComments.placeholder')"
     ></ion-textarea>
 
     <ion-button
@@ -14,7 +14,7 @@
       color="primary"
       size="small"
       :disabled="true"
-    >Submit</ion-button>
+    >{{ $t("ScoreComments.submit") }}</ion-button>
   </div>
 </template>
 

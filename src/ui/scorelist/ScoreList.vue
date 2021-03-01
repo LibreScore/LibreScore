@@ -17,7 +17,7 @@
   >
     <ion-infinite-scroll-content
       loading-spinner="circular"
-      loading-text="Loading more sheets..."
+      :loading-text="$t('ScoreList.loading')"
     >
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>

@@ -43,12 +43,12 @@
         <ion-button
           color="danger"
           @click="cancelCb"
-        >Cancel</ion-button>
+        >{{ $t("AuthModal.cancel") }}</ion-button>
         <ion-button
           v-if="stage === 2"
           color="primary"
           @click="continueCb"
-        >Continue</ion-button>
+        >{{ $t("AuthModal.continue") }}</ion-button>
       </ion-buttons>
 
     </div>
@@ -89,10 +89,10 @@ const AuthModal = defineComponent({
       pubKey: undefined as UserPubKeyType | undefined,
       continueCb: (() => undefined) as (provider: IdentityProvider, inputs: Record<string, any>) => void,
       cancelCb: (): void => undefined,
-      modalTitles: [
-        'Select an Authentication Method',
-        'Authorizing...',
-        'Confirmation. Is that you?',
+      modalTitles: [ // this.$tm('AuthModal.stages')
+        this.$t('AuthModal.stages.0'),
+        this.$t('AuthModal.stages.1'),
+        this.$t('AuthModal.stages.2'),
       ],
     }
   },

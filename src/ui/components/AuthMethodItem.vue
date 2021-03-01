@@ -60,7 +60,7 @@
       button
       detail
       @click="provider.createIdentity(providerOptions)"
-    >Create Credential</ion-item>
+    >{{ $t("AuthModal.createCred") }}</ion-item>
 
     <ion-item
       v-show="show"
@@ -69,7 +69,7 @@
       button
       detail
       @click="continueCb(provider, providerOptions)"
-    >Authenticate</ion-item>
+    >{{ $t("AuthModal.authenticate") }}</ion-item>
   </div>
 </template>
 

@@ -16,13 +16,13 @@
             <ion-text
               class="main-text"
               color="primary"
-            >{{ appDesc }}</ion-text>
+            >{{ $t("APP_DESC") }}</ion-text>
             <ion-text>
-              With LibreScore, you can get all the sheet music you need – <b>for free</b>.
+              <i18n-t keypath="Home.desc.0"><b>{{ $t("Home.descForFree") }}</b></i18n-t>
               <br>
-              In contrast to other music sharing platforms, we don't charge you any money for getting notes. We are compatible with <a href="https://musescore.org/">MuseScore</a>, which is a free music writing software.
+              <i18n-t keypath="Home.desc.1"><a href="https://musescore.org/">MuseScore</a></i18n-t>
               <br>
-              To top it all off, all of what you see right here is open source! If you feel like contributing, check out <a :href="githubUrl">this</a> page.
+              <i18n-t keypath="Home.desc.2"><a :href="githubUrl">{{ $t("Home.descGithubPage") }}</a></i18n-t>
             </ion-text>
           </ion-col>
         </ion-row>
@@ -34,13 +34,13 @@
         <ion-title
           size="large"
           style="font-size: 24px;"
-        >Newest sheets</ion-title>
+        >{{ $t("Home.newest") }}</ion-title>
 
         <router-link
           to="/upload"
           slot="end"
         >
-          <ion-text color="primary">upload ></ion-text>
+          <ion-text color="primary">{{ $t("Home.upload") }} ></ion-text>
         </router-link>
       </ion-toolbar>
 
@@ -67,7 +67,6 @@ export default defineComponent({
   data () {
     return {
       baseUrl: getBaseUrl(),
-      appDesc: process.env.VUE_APP_DESC || '',
       githubUrl: 'https://github.com/LibreScore/LibreScore',
     }
   },

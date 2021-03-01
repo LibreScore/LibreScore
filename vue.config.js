@@ -25,6 +25,7 @@ module.exports = {
   filenameHashing: true,
   productionSourceMap: true,
   integrity: false,
+
   transpileDependencies: [
     /@?(ipfs|ipld|libp2p|multi|it).*/,
     '@ionic/vue',
@@ -38,6 +39,7 @@ module.exports = {
     'merge-options',
     'class-is',
   ],
+
   pwa: {
     name: process.env.VUE_APP_NAME,
     themeColor: '#3880FF',
@@ -96,6 +98,7 @@ module.exports = {
       ],
     },
   },
+
   chainWebpack: config => {
     config.plugin('html')
       .tap(args => {
@@ -104,5 +107,14 @@ module.exports = {
         args[0].landingScript = LANDING_SCRIPT_MIN
         return args
       })
+  },
+
+  pluginOptions: {
+    i18n: {
+      localeDir: 'ui/i18n',
+      enableLegacy: true,
+      runtimeOnly: true,
+      fullInstall: true,
+    },
   },
 }
