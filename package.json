@@ -35,7 +35,7 @@
     "vue": "^3.0.4",
     "vue-i18n": "^9.0.0-rc.7",
     "vue-router": "^4.0.1",
-    "webmscore": "^0.20.3"
+    "webmscore": "^0.21.0"
   },
   "devDependencies": {
     "@intlify/vue-i18n-loader": "^2.0.0-rc.1",

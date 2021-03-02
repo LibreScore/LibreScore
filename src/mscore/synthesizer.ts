@@ -138,16 +138,6 @@ export class Synthesizer {
     }
   }
 
-  private deinterleave (dest: Float32Array, src: Float32Array, framesLen: number) {
-    const channelA = dest
-    const channelB = new Float32Array(dest.buffer, framesLen * 4)
-
-    for (let i = 0, j = 0; i < framesLen; i++, j += 2) {
-      channelA[i] = src[j]
-      channelB[i] = src[j + 1]
-    }
-  }
-
   /**
    * Build AudioFragment from the list of `SynthRes`es, and load it to cache
    * @returns the AudioFragment processed, and `true` if the AudioFragment exists in cache
@@ -176,8 +166,7 @@ export class Synthesizer {
 
       // copy data to the AudioBuffer
       // audio frames are non-interleaved float32 PCM
-      const chunk = new Float32Array(this.FRAME_LENGTH * 2)
-      this.deinterleave(chunk, new Float32Array(synthRes.chunk.buffer), this.FRAME_LENGTH)
+      const chunk = new Float32Array(synthRes.chunk.buffer)
 
       for (let c = 0; c < this.CHANNELS; c++) {
         const chanChunk = chunk.subarray(c * this.FRAME_LENGTH, (c + 1) * this.FRAME_LENGTH)
