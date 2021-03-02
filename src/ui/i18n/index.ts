@@ -25,6 +25,8 @@ const i18n = createI18n({
   locale: navigator.language,
   fallbackLocale: 'en',
   messages: loadLocaleMessages(),
+  silentTranslationWarn: true,
+  silentFallbackWarn: true,
 })
 
 export default i18n
