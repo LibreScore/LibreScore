@@ -4,7 +4,6 @@ import type WebMscore from 'webmscore'
 import type { SynthRes } from 'webmscore/schemas'
 import createTree from 'functional-red-black-tree'
 import { AudioContext } from '@/utils/audio-ctx'
-import { sleep } from '@/utils'
 
 export interface AudioFragment {
   startTime: number; // in seconds
@@ -139,6 +138,16 @@ export class Synthesizer {
     }
   }
 
+  private deinterleave (dest: Float32Array, src: Float32Array, framesLen: number) {
+    const channelA = dest
+    const channelB = new Float32Array(dest.buffer, framesLen * 4)
+
+    for (let i = 0, j = 0; i < framesLen; i++, j += 2) {
+      channelA[i] = src[j]
+      channelB[i] = src[j + 1]
+    }
+  }
+
   /**
    * Build AudioFragment from the list of `SynthRes`es, and load it to cache
    * @returns the AudioFragment processed, and `true` if the AudioFragment exists in cache
@@ -161,22 +170,18 @@ export class Synthesizer {
       this.SAMPLE_RATE, // sampleRate
     )
 
-    const channelDataL = Array.from({ length: this.CHANNELS }).map((_, c) => {
-      return buf.getChannelData(c)
-    })
-
     for (let i = 0; i < synthResL.length; i++) {
       const synthRes = synthResL[i]
-      const chunk = new Float32Array(synthRes.chunk.buffer)
+      const bufOffset = i * this.FRAME_LENGTH
 
       // copy data to the AudioBuffer
-      // audio frames are interleaved
-      for (let d = 0; d < this.FRAME_LENGTH; d++) {
-        for (let c = 0; c < this.CHANNELS; c++) {
-          const chunkOffset = d * this.CHANNELS + c
-          const bufOffset = i * this.FRAME_LENGTH + d
-          channelDataL[c][bufOffset] = chunk[chunkOffset]
-        }
+      // audio frames are non-interleaved float32 PCM
+      const chunk = new Float32Array(this.FRAME_LENGTH * 2)
+      this.deinterleave(chunk, new Float32Array(synthRes.chunk.buffer), this.FRAME_LENGTH)
+
+      for (let c = 0; c < this.CHANNELS; c++) {
+        const chanChunk = chunk.subarray(c * this.FRAME_LENGTH, (c + 1) * this.FRAME_LENGTH)
+        buf.copyToChannel(chanChunk, c, bufOffset)
       }
     }
 
