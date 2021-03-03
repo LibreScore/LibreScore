@@ -37,7 +37,7 @@ export default defineComponent({
   /* see https://pqina.nl/blog/presenting-images-in-an-aspect-ratio-with-css/ */
   .thumbnail-container {
     position: relative;
-    border: 2px solid #797d81;
+    border: 2px solid var(--ion-color-medium-shade);
   }
 
   /* Create a pseudo element that uses padding-bottom to take up space */

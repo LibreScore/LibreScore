@@ -35,7 +35,7 @@
                   class="app-btn header-bar-btn"
                   :disabled="action.disabled"
                   :color="i == 0 ? 'primary' : undefined"
-                  :style="i !== 0 ? {'--background':'#D0D7DE','--color':'#424242'} : {}"
+                  :style="i !== 0 ? {'--background':'var(--color-light-low-contrast)','--color':'var(--ion-color-light-contrast)'} : {}"
                   expand="block"
                   size="small"
                   @click="(e) => onClick(e, action)"

@@ -12,7 +12,6 @@
     "javascript.format.insertSpaceAfterConstructor": true,
     "typescript.format.insertSpaceAfterConstructor": true,
     "typescript.tsdk": "node_modules/typescript/lib",
-    "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true
     },
