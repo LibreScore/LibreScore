@@ -2,6 +2,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import { getBaseUrl } from '@/utils'
 import { updatePageMetadata } from '@/ui/seo'
+import { clear as clearMetaTags, update as updateMetaTag } from '@/ui/seo/meta-tag'
 
 import Home from '../Home.vue'
 import ScoreView from '../scoreview/ScoreView.vue'
@@ -37,11 +38,17 @@ const router = createRouter({
 })
 
 router.afterEach(() => {
+  // remove any stale meta tag elements
+  clearMetaTags()
   // clear page metadata
   updatePageMetadata({
     title: undefined,
     description: undefined,
   })
+
+  // https://ogp.me/ meta tags 
+  updateMetaTag({ property: 'og:url', content: location.href })
+  updateMetaTag({ property: 'og:image', content: document.baseURI + 'img/logo-text.svg' })
 })
 
 export default router

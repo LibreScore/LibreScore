@@ -6,10 +6,13 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
   <title>
     <%= VUE_APP_NAME %>
   </title>
-  <meta name="description" content="<%= VUE_APP_NAME %> — <%= VUE_APP_DESC %>">
+  <meta name="description" content="<%= VUE_APP_NAME %> — <%= VUE_APP_DESC %>" data-app-controlled>
+  <meta property="og:site_name" content="<%= VUE_APP_NAME %>">
+  <meta property="og:type" content="website">
 
   <script><%= htmlWebpackPlugin.options.loaderScript %></script>
 
