@@ -136,7 +136,8 @@ export default defineComponent({
     },
   },
   async mounted () {
-    /* eslint-disable @typescript-eslint/unbound-method */
+    /* eslint-disable @typescript-eslint/unbound-method */ // for `this.calRatio`
+    this.calRatio()
 
     // on entering/exiting fullscreen mode
     document.addEventListener('fullscreenchange', this.calRatio)
