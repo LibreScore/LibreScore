@@ -100,7 +100,7 @@ export class ScorePack {
         throw ERR_PREV_SCORE_INVALID
       }
       // prefer to use the string representation which is encoded in base58-btc
-      this._prev = prev.toBaseEncodedString('base58-btc')
+      this._prev = prev.toBaseEncodedString('base58btc')
     }
   }
 

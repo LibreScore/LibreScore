@@ -17,7 +17,7 @@ const ipfsClientLite = (options: ClientOptions) => {
 export type IPFSLite = ReturnType<typeof ipfsClientLite>
 
 export const IPFS_CLIENT_INFURA = ipfsClientLite({ url: 'https://ipfs.infura.io:5001/' })
-export const IPFS_CLIENT_IPFS_IO = ipfsClientLite({ url: 'https://ipfs.io/' })
+export const IPFS_CLIENT_IPFS_IO = ipfsClientLite({ url: 'https://ipfs.io/', method: 'GET' })
 
 export const ipfsInstance = Object.assign({}, IPFS_CLIENT_INFURA, {
   // replace `dag.get` (using `dag.resolve` internally) with the implementation from ipfs.io,

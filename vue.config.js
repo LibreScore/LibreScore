@@ -93,7 +93,6 @@ module.exports = {
           // match static ipfs api urls
           // e.g. https://ipfs.io/api/v0/cat?arg=/ipfs/cid, https://ipfs.io/api/v0/block/get?arg=cid, https://ipfs.io/api/v0/dag/resolve?arg=cid
           urlPattern: /^https:\/\/ipfs\.io\/api\/v0\/(cat|block\/get|dag\/resolve)\?arg=((?:\/ipfs\/)?\w+)/,
-          method: 'POST',
         },
       ],
     },
