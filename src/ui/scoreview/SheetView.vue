@@ -1,7 +1,7 @@
 <template>
   <div
     class="sheet-container"
-    :class="{ 'full-height': isFullHeight }"
+    :class="{ 'full-height': fullHeight }"
   >
     <img
       class="sheet-img"
@@ -55,14 +55,16 @@ export default defineComponent({
     alt: {
       type: String,
     },
+    fullHeight: {
+      type: Boolean,
+      default: true,
+    },
   },
   emits: [
     'seek', // seek to time (ms)
   ],
   data () {
-    return {
-      isFullHeight: true,
-    }
+    return {}
   },
   computed: {
     /**
@@ -111,47 +113,10 @@ export default defineComponent({
         left: toPercentage(e.x / this.imgWidth),
       }
     },
-    calRatio () {
-      const slideParent = this.$parent?.$el as HTMLIonSlideElement | undefined
-      if (slideParent) {
-        // calculate the aspect ratio of the container parent <ion-slide>
-        const { width, height } = slideParent.getBoundingClientRect()
-        const ratio = width / height
-
-        // is the sheet image consuming the whole height of .sheet-container?
-        this.isFullHeight = ratio > (this.imgWidth / this.imgHeight)
-      }
-    },
     onClick (e: MeasureEl): void {
       const time = this.measures.getTimeByEl(e)
       this.$emit('seek', time)
     },
-    async getSwiper () {
-      // the parent <ion-slides>
-      const slidesParent = this.$parent?.$parent?.$el as HTMLIonSlidesElement | undefined
-      if (slidesParent) {
-        const swiper = await slidesParent.getSwiper()
-        return swiper
-      }
-    },
-  },
-  async mounted () {
-    /* eslint-disable @typescript-eslint/unbound-method */ // for `this.calRatio`
-    this.calRatio()
-
-    // on entering/exiting fullscreen mode
-    document.addEventListener('fullscreenchange', this.calRatio)
-
-    // listen the `resize` event on the underlying `swiper`
-    // see https://swiperjs.com/api/#events
-    const swiper = await this.getSwiper()
-    swiper?.on('resize', this.calRatio)
-  },
-  async beforeUnmount () {
-    // cleanup
-    document.removeEventListener('fullscreenchange', this.calRatio)
-    const swiper = await this.getSwiper()
-    swiper?.off('resize', this.calRatio)
   },
 })
 </script>

@@ -42,6 +42,13 @@ export class Measures {
     return this.mpos.pageSize.height
   }
 
+  /**
+   * The aspect ratio (`width / height`) of the sheet image
+   */
+  get imgAspectRatio (): number {
+    return this.imgWidth / this.imgHeight
+  }
+
   at (elid: number): MeasureEl {
     return this.elements[elid]
   }

@@ -13,35 +13,41 @@
         ref="slides-container"
         @wheel.passive="sheetScrLk = false /** unlock upon a mousewheel scroll */"
       >
-        <ion-slides
-          ref="slides"
-          :scrollbar="true"
-          :pager="imgUrls.length <= 15"
-          @ionSlideDidChange="slideIndexChanged"
-          @ionSlideDrag="sheetScrLk = false /** unlock upon manually switching between pages */"
+        <sheet-height-adapter
+          :measures="measures"
+          v-slot="{ fullHeight }"
         >
-          <ion-slide
-            v-for="(_, p) of imgUrls"
-            :key="'sheet-' + p /** slides are preallocated with the number of pages in this score */"
-            class="ion-align-self-center"
+          <ion-slides
+            ref="slides"
+            :scrollbar="true"
+            :pager="imgUrls.length <= 15"
+            @ionSlideDidChange="slideIndexChanged"
+            @ionSlideDrag="sheetScrLk = false /** unlock upon manually switching between pages */"
           >
-            <sheet-view
-              v-if="imgUrls[p] /** the sheet image of this page is processed */"
-              :page="p"
-              :measures="measures"
-              :img="imgUrls[p]"
-              :currentTime="currentTime"
-              @seek="updatePlaybackTime"
-              :alt="`${filename} – page ${p + 1} of ${imgUrls.length}`"
-            ></sheet-view>
+            <ion-slide
+              v-for="(_, p) of imgUrls"
+              :key="'sheet-' + p /** slides are preallocated with the number of pages in this score */"
+              class="ion-align-self-center"
+            >
+              <sheet-view
+                v-if="imgUrls[p] /** the sheet image of this page is processed */"
+                :page="p"
+                :measures="measures"
+                :img="imgUrls[p]"
+                :currentTime="currentTime"
+                @seek="updatePlaybackTime"
+                :alt="`${filename} – page ${p + 1} of ${imgUrls.length}`"
+                :fullHeight="fullHeight"
+              ></sheet-view>
 
-            <!-- image loading -->
-            <ion-spinner
-              v-else
-              color="primary"
-            ></ion-spinner>
-          </ion-slide>
-        </ion-slides>
+              <!-- image loading -->
+              <ion-spinner
+                v-else
+                color="primary"
+              ></ion-spinner>
+            </ion-slide>
+          </ion-slides>
+        </sheet-height-adapter>
       </div>
 
       <score-playback
@@ -76,6 +82,7 @@ import { isDev } from '@/utils'
 
 import { IonSlides, IonSlide, IonSpinner } from '@ionic/vue'
 import SheetView from './SheetView.vue'
+import SheetHeightAdapter from './SheetHeightAdapter.vue'
 import ScorePlayback from './ScorePlayback.vue'
 import { ActionGroups } from './ScoreHeaderBar.vue'
 
@@ -85,6 +92,7 @@ export default defineComponent({
     IonSlide,
     IonSpinner,
     SheetView,
+    SheetHeightAdapter,
     ScorePlayback,
   },
   props: {
