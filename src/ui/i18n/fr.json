@@ -1,0 +1,57 @@
+{
+  "APP_DESC": "Partition. Libres. Pour toujours.",
+  "Home": {
+    "desc": [
+      "Avec LibreScore, vous pouvez obtenir toutes les partitions dont vous avez besoin – {0}.",
+      "Contrairement à d'autres plateformes de partage de partitions, nous ne vous faisons pas payer pour obtenir des notes. Nous sommes compatibles avec {0}, qui est un logiciel de notation musicale libre et gratuit.",
+      "Pour couronner le tout, tout ce que vous voyez ici est open source ! Si vous avez envie de contribuer, consultez {0}."
+    ],
+    "descForFree": "gratuitement",
+    "descGithubPage": "cette page",
+    "newest": "Partitions les plus récentes",
+    "upload": "Envoyer"
+  },
+  "404": "404 Non trouvé,
+  "ScoreList": {
+    "loading": "Charger plus de partitions..."
+  },
+  "ScoreComments": {
+    "title": "Commentaires",
+    "placeholder": "Écrivez votre commentaire ici!",
+    "submit": "Envoyer"
+  },
+  "ScoreViewActions": {
+    "download": "Télécharger {type}",
+    "downloadAudio": "Télécharger Audio",
+    "print": "Imprimer"
+  },
+  "ScoreInfo": {
+    "uploader": "Uploader",
+    "tags": "Tags",
+    "date": "Date de soumission",
+    "instruments": "Instruments",
+    "pages": "Pages",
+    "duration": "Durée",
+    "sources": "Sources",
+    "description": "Description"
+  },
+  "UserProfile": {
+    "shortId": "ID court",
+    "fullId": "ID complet",
+    "ipnsKeyId": "Clé IPNS ID",
+    "username": "Nom d'utilisateur",
+    "fetching": "Récupération du profil utilisateur détaillé de l'IPNS …",
+    "error": "Erreur lors du chargement du profil utilisateur détaillé depuis IPNS"
+  },
+  "AuthModal": {
+    "cancel": "Annuler",
+    "continue": "Continuer",
+    "stages": [
+      "Sélectionnez une méthode d'authentification",
+      "Authentification...",
+      "Confirmez. C'est bien vous?"
+    ],
+    "createCred": "Créer un identifiant",
+    "authenticate": "Authentifier"
+  }
+}
