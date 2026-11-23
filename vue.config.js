@@ -90,12 +90,20 @@ module.exports = {
         },
         {
           handler: 'CacheFirst',
-          // match static ipfs api urls
-          // e.g. https://ipfs.io/api/v0/cat?arg=/ipfs/cid, https://ipfs.io/api/v0/block/get?arg=cid, https://ipfs.io/api/v0/dag/resolve?arg=cid
-          urlPattern: /^https:\/\/ipfs\.io\/api\/v0\/(cat|block\/get|dag\/resolve)\?arg=((?:\/ipfs\/)?\w+)/,
+          // match ipfs gateway content urls (immutable content by CID)
+          // e.g. https://ipfs.io/ipfs/<cid>, https://dweb.link/ipfs/<cid>
+          urlPattern: /^https:\/\/(ipfs\.io|dweb\.link)\/ipfs\/\w+/,
         },
       ],
     },
+  },
+
+  css: {
+    // use runtime style injection instead of mini-css-extract-plugin:
+    // mciex's webpack-4 loader evaluates the child-compiler bundle in-process,
+    // which crashes on modern Node (circular core-js well-known-symbol
+    // re-entry in the bundled graph). Runtime injection keeps PWA behavior.
+    extract: false,
   },
 
   chainWebpack: config => {
